@@ -7,6 +7,12 @@ type Props = {
   title: string;
 };
 
+// Placeholders LQIP basiques (en production, utiliser plaiceholder ou sharp pour générer des placeholders réels)
+const placeholders: Record<string, string> = {
+  "/main.webp": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+",
+  "/plusvaluehuile.webp": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+",
+};
+
 export default function ProductGallery({ images, title }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -19,8 +25,10 @@ export default function ProductGallery({ images, title }: Props) {
           width={1200}
           height={900}
           className="object-contain w-full h-auto"
-          priority
-          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={selectedIndex === 0}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+          placeholder="blur"
+          blurDataURL={placeholders[images[selectedIndex]] || undefined}
         />
       </div>
 
@@ -39,11 +47,14 @@ export default function ProductGallery({ images, title }: Props) {
             >
               <Image
                 src={src}
-                alt={`${title} ${i + 1}`}
+                alt={`${title} - Vue ${i + 1}`}
                 width={400}
                 height={300}
                 className="object-cover w-full h-auto"
                 loading="lazy"
+                sizes="(max-width: 768px) 33vw, 150px"
+                placeholder="blur"
+                blurDataURL={placeholders[src] || undefined}
               />
             </button>
           ))}
@@ -52,4 +63,3 @@ export default function ProductGallery({ images, title }: Props) {
     </div>
   );
 }
-
