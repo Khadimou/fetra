@@ -1,10 +1,47 @@
 ﻿import Image from "next/image";
+import type { Metadata } from "next";
 import { getProduct } from "../../lib/product";
 import ProductCard from "../../components/ProductCard";
 import ProductGallery from "../../components/ProductGallery";
 import Reviews from "../../components/Reviews";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const product = await getProduct();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const imageUrl = `${baseUrl}${product.images[0]}`;
+
+  return {
+    title: `${product.title} | FETRA`,
+    description: product.descriptionShort,
+    openGraph: {
+      title: product.title,
+      description: product.descriptionShort,
+      url: `${baseUrl}/product`,
+      siteName: "FETRA",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 900,
+          alt: product.title,
+        },
+      ],
+      locale: "fr_FR",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.descriptionShort,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: `${baseUrl}/product`,
+    },
+  };
+}
 
 export default async function ProductPage() {
   const product = await getProduct();
@@ -16,7 +53,7 @@ export default async function ProductPage() {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.title,
-    image: product.images,
+    image: product.images.map((img) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img}`),
     description: product.descriptionShort,
     sku: product.sku,
     brand: { "@type": "Brand", name: "FETRA" },
@@ -49,6 +86,11 @@ export default async function ProductPage() {
       priceCurrency: "EUR",
       price: Number(product.price.toFixed(2)),
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      seller: {
+        "@type": "Organization",
+        name: "FETRA",
+      },
     },
   } as const;
 
