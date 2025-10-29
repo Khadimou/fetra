@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProductCard from '../components/ProductCard';
 import type { Product } from '../lib/product';
 
-// Mock du produit
 const mockProduct: Product = {
   sku: 'FETRA-RIT-001',
   title: 'Test Product',
@@ -15,7 +14,6 @@ const mockProduct: Product = {
   howTo: ['Step 1', 'Step 2'],
 };
 
-// Mock de fetch pour les tests
 global.fetch = vi.fn();
 
 describe('ProductCard', () => {
@@ -27,13 +25,12 @@ describe('ProductCard', () => {
     const { container } = render(<ProductCard product={mockProduct} />);
     const increaseButton = screen.getByLabelText('Augmenter la quantité');
     
-    // Simuler plusieurs clics pour dépasser le stock
     for (let i = 0; i < 15; i++) {
       fireEvent.click(increaseButton);
     }
     
     const quantityDisplay = container.querySelector('.min-w-\\[60px\\]');
-    expect(quantityDisplay?.textContent).toBe('10'); // Ne devrait pas dépasser stock
+    expect(quantityDisplay?.textContent).toBe('10');
   });
 
   it('should disable CTA when stock is 0', () => {
@@ -48,13 +45,12 @@ describe('ProductCard', () => {
     const { container } = render(<ProductCard product={mockProduct} />);
     const decreaseButton = screen.getByLabelText('Diminuer la quantité');
     
-    // Simuler plusieurs clics pour descendre en dessous de 1
     fireEvent.click(decreaseButton);
     fireEvent.click(decreaseButton);
     fireEvent.click(decreaseButton);
     
     const quantityDisplay = container.querySelector('.min-w-\\[60px\\]');
-    expect(quantityDisplay?.textContent).toBe('1'); // Minimum devrait être 1
+    expect(quantityDisplay?.textContent).toBe('1');
   });
 
   it('should send correct checkout request body', async () => {
@@ -81,12 +77,35 @@ describe('ProductCard', () => {
     render(<ProductCard product={mockProduct} />);
     const increaseButton = screen.getByLabelText('Augmenter la quantité');
     
-    // Augmenter jusqu'au stock max
     for (let i = 0; i < 10; i++) {
       fireEvent.click(increaseButton);
     }
     
     expect(increaseButton).toBeDisabled();
+  });
+
+  it('should clamp quantity between 1 and stock on checkout', async () => {
+    (global.fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ url: 'https://checkout.stripe.com/test' }),
+    });
+
+    const { container } = render(<ProductCard product={mockProduct} />);
+    const increaseButton = screen.getByLabelText('Augmenter la quantité');
+    
+    // Try to exceed stock
+    for (let i = 0; i < 15; i++) {
+      fireEvent.click(increaseButton);
+    }
+    
+    const buyButton = screen.getByRole('button', { name: /Acheter/ });
+    fireEvent.click(buyButton);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/checkout', expect.objectContaining({
+        body: JSON.stringify({ sku: 'FETRA-RIT-001', quantity: 10 }),
+      }));
+    });
   });
 });
 
