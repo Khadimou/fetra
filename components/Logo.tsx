@@ -1,13 +1,17 @@
 export default function Logo({ variant = 'default' }: { variant?: 'default' | 'large' }) {
   const sizeClasses = variant === 'large' 
     ? 'text-4xl md:text-5xl' 
-    : 'text-2xl md:text-3xl';
+    : 'text-3xl';
+    
+  const beautySize = variant === 'large'
+    ? 'text-sm md:text-base'
+    : 'text-[0.5rem] md:text-xs';
     
   return (
     <div className="flex items-center gap-3">
-      {/* Small decorative icon - leaf from original logo */}
+      {/* Small decorative icon - leaf */}
       <svg 
-        className="w-7 h-7 md:w-8 md:h-8 text-fetra-olive flex-shrink-0" 
+        className="w-8 h-8 md:w-9 md:h-9 text-fetra-olive flex-shrink-0" 
         viewBox="0 0 24 24" 
         fill="none" 
         stroke="currentColor"
@@ -22,18 +26,30 @@ export default function Logo({ variant = 'default' }: { variant?: 'default' | 'l
         />
       </svg>
       
-      {/* FETRA text logo */}
-      <span 
-        className={`${sizeClasses} font-serif font-bold tracking-[0.2em] text-fetra-olive relative`}
-        style={{
-          fontFamily: "'Playfair Display', 'Georgia', serif",
-          letterSpacing: '0.15em',
-          fontWeight: 600
-        }}
-      >
-        FETRA
-        <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-fetra-pink"></span>
-      </span>
+      {/* FETRA BEAUTY text logo - stacked */}
+      <div className="flex flex-col items-start leading-none">
+        <span 
+          className={`${sizeClasses} font-serif font-bold tracking-[0.15em] text-fetra-olive`}
+          style={{
+            fontFamily: "'Playfair Display', 'Georgia', serif",
+            letterSpacing: '0.15em',
+            fontWeight: 700,
+            lineHeight: 1
+          }}
+        >
+          FETRA
+        </span>
+        <span 
+          className={`${beautySize} font-sans tracking-[0.3em] text-fetra-pink font-semibold mt-0.5 ml-0.5`}
+          style={{
+            letterSpacing: '0.35em',
+            fontWeight: 600,
+            lineHeight: 1
+          }}
+        >
+          BEAUTY
+        </span>
+      </div>
     </div>
   );
 }

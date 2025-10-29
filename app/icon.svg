@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#6B8E23"/>
+  
+  <!-- Leaf icon in white -->
+  <path 
+    d="M32 12C21.5 12 13 20.5 13 31c0 4 2 8 4 10 2 4 6 6 10 8 0-4 2-8 4-10 2-4 4-6 6-8 2 2 4 4 6 8 2 2 4 6 4 10 4-2 8-4 10-8 2-2 4-6 4-10 0-10.5-8.5-19-19-19zm0 0c-2 4-4 8-4 12s2 8 4 12c2-4 4-8 4-12s-2-8-4-12z" 
+    stroke="white" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+    fill="white"
+    fill-opacity="0.2"
+  />
+  
+  <!-- Pink accent line at bottom -->
+  <rect x="16" y="54" width="32" height="2" fill="#F472B6" rx="1"/>
+</svg>
+

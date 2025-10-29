@@ -6,20 +6,29 @@ import NewsletterPopup from "../components/NewsletterPopup";
 import HubspotSnippet from "../components/HubspotSnippet";
 
 export const metadata: Metadata = {
-  title: 'FETRA — Rituel Visage Liftant',
+  title: 'FETRA BEAUTY — Rituel Visage Liftant',
   description: 'Rituel Visage Liftant : Kit Quartz Rose 3-en-1 & Huile RedMoringa — Livraison offerte',
   metadataBase: new URL('https://www.fetrabeauty.com'),
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }
+    ]
+  },
   openGraph: {
-    title: 'FETRA — Rituel Visage Liftant',
+    title: 'FETRA BEAUTY — Rituel Visage Liftant',
     description: 'Rituel Visage Liftant : Kit Quartz Rose 3-en-1 & Huile RedMoringa — Livraison offerte',
     url: 'https://www.fetrabeauty.com',
-    siteName: 'FETRA',
+    siteName: 'FETRA BEAUTY',
     images: [
       {
         url: 'https://www.fetrabeauty.com/main.webp',
         width: 1200,
         height: 900,
-        alt: 'Rituel Visage Liftant — FETRA'
+        alt: 'Rituel Visage Liftant — FETRA BEAUTY'
       }
     ],
     type: 'website',
@@ -27,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FETRA — Rituel Visage Liftant',
+    title: 'FETRA BEAUTY — Rituel Visage Liftant',
     description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
     images: ['https://www.fetrabeauty.com/main.webp']
   }
