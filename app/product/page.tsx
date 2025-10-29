@@ -56,9 +56,9 @@ export default async function ProductPage() {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.title,
-    image: Array.isArray(product.images) && typeof product.images[0] === 'object' 
+    image: Array.isArray(product.images) && product.images.length > 0 && typeof product.images[0] === 'object' 
       ? product.images.map((img: any) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img.src || img}`)
-      : product.images.map((img: string) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img}`),
+      : (product.images as string[]).map((img: string) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img}`),
     description: product.descriptionShort,
     sku: product.sku,
     brand: { "@type": "Brand", name: "FETRA" },
