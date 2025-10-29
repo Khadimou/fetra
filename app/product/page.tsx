@@ -158,7 +158,12 @@ export default async function ProductPage() {
 
       <FAQ />
 
-      <MobileBarBridge sku={product.sku} price={product.price} />
+      <MobileBarBridge 
+        sku={product.sku} 
+        price={product.price}
+        title={product.title}
+        image={typeof product.images[0] === 'object' && 'src' in product.images[0] ? product.images[0].src : (product.images[0] as string)}
+      />
     </div>
   );
 }

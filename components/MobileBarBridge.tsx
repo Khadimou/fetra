@@ -1,21 +1,25 @@
 "use client";
 
-import { beginCheckout } from "../lib/analytics";
+import { useRouter } from "next/navigation";
+import { addToCart } from "../lib/cart";
+import MobilePurchaseBar from "./MobilePurchaseBar";
 
-type Props = { sku: string; price: number };
+type Props = { sku: string; price: number; title: string; image: string };
 
-export default function MobileBarBridge({ sku, price }: Props) {
-  async function onBuy() {
-    beginCheckout(sku, 1, price);
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sku, quantity: 1 }),
-    });
-    const data = await res.json();
-    if (data?.url) window.location.href = data.url as string;
+export default function MobileBarBridge({ sku, price, title, image }: Props) {
+  const router = useRouter();
+  
+  function onBuy() {
+    addToCart({
+      sku,
+      title,
+      price,
+      image,
+    }, 1);
+    
+    router.push('/cart');
   }
+  
   const priceStr = (Number(price).toFixed(2)).toString();
-  const MobilePurchaseBar = require('./MobilePurchaseBar').default;
   return <MobilePurchaseBar price={priceStr} onBuy={onBuy} />;
 }

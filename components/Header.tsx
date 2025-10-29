@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import Logo from './Logo';
 import SearchModal from './SearchModal';
+import CartCounter from './CartCounter';
 
-export default function Header({ cartCount = 0 }: { cartCount?: number }) {
+export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -100,17 +101,13 @@ export default function Header({ cartCount = 0 }: { cartCount?: number }) {
               {/* Cart */}
               <a
                 href="/cart"
-                aria-label={`Panier ${cartCount > 0 ? `(${cartCount} articles)` : ''}`}
+                aria-label="Panier"
                 className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
               >
                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-fetra-pink text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
+                <CartCounterBadge />
               </a>
 
               {/* Mobile menu button */}
@@ -187,5 +184,17 @@ export default function Header({ cartCount = 0 }: { cartCount?: number }) {
       {/* Search Modal */}
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
+  );
+}
+
+function CartCounterBadge() {
+  const count = CartCounter();
+  
+  if (count === 0) return null;
+  
+  return (
+    <span className="absolute -top-1 -right-1 bg-fetra-pink text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+      {count}
+    </span>
   );
 }

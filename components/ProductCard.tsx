@@ -1,7 +1,8 @@
 ﻿"use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { Product } from "../lib/product";
-import { beginCheckout } from "../lib/analytics";
+import { addToCart } from "../lib/cart";
 import Badges from "./Badges";
 import Scarcity from "./Scarcity";
 import SocialProof from "./SocialProof";
@@ -9,6 +10,7 @@ import SocialProof from "./SocialProof";
 type Props = { product: Product };
 
 export default function ProductCard({ product }: Props) {
+  const router = useRouter();
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -50,29 +52,35 @@ export default function ProductCard({ product }: Props) {
     }
   }
 
-  async function handleCheckout() {
+  function handleAddToCart() {
     if (!product || product.stock <= 0) return;
     const qty = Math.max(1, Math.min(quantity, product.stock));
     setQuantity(qty);
     setLoading(true);
 
-    beginCheckout(product.sku, qty, product.price);
-
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sku: product.sku, quantity: qty }),
-      });
-      if (!res.ok) throw new Error("Network response was not ok");
-      const data = await res.json();
-      if (data?.url) {
-        window.location.href = data.url as string;
-      } else {
-        throw new Error((data as any)?.error || "No checkout URL");
-      }
+      // Get first image for cart display
+      const firstImage = Array.isArray(product.images) && product.images.length > 0
+        ? (typeof product.images[0] === 'object' && 'src' in product.images[0]
+            ? product.images[0].src
+            : product.images[0])
+        : '/main.webp';
+
+      // Add to cart
+      addToCart({
+        sku: product.sku,
+        title: product.title,
+        price: product.price,
+        image: firstImage as string,
+      }, qty);
+
+      // Brief loading state for visual feedback
+      setTimeout(() => {
+        setLoading(false);
+        router.push('/cart');
+      }, 500);
     } catch (e: any) {
-      alert(e?.message || "Erreur lors du paiement");
+      alert(e?.message || "Erreur lors de l'ajout au panier");
       setLoading(false);
     }
   }
@@ -143,11 +151,11 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         <button
-          onClick={handleCheckout}
+          onClick={handleAddToCart}
           disabled={loading || isOutOfStock || !isValidQuantity}
           className="mt-6 w-full py-3 rounded-2xl px-6 font-semibold shadow-sm transition-transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-md bg-fetra-olive hover:bg-fetra-olive/90 text-white"
         >
-          {loading ? "Redirection..." : isOutOfStock ? "Rupture de stock" : `Acheter • ${Number(product.price * quantity).toFixed(2)} €`}
+          {loading ? "Ajout au panier..." : isOutOfStock ? "Rupture de stock" : `Ajouter au panier • ${Number(product.price * quantity).toFixed(2)} €`}
         </button>
 
         <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-600">
