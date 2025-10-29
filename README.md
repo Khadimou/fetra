@@ -212,6 +212,92 @@ Dans le dashboard Vercel :
 3. Sélectionnez les environnements concernés (Production, Preview, Development)
 4. **Important** : Redéployez l'application après avoir ajouté/modifié les variables
 
+### Configuration du domaine personnalisé (www.fetrabeauty.com)
+
+Le projet est configuré pour utiliser `www.fetrabeauty.com` comme domaine canonique avec redirections automatiques non-www → www et HTTP → HTTPS.
+
+#### 1. Ajouter le domaine dans Vercel
+
+1. **Allez dans** Settings → Domains
+2. **Ajoutez** `www.fetrabeauty.com` comme domaine principal
+3. **Ajoutez** `fetrabeauty.com` (racine) avec redirection vers www
+
+#### 2. Configuration DNS
+
+⚠️ **Important** : Ne modifiez PAS les nameservers si votre domaine utilise Google Workspace (Gmail). Ajoutez uniquement les enregistrements DNS suivants :
+
+**Enregistrements à ajouter** (chez votre registrar : Squarespace, Google Domains, etc.) :
+
+| Type  | Nom/Host | Valeur/Cible | TTL |
+|-------|----------|--------------|-----|
+| CNAME | www | cname.vercel-dns.com. | 3600 |
+| A | @ | 76.76.21.21 | 3600 |
+
+**Note** : Si votre registrar ne permet pas d'enregistrement A sur la racine (@), vous pouvez :
+- Utiliser uniquement le CNAME `www` → Vercel gérera la redirection racine → www
+- Ou utiliser un enregistrement ALIAS/ANAME si disponible
+
+**⚠️ Important - Google Workspace** :
+- **NE TOUCHEZ PAS** aux enregistrements MX existants (mail)
+- **NE TOUCHEZ PAS** aux nameservers si vous utilisez Gmail
+- Ajoutez **UNIQUEMENT** les enregistrements A et CNAME ci-dessus
+
+#### 3. Vérification DNS
+
+Après avoir ajouté les enregistrements DNS :
+
+```bash
+# Vérifier le CNAME www
+nslookup www.fetrabeauty.com
+
+# Vérifier l'enregistrement A racine
+nslookup fetrabeauty.com
+
+# Vérifier le certificat SSL (après propagation DNS)
+curl -I https://www.fetrabeauty.com/status
+```
+
+La propagation DNS peut prendre de 5 minutes à 48 heures selon les registrars.
+
+#### 4. Certificat SSL automatique
+
+- **Vercel provisionne automatiquement** un certificat SSL Let's Encrypt une fois que les enregistrements DNS sont vérifiés
+- Vérifiez dans Vercel Dashboard → Settings → Domains que le statut est ✅ "Valid"
+- Le middleware (`middleware.ts`) force automatiquement HTTPS
+
+#### 5. Redirections automatiques
+
+Le projet inclut :
+- **middleware.ts** : Force `www.fetrabeauty.com` et HTTPS (308 permanent redirect)
+- **vercel.json** : Headers HSTS pour la sécurité
+- Redirection `fetrabeauty.com` → `www.fetrabeauty.com` (308)
+- Redirection `http://` → `https://` (308)
+
+#### 6. Tester les redirections
+
+```bash
+# Test redirection non-www → www
+curl -I http://fetrabeauty.com
+# Devrait rediriger vers https://www.fetrabeauty.com
+
+# Test redirection HTTP → HTTPS
+curl -I http://www.fetrabeauty.com
+# Devrait rediriger vers https://www.fetrabeauty.com
+
+# Test page de statut
+curl https://www.fetrabeauty.com/status
+```
+
+#### 7. Mise à jour des variables d'environnement
+
+Après configuration du domaine, mettez à jour :
+
+```env
+NEXT_PUBLIC_BASE_URL=https://www.fetrabeauty.com
+```
+
+Et redéployez sur Vercel.
+
 ## 💳 Configuration Stripe
 
 ### Test de paiement
