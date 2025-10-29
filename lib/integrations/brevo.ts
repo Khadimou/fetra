@@ -3,47 +3,81 @@
  * Provides functions to interact with Brevo API for email marketing
  */
 
+/**
+ * Retry helper function with exponential backoff
+ */
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  let lastError: Error;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+      
+      // Don't retry on client errors (4xx)
+      if (error.message && error.message.includes('400')) {
+        throw error;
+      }
+
+      if (attempt < maxRetries - 1) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.log(`Brevo retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError!;
+}
+
 export async function addContactBrevo(
   email: string,
   attributes?: Record<string, any>
 ): Promise<any> {
-  const apiKey = process.env.BREVO_API_KEY;
-  const apiBase = process.env.BREVO_API_BASE || 'https://api.brevo.com';
+  return retryWithBackoff(async () => {
+    const apiKey = process.env.BREVO_API_KEY;
+    const apiBase = process.env.BREVO_API_BASE || 'https://api.brevo.com';
 
-  if (!apiKey) {
-    throw new Error('BREVO_API_KEY not configured');
-  }
-
-  const endpoint = `${apiBase}/v3/contacts`;
-
-  const payload: any = {
-    email,
-    updateEnabled: true // Update if contact already exists
-  };
-
-  if (attributes) {
-    payload.attributes = attributes;
-  }
-
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'api-key': apiKey
-    },
-    body: JSON.stringify(payload)
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    // Don't throw if contact already exists
-    if (res.status === 400 && errorText.includes('already exists')) {
-      return { message: 'Contact already exists', updated: true };
+    if (!apiKey) {
+      throw new Error('BREVO_API_KEY not configured');
     }
-    throw new Error(`Brevo API error: ${errorText}`);
-  }
 
-  return res.json();
+    const endpoint = `${apiBase}/v3/contacts`;
+
+    const payload: any = {
+      email,
+      updateEnabled: true // Update if contact already exists
+    };
+
+    if (attributes) {
+      payload.attributes = attributes;
+    }
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': apiKey
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      // Don't throw if contact already exists
+      if (res.status === 400 && errorText.includes('already exists')) {
+        return { message: 'Contact already exists', updated: true };
+      }
+      throw new Error(`Brevo API error (${res.status}): ${errorText}`);
+    }
+
+    return res.json();
+  });
 }
 
 /**
