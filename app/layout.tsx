@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import NewsletterPopup from "../components/NewsletterPopup";
+import HubspotSnippet from "../components/HubspotSnippet";
 
 export const metadata: Metadata = {
   title: "FETRA  Rituel Visage Liftant",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr">
       <body>
+        <HubspotSnippet />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-fetra-olive focus:text-white focus:rounded-md">
           Aller au contenu principal
         </a>
