@@ -11,19 +11,21 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const product = await getProduct();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const imageUrl = `${baseUrl}${product.images[0]}`;
+  const imageUrl = Array.isArray(product.images) && typeof product.images[0] === 'object'
+    ? `${baseUrl}${(product.images[0] as any).src}`
+    : `${baseUrl}${product.images[0]}`;
 
   return {
-    title: `${product.title} | FETRA`,
-    description: product.descriptionShort,
+    title: 'Rituel Visage Liftant — FETRA',
+    description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
     openGraph: {
-      title: product.title,
+      title: 'FETRA — Rituel Visage',
       description: product.descriptionShort,
       url: `${baseUrl}/product`,
       siteName: "FETRA",
       images: [
         {
-          url: imageUrl,
+          url: imageUrl.includes('/optimized_images/') ? imageUrl : '/optimized_images/main_1200.webp',
           width: 1200,
           height: 900,
           alt: product.title,
@@ -34,9 +36,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: product.title,
-      description: product.descriptionShort,
-      images: [imageUrl],
+      title: 'Rituel Visage Liftant — FETRA',
+      description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
+      images: [imageUrl.includes('/optimized_images/') ? imageUrl : '/optimized_images/main_1200.webp'],
     },
     alternates: {
       canonical: `${baseUrl}/product`,
