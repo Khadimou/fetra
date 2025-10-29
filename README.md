@@ -32,6 +32,46 @@ Pour changer les couleurs de marque :
 2. Mettez à jour les variables CSS dans `app/globals.css`
 3. Les classes Tailwind seront automatiquement disponibles (ex: `bg-fetra-olive`, `text-fetra-pink`)
 
+## 🖼️ Pipeline d'images
+
+### Images optimisées
+
+Les images produits sont stockées dans `/public/optimized_images/` avec leurs placeholders LQIP (Low Quality Image Placeholder).
+
+### Structure des images
+
+Dans `lib/product.ts`, les images sont définies avec leur source et leur placeholder LQIP :
+
+```typescript
+images: [
+  { 
+    src: '/optimized_images/main_1200.webp', 
+    lqip: 'data:image/webp;base64,...' 
+  }
+]
+```
+
+### Régénérer les LQIP
+
+Pour générer de nouveaux placeholders LQIP à partir d'images :
+
+1. **Option 1 : Utiliser un outil en ligne** comme [plaiceholder.co](https://plaiceholder.co/)
+2. **Option 2 : Utiliser sharp** (Node.js) :
+   ```bash
+   npm install sharp
+   ```
+   ```javascript
+   const sharp = require('sharp');
+   const { base64 } = await sharp('image.webp')
+     .resize(20)
+     .blur(10)
+     .toBuffer()
+     .then(buffer => `data:image/webp;base64,${buffer.toString('base64')}`);
+   ```
+3. **Option 3 : Utiliser next/image** avec `placeholder="blur"` - Next.js génère automatiquement les placeholders si vous utilisez `import` pour les images statiques
+
+Les placeholders LQIP sont encodés en base64 et ajoutés directement dans `lib/product.ts` pour un chargement instantané.
+
 ## 🚀 Démarrage
 
 ### Installation
@@ -98,8 +138,12 @@ Les tests sont situés dans le dossier `__tests__/`.
 
 Dans le dashboard Vercel :
 1. Allez dans **Settings** → **Environment Variables**
-2. Ajoutez toutes les variables nécessaires
+2. Ajoutez toutes les variables nécessaires :
+   - `NEXT_PUBLIC_BASE_URL` : URL de production (ex: `https://votre-domaine.vercel.app`)
+   - `STRIPE_SECRET_KEY` : Clé secrète Stripe (mode production/test)
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` : Clé publique Stripe (mode production/test)
 3. Sélectionnez les environnements concernés (Production, Preview, Development)
+4. **Important** : Redéployez l'application après avoir ajouté/modifié les variables
 
 ## 💳 Configuration Stripe
 
@@ -153,9 +197,11 @@ fetra/
 │   ├── SocialProof.tsx   # Preuve sociale
 │   └── Reviews.tsx       # Section avis clients
 ├── lib/                   # Utilitaires
-│   └── product.ts        # Données produit
+│   ├── product.ts        # Données produit
+│   └── analytics.ts      # Fonctions analytics (dataLayer)
 ├── __tests__/            # Tests unitaires
 └── public/               # Assets statiques
+    └── optimized_images/ # Images optimisées avec LQIP
 ```
 
 ## 🛠️ Scripts disponibles
