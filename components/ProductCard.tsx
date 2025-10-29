@@ -1,5 +1,5 @@
 ﻿"use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Product } from "../lib/product";
 import Badges from "./Badges";
 import Scarcity from "./Scarcity";
@@ -11,11 +11,50 @@ export default function ProductCard({ product }: Props) {
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    const clamped = Math.max(1, Math.min(quantity, product.stock));
+    if (clamped !== quantity) {
+      setQuantity(clamped);
+    }
+  }, [product.stock, quantity]);
+
+  function handleDecrease() {
+    setQuantity((q) => Math.max(1, q - 1));
+  }
+
+  function handleIncrease() {
+    setQuantity((q) => Math.min(product.stock, q + 1));
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, action: 'increase' | 'decrease') {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (action === 'increase') handleIncrease();
+      else handleDecrease();
+    } else if (e.key === 'ArrowUp' && action === 'increase') {
+      e.preventDefault();
+      handleIncrease();
+    } else if (e.key === 'ArrowDown' && action === 'decrease') {
+      e.preventDefault();
+      handleDecrease();
+    }
+  }
+
   async function handleCheckout() {
     if (!product || product.stock <= 0) return;
     const qty = Math.max(1, Math.min(quantity, product.stock));
     setQuantity(qty);
     setLoading(true);
+    
+    // Analytics stub
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'checkout_initiated',
+        product_sku: product.sku,
+        quantity: qty,
+      });
+    }
+
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -34,6 +73,9 @@ export default function ProductCard({ product }: Props) {
       setLoading(false);
     }
   }
+
+  const isOutOfStock = product.stock <= 0;
+  const isValidQuantity = quantity >= 1 && quantity <= product.stock;
 
   return (
     <div className="sticky top-24 bg-white rounded-2xl p-6 brand-shadow border border-gray-100">
@@ -56,17 +98,47 @@ export default function ProductCard({ product }: Props) {
 
         <SocialProof />
 
-        <div className="mt-6 flex items-center gap-3">
-          <span className="text-sm font-medium">Quantité</span>
-          <div className="ml-auto flex items-center border rounded-md overflow-hidden">
-            <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="px-3 py-1"></button>
-            <div className="px-4 py-2">{quantity}</div>
-            <button onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))} className="px-3 py-1">+</button>
+        <div className="mt-6">
+          <label htmlFor="quantity" className="text-sm font-medium block mb-2">
+            Quantité
+          </label>
+          <div className="flex items-center gap-2">
+            <button
+              id="quantity-decrease"
+              onClick={handleDecrease}
+              onKeyDown={(e) => handleKeyDown(e, 'decrease')}
+              disabled={quantity <= 1 || isOutOfStock}
+              aria-label="Diminuer la quantité"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+              </svg>
+            </button>
+            <div className="px-4 py-2 border border-gray-300 rounded-lg min-w-[60px] text-center font-medium">
+              {quantity}
+            </div>
+            <button
+              id="quantity-increase"
+              onClick={handleIncrease}
+              onKeyDown={(e) => handleKeyDown(e, 'increase')}
+              disabled={quantity >= product.stock || isOutOfStock}
+              aria-label="Augmenter la quantité"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
           </div>
         </div>
 
-        <button onClick={handleCheckout} disabled={loading || product.stock <= 0} className={`mt-6 w-full py-3 rounded-lg text-white font-semibold ${product.stock > 0 ? "bg-fetra-olive hover:bg-fetra-olive/90" : "bg-gray-300"}`}>
-          {loading ? "Redirection" : `Acheter  ${Number(product.price).toFixed(2)} €`}
+        <button
+          onClick={handleCheckout}
+          disabled={loading || isOutOfStock || !isValidQuantity}
+          className="mt-6 w-full py-3 rounded-2xl px-6 font-semibold shadow-sm transition-transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-md bg-fetra-olive hover:bg-fetra-olive/90 text-white"
+        >
+          {loading ? "Redirection..." : isOutOfStock ? "Rupture de stock" : `Acheter • ${Number(product.price * quantity).toFixed(2)} €`}
         </button>
 
         <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-600">
