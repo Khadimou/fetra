@@ -6,9 +6,31 @@ import NewsletterPopup from "../components/NewsletterPopup";
 import HubspotSnippet from "../components/HubspotSnippet";
 
 export const metadata: Metadata = {
-  title: "FETRA  Rituel Visage Liftant",
-  description:
-    "Rituel Visage Liftant : Kit Quartz Rose 3-en-1 & Huile Régénérante  Livraison offerte",
+  title: 'FETRA — Rituel Visage Liftant',
+  description: 'Rituel Visage Liftant : Kit Quartz Rose 3-en-1 & Huile RedMoringa — Livraison offerte',
+  metadataBase: new URL('https://www.fetrabeauty.com'),
+  openGraph: {
+    title: 'FETRA — Rituel Visage Liftant',
+    description: 'Rituel Visage Liftant : Kit Quartz Rose 3-en-1 & Huile RedMoringa — Livraison offerte',
+    url: 'https://www.fetrabeauty.com',
+    siteName: 'FETRA',
+    images: [
+      {
+        url: 'https://www.fetrabeauty.com/main.webp',
+        width: 1200,
+        height: 900,
+        alt: 'Rituel Visage Liftant — FETRA'
+      }
+    ],
+    type: 'website',
+    locale: 'fr_FR'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FETRA — Rituel Visage Liftant',
+    description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
+    images: ['https://www.fetrabeauty.com/main.webp']
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
