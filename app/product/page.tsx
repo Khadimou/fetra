@@ -5,6 +5,7 @@ import ProductCard from "../../components/ProductCard";
 import Gallery from "../../components/Gallery";
 import Reviews from "../../components/Reviews";
 import MobileBarBridge from "../../components/MobileBarBridge";
+import FAQ from "../../components/FAQ";
 
 export const dynamic = "force-dynamic";
 
@@ -116,12 +117,27 @@ export default async function ProductPage() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      
+      {/* Offre de lancement */}
+      <div className="mb-6 bg-gradient-to-r from-fetra-olive to-fetra-pink text-white p-4 rounded-xl text-center brand-shadow">
+        <p className="text-lg font-semibold">🎉 Offre de Lancement : Livraison Gratuite sur toute commande !</p>
+        <p className="text-sm mt-1">Inscrivez-vous à notre newsletter et recevez -10% sur votre première commande</p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <div className="order-2 md:order-1">
           <Gallery 
             images={product.images} 
             lqips={product.images.map((img: any) => typeof img === 'object' ? img.lqip : undefined)}
           />
+          
+          {/* Description longue */}
+          {product.descriptionLong && (
+            <div className="mt-6 bg-white p-6 rounded-xl brand-shadow">
+              <h3 className="font-semibold text-lg mb-3">Un Rituel Universel</h3>
+              <p className="text-sm text-gray-700 leading-relaxed">{product.descriptionLong}</p>
+            </div>
+          )}
           
           <div className="mt-6 bg-white p-6 rounded-xl brand-shadow">
             <h3 className="font-semibold text-lg mb-3">Guide d'utilisation</h3>
@@ -139,6 +155,8 @@ export default async function ProductPage() {
       <div className="mt-12">
         <Reviews averageRating={4.7} reviewCount={128} />
       </div>
+
+      <FAQ />
 
       <MobileBarBridge sku={product.sku} price={product.price} />
     </div>

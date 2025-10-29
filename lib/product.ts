@@ -11,13 +11,14 @@ export type Product = {
   stock: number;
   images: ProductImage[] | string[];
   descriptionShort: string;
+  descriptionLong?: string;
   howTo: string[];
 };
 
 export async function getProduct(): Promise<Product> {
   return {
     sku: "FETRA-RIT-001",
-    title: "Le Rituel Visage Liftant — Kit Quartz Rose 3-en-1 & Huile RedMoringa",
+    title: "Le Rituel Visage Liftant FETRA : Kit Quartz Rose 3-en-1 & Huile Régénérante",
     price: 49.9,
     value: 54.8,
     stock: 13,
@@ -32,6 +33,7 @@ export async function getProduct(): Promise<Product> {
       },
     ],
     descriptionShort: "Rituel de 5 minutes qui draine, sculpte et illumine votre peau.",
+    descriptionLong: "Un rituel de beauté universel conçu pour tous les visages, sans distinction de genre ou de type de peau. Notre Kit Quartz Rose 3-en-1 associé à l'Huile Régénérante offre un moment de bien-être quotidien pour révéler l'éclat naturel de votre peau, sculpter vos traits et profiter d'une expérience sensorielle apaisante. Adapté à toutes les carnations et tous les types de peau, ce rituel respecte la sensibilité de votre épiderme grâce à des outils en Quartz Rose authentique et une formulation naturelle.",
     howTo: [
       "Nettoyez votre visage.",
       "Appliquez 3–4 gouttes d'huile.",
