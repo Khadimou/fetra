@@ -244,6 +244,188 @@ Pour passer en production :
 2. **Mettez à jour les variables d'environnement** sur Vercel
 3. **Testez** avec une vraie carte en mode test avant de passer en production
 
+### Test des Webhooks Stripe en local
+
+Pour tester les webhooks Stripe en développement local :
+
+1. **Installez Stripe CLI** :
+   ```bash
+   # Windows (avec Scoop)
+   scoop install stripe
+   
+   # macOS (avec Homebrew)
+   brew install stripe/stripe-cli/stripe
+   ```
+
+2. **Authentifiez-vous** :
+   ```bash
+   stripe login
+   ```
+
+3. **Écoutez les webhooks** :
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+
+4. **Copiez le webhook secret** affiché et ajoutez-le dans `.env.local` :
+   ```
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   ```
+
+5. **Testez un paiement** et vérifiez les logs dans la console Stripe CLI
+
+## 🚀 Guide de configuration POC (Proof of Concept)
+
+### Checklist complète pour démarrer
+
+#### 1. Configuration de base
+- [ ] Cloner le dépôt : `git clone git@github.com:Khadimou/fetra.git`
+- [ ] Installer les dépendances : `npm install`
+- [ ] Copier `.env.example` vers `.env.local`
+- [ ] Démarrer le serveur : `npm run dev`
+
+#### 2. Configuration HubSpot
+
+1. **Créer un compte** sur [hubspot.com](https://hubspot.com) (compte gratuit disponible)
+2. **Obtenir le Portal ID** :
+   - Allez dans **Settings** → **Account Setup** → **Account Defaults**
+   - Notez votre **Hub ID** (Portal ID)
+   - Ajoutez dans `.env.local` : `NEXT_PUBLIC_HUBSPOT_ID=votre_portal_id`
+3. **Obtenir l'API Key** :
+   - Allez dans **Settings** → **Integrations** → **API Key**
+   - Générez une nouvelle clé
+   - Ajoutez dans `.env.local` : `HUBSPOT_API_KEY=votre_cle_api`
+4. **Vérifier le tracking** :
+   - Visitez votre site en local
+   - Vérifiez dans HubSpot **Reports** → **Analytics Tools** → **Traffic Analytics**
+
+#### 3. Configuration Brevo (Sendinblue)
+
+1. **Créer un compte** sur [brevo.com](https://brevo.com) (gratuit jusqu'à 300 emails/jour)
+2. **Obtenir l'API Key** :
+   - Allez dans **SMTP & API** → **API Keys**
+   - Générez une clé API v3
+   - Ajoutez dans `.env.local` : `BREVO_API_KEY=votre_cle_api`
+3. **Créer une liste de contacts** :
+   - Allez dans **Contacts** → **Lists**
+   - Créez une liste "Newsletter" ou "Customers"
+   - Notez l'ID de la liste (visible dans l'URL : `/lists/ID`)
+4. **Configurer la liste dans le code** :
+   - Ouvrez `app/api/newsletter/route.ts`
+   - Ligne 27, remplacez `listIds: [2]` par `listIds: [VOTRE_ID]`
+5. **Tester l'inscription newsletter** :
+   - Utilisez le formulaire dans le footer
+   - Vérifiez dans Brevo **Contacts** → votre liste
+
+#### 4. Configuration Freshdesk
+
+1. **Créer un compte** sur [freshdesk.com](https://freshdesk.com) (essai gratuit 21 jours)
+2. **Obtenir le domaine** :
+   - Votre URL Freshdesk : `votredomaine.freshdesk.com`
+   - Ajoutez dans `.env.local` : `FRESHDESK_DOMAIN=votredomaine.freshdesk.com`
+3. **Obtenir l'API Key** :
+   - Allez dans **Profile Settings** → **API Key**
+   - Copiez votre clé API
+   - Ajoutez dans `.env.local` : `FRESHDESK_API_KEY=votre_cle_api`
+4. **Tester la création de ticket** :
+   ```bash
+   curl -X POST http://localhost:3000/api/support \
+     -H "Content-Type: application/json" \
+     -d '{"name":"Test","email":"test@example.com","subject":"Test","message":"Test message"}'
+   ```
+   - Vérifiez dans Freshdesk **Tickets** → **All tickets**
+
+#### 5. Configuration Stripe Webhooks
+
+1. **Créer un compte** Stripe (mode test)
+2. **Configurer les clés** dans `.env.local`
+3. **Installer Stripe CLI** (voir section ci-dessus)
+4. **Démarrer le forwarding** :
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+5. **Faire un test de paiement** :
+   - Ajoutez un produit au panier
+   - Utilisez la carte test `4242 4242 4242 4242`
+   - Vérifiez les logs Stripe CLI
+6. **Vérifier la synchronisation** :
+   - Vérifiez dans HubSpot : nouveau contact créé avec détails commande
+   - Vérifiez dans Brevo : contact ajouté à la liste
+   - Vérifiez dans `data/orders.json` : commande sauvegardée
+
+#### 6. Vérification des données
+
+**HubSpot** :
+- **Contacts** → cherchez par email → vérifiez les propriétés :
+  - `last_order_id`
+  - `last_order_amount`
+  - `last_order_date`
+- **Activity** → vérifiez les événements `begin_checkout`
+
+**Brevo** :
+- **Contacts** → cherchez par email → vérifiez les attributs :
+  - `LAST_ORDER_ID`
+  - `LAST_ORDER_AMOUNT`
+  - `LAST_ORDER_DATE`
+
+**Freshdesk** :
+- **Tickets** → vérifiez la création automatique
+
+**Fichiers locaux** :
+- `data/orders.json` → historique des commandes
+
+#### 7. Tests automatisés
+
+```bash
+# Lancer tous les tests
+npm run test
+
+# Tests spécifiques
+npm run test -- newsletter.test.ts
+npm run test -- webhook.test.ts
+```
+
+### 🔧 Commandes utiles pour le POC
+
+```bash
+# Démarrer le serveur de développement
+npm run dev
+
+# Tester les webhooks Stripe en local
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+
+# Lancer les tests
+npm run test
+
+# Vérifier les erreurs de lint
+npm run lint
+
+# Formater le code
+npm run format
+
+# Build de production (pour tester)
+npm run build
+```
+
+### 📊 Endpoints API disponibles
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/newsletter` | POST | Inscription newsletter (Brevo) |
+| `/api/support` | POST | Création ticket Freshdesk |
+| `/api/webhooks/stripe` | POST | Webhook Stripe (checkout, payment) |
+| `/api/events/begin_checkout` | POST | Tracking événement checkout |
+| `/api/checkout` | POST | Création session Stripe Checkout |
+| `/api/product` | GET | Récupération produit |
+
+### 🐛 Debugging
+
+- **Logs HubSpot** : Vérifiez la console serveur (`npm run dev`)
+- **Logs Brevo** : Vérifiez la console serveur
+- **Logs Stripe** : Utilisez `stripe listen` pour voir les webhooks en temps réel
+- **Logs Freshdesk** : Vérifiez la console serveur
+- **Logs commandes** : Consultez `data/orders.json`
+
 ## 📁 Structure du projet
 
 ```
