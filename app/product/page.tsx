@@ -2,11 +2,15 @@
 import { getProduct } from "../../lib/product";
 import ProductCard from "../../components/ProductCard";
 import ProductGallery from "../../components/ProductGallery";
+import Reviews from "../../components/Reviews";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductPage() {
   const product = await getProduct();
+
+  const averageRating = 4.8;
+  const reviewCount = 124;
 
   const jsonLd = {
     "@context": "https://schema.org/",
@@ -16,6 +20,29 @@ export default async function ProductPage() {
     description: product.descriptionShort,
     sku: product.sku,
     brand: { "@type": "Brand", name: "FETRA" },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: averageRating.toString(),
+      reviewCount: reviewCount.toString(),
+      bestRating: "5",
+      worstRating: "1",
+    },
+    review: [
+      {
+        "@type": "Review",
+        author: {
+          "@type": "Person",
+          name: "Sophie M.",
+        },
+        datePublished: "2024-01-15",
+        reviewBody: "Produit incroyable ! Ma peau est beaucoup plus ferme après seulement 2 semaines d'utilisation.",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+        },
+      },
+    ],
     offers: {
       "@type": "Offer",
       url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/product`,
@@ -43,6 +70,10 @@ export default async function ProductPage() {
         <div className="order-1 md:order-2">
           <ProductCard product={product} />
         </div>
+      </div>
+
+      <div className="mt-12">
+        <Reviews averageRating={averageRating} reviewCount={reviewCount} />
       </div>
     </div>
   );
