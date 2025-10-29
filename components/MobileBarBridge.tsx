@@ -1,12 +1,12 @@
 "use client";
 
+import { beginCheckout } from "../lib/analytics";
+
 type Props = { sku: string; price: number };
 
 export default function MobileBarBridge({ sku, price }: Props) {
   async function onBuy() {
-    if (typeof window !== 'undefined' && (window as any).dataLayer) {
-      (window as any).dataLayer.push({ event: 'begin_checkout', sku, quantity: 1 });
-    }
+    beginCheckout(sku, 1, price);
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

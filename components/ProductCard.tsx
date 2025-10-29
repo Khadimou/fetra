@@ -1,6 +1,7 @@
 ﻿"use client";
 import React, { useState, useEffect } from "react";
 import type { Product } from "../lib/product";
+import { beginCheckout } from "../lib/analytics";
 import Badges from "./Badges";
 import Scarcity from "./Scarcity";
 import SocialProof from "./SocialProof";
@@ -55,9 +56,7 @@ export default function ProductCard({ product }: Props) {
     setQuantity(qty);
     setLoading(true);
 
-    if (typeof window !== 'undefined' && (window as any).dataLayer) {
-      (window as any).dataLayer.push({ event: 'begin_checkout', sku: product.sku, quantity: qty });
-    }
+    beginCheckout(product.sku, qty, product.price);
 
     try {
       const res = await fetch("/api/checkout", {
