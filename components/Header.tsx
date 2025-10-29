@@ -13,7 +13,7 @@ export default function Header({ cartCount = 0 }: { cartCount?: number }) {
           </a>
         </nav>
         <div className="mx-auto">
-          <Image src="/logo.svg" alt="FETRA" width={160} height={40} priority />
+          <Image src="/fetra_logo.png" alt="FETRA" width={160} height={40} priority />
         </div>
         <div className="flex items-center gap-3">
           <button
