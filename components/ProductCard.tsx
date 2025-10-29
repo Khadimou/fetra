@@ -26,7 +26,10 @@ export default function ProductCard({ product }: Props) {
     setQuantity((q) => Math.min(product.stock, q + 1));
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, action: 'increase' | 'decrease') {
+  function handleKeyDown(
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    action: 'increase' | 'decrease'
+  ) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       if (action === 'increase') handleIncrease();
@@ -37,6 +40,12 @@ export default function ProductCard({ product }: Props) {
     } else if (e.key === 'ArrowDown' && action === 'decrease') {
       e.preventDefault();
       handleDecrease();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setQuantity(1);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setQuantity(Math.max(1, product.stock));
     }
   }
 
@@ -45,14 +54,9 @@ export default function ProductCard({ product }: Props) {
     const qty = Math.max(1, Math.min(quantity, product.stock));
     setQuantity(qty);
     setLoading(true);
-    
-    // Analytics stub
+
     if (typeof window !== 'undefined' && (window as any).dataLayer) {
-      (window as any).dataLayer.push({
-        event: 'checkout_initiated',
-        product_sku: product.sku,
-        quantity: qty,
-      });
+      (window as any).dataLayer.push({ event: 'begin_checkout', sku: product.sku, quantity: qty });
     }
 
     try {
@@ -81,6 +85,12 @@ export default function ProductCard({ product }: Props) {
     <div className="sticky top-24 bg-white rounded-2xl p-6 brand-shadow border border-gray-100">
       <h1 className="text-2xl font-bold">{product.title}</h1>
       <p className="mt-2 text-gray-600">{product.descriptionShort}</p>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-600">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-fetra-olive/10 text-fetra-olive">Livraison off.</span>
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-fetra-pink/10 text-fetra-pink">Retour 14j</span>
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-gray-700">Paiement 3x</span>
+      </div>
 
       <Badges />
 
