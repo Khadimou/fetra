@@ -11,39 +11,39 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const product = await getProduct();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const imageUrl = Array.isArray(product.images) && typeof product.images[0] === 'object'
-    ? `${baseUrl}${(product.images[0] as any).src}`
-    : `${baseUrl}${product.images[0]}`;
+  const canonicalUrl = 'https://www.fetrabeauty.com/product';
+  
+  // Get first image for Open Graph
+  const firstImageSrc = Array.isArray(product.images) && typeof product.images[0] === 'object'
+    ? (product.images[0] as any).src
+    : product.images[0];
+  const imageUrl = `https://www.fetrabeauty.com${firstImageSrc}`;
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
-    title: 'Rituel Visage Liftant — FETRA',
-    description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
+    title: product.title,
+    description: product.descriptionShort,
     openGraph: {
-      title: 'FETRA — Rituel Visage',
+      title: product.title,
       description: product.descriptionShort,
-      url: `${baseUrl}/product`,
+      url: canonicalUrl,
       siteName: "FETRA",
-      images: [
-        {
-          url: imageUrl.includes('/optimized_images/') ? imageUrl : '/optimized_images/main_1200.webp',
-          width: 1200,
-          height: 900,
-          alt: product.title,
-        },
-      ],
+      images: product.images.map((img: any) => ({
+        url: `https://www.fetrabeauty.com${typeof img === 'object' ? img.src : img}`,
+        width: 1200,
+        height: 900,
+        alt: product.title
+      })),
       locale: "fr_FR",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: 'Rituel Visage Liftant — FETRA',
-      description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
-      images: [imageUrl.includes('/optimized_images/') ? imageUrl : '/optimized_images/main_1200.webp'],
+      title: product.title,
+      description: product.descriptionShort,
+      images: [imageUrl],
     },
     alternates: {
-      canonical: `${baseUrl}/product`,
+      canonical: canonicalUrl,
     },
   };
 }
@@ -59,8 +59,8 @@ export default async function ProductPage() {
     "@type": "Product",
     name: product.title,
     image: Array.isArray(product.images) && product.images.length > 0 && typeof product.images[0] === 'object' 
-      ? product.images.map((img: any) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img.src || img}`)
-      : (product.images as string[]).map((img: string) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img}`),
+      ? product.images.map((img: any) => `https://www.fetrabeauty.com${img.src || img}`)
+      : (product.images as string[]).map((img: string) => `https://www.fetrabeauty.com${img}`),
     description: product.descriptionShort,
     sku: product.sku,
     brand: { "@type": "Brand", name: "FETRA" },
@@ -103,7 +103,7 @@ export default async function ProductPage() {
     ],
     offers: {
       "@type": "Offer",
-      url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/product`,
+      url: "https://www.fetrabeauty.com/product",
       priceCurrency: "EUR",
       price: Number(product.price.toFixed(2)),
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
