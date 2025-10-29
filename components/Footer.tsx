@@ -1,4 +1,5 @@
 import Logo from './Logo';
+import NewsletterForm from './NewsletterForm';
 
 export default function Footer() {
   return (
@@ -26,17 +27,7 @@ export default function Footer() {
         </div>
         <div>
           <h4 className="font-semibold mb-3">Newsletter</h4>
-          <form className="flex gap-2">
-            <input
-              aria-label="email"
-              className="flex-1 border rounded-md px-3 py-2"
-              placeholder="Votre email"
-              type="email"
-            />
-            <button className="px-4 py-2 rounded-md bg-fetra-olive text-white">
-              S'inscrire
-            </button>
-          </form>
+          <NewsletterForm />
           <div className="mt-4 flex gap-3 items-center text-xs">
             <div className="flex items-center gap-2">
               <span>🔒</span> Paiement sécurisé
