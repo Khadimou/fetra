@@ -8,7 +8,7 @@ export default function SocialProof({ rating = 4.8, reviewCount = 124 }: Props) 
   const hasHalfStar = rating % 1 >= 0.5;
 
   return (
-    <div className="mt-4 p-4 bg-fetra-olive/5 rounded-lg border border-fetra-olive/20">
+    <div className="mt-4 p-4 bg-fetra-olive/5 rounded-lg border border-fetra-olive/20 animate-fade-in">
       <div className="flex items-center gap-3 mb-2">
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -32,7 +32,7 @@ export default function SocialProof({ rating = 4.8, reviewCount = 124 }: Props) 
         <span className="text-xs text-gray-600">({reviewCount} avis)</span>
       </div>
       <p className="text-xs text-gray-600">
-        <span className="font-semibold text-fetra-pink">12 personnes</span> ont ajouté ce produit à leur panier aujourd'hui
+        <span className="font-semibold text-fetra-pink">{Math.max(12, Math.floor(reviewCount / 3))} personnes</span> ont acheté ce mois-ci
       </p>
     </div>
   );
