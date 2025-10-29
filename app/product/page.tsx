@@ -116,7 +116,10 @@ export default async function ProductPage() {
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <div className="order-2 md:order-1">
-          <Gallery images={product.images} />
+          <Gallery 
+            images={product.images} 
+            lqips={product.images.map((img: any) => typeof img === 'object' ? img.lqip : undefined)}
+          />
           
           <div className="mt-6 bg-white p-6 rounded-xl brand-shadow">
             <h3 className="font-semibold text-lg mb-3">Guide d'utilisation</h3>
