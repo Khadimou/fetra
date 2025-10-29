@@ -24,11 +24,27 @@ export async function getProduct(): Promise<Product> {
     stock: 13,
     images: [
       { 
-        src: '/optimized_images/main_1200.webp', 
+        src: '/main.webp', 
         lqip: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoCAAEADMBOJwAALp4AqJYgAD5oqdMACgA=' 
       },
       { 
-        src: '/optimized_images/plusvaluehuile_1200.webp', 
+        src: '/application.webp', 
+        lqip: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoCAAEADMBOJwAALp4AqJYgAD5oqdMACgA=' 
+      },
+      { 
+        src: '/guasha_champi.webp', 
+        lqip: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoCAAEADMBOJwAALp4AqJYgAD5oqdMACgA=' 
+      },
+      { 
+        src: '/emballage.webp', 
+        lqip: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoCAAEADMBOJwAALp4AqJYgAD5oqdMACgA=' 
+      },
+      { 
+        src: '/descriptive.webp', 
+        lqip: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoCAAEADMBOJwAALp4AqJYgAD5oqdMACgA=' 
+      },
+      { 
+        src: '/plusvaluehuile.webp', 
         lqip: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoCAAEADMBOJwAALp4AqJYgAD5oqdMACgA=' 
       },
     ],
