@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { upsertContactHubspot } from '../../../../lib/integrations/hubspot';
 import { addContactBrevo } from '../../../../lib/integrations/brevo';
+import { saveOrder } from '../../../../lib/db/orders';
 
 export async function POST(request: Request) {
   try {
@@ -50,6 +51,25 @@ export async function POST(request: Request) {
       if (!customerEmail) {
         console.warn('No customer email in checkout session');
         return NextResponse.json({ received: true });
+      }
+
+      // 0) Save order to local database
+      try {
+        saveOrder({
+          id: orderId,
+          email: customerEmail,
+          customerName,
+          amount: amountTotal,
+          currency: session.currency || 'eur',
+          status: session.payment_status || 'unknown',
+          createdAt: new Date().toISOString(),
+          metadata: {
+            stripeSessionId: session.id,
+            paymentIntent: session.payment_intent
+          }
+        });
+      } catch (err: any) {
+        console.error('Error saving order:', err.message);
       }
 
       // 1) Upsert contact in HubSpot
