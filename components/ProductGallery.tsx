@@ -39,10 +39,10 @@ export default function ProductGallery({ images, title }: Props) {
               key={i}
               onClick={() => setSelectedIndex(i)}
               aria-label={`Afficher l'image ${i + 1} de ${title}`}
-              className={`rounded-lg overflow-hidden bg-white p-2 border-2 transition-all focus:outline-none focus:ring-2 focus:ring-fetra-pink/30 ${
+              className={`rounded-lg overflow-hidden bg-white p-2 border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-fetra-pink/30 focus-visible:ring-2 focus-visible:ring-fetra-pink/30 ${
                 selectedIndex === i
-                  ? "border-fetra-pink ring-2 ring-fetra-pink/20"
-                  : "border-transparent hover:border-gray-300"
+                  ? "border-fetra-pink ring-2 ring-fetra-pink/20 scale-105"
+                  : "border-transparent hover:border-gray-300 hover:scale-105"
               }`}
             >
               <Image
