@@ -82,7 +82,7 @@ npm install
 
 ### Variables d'environnement
 
-Créez un fichier `.env.local` à la racine du projet :
+Créez un fichier `.env.local` à la racine du projet (copiez `.env.example`) :
 
 ```env
 # URL de base de l'application
@@ -91,7 +91,74 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 # Clés Stripe (obtenez-les sur https://dashboard.stripe.com/test/apikeys)
 STRIPE_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+
+# HubSpot (tracking et CRM)
+HUBSPOT_API_KEY=your_hubspot_api_key_here
+HUBSPOT_API_BASE=https://api.hubapi.com
+NEXT_PUBLIC_HUBSPOT_ID=your_hubspot_portal_id_here
+
+# Brevo (email marketing, ex-Sendinblue)
+BREVO_API_KEY=your_brevo_api_key_here
+BREVO_API_BASE=https://api.brevo.com
+
+# Freshdesk (support client)
+FRESHDESK_API_KEY=your_freshdesk_api_key_here
+FRESHDESK_DOMAIN=yourcompany.freshdesk.com
+FRESHDESK_API_BASE=https://{domain}.freshdesk.com
+
+# Optional analytics
+SENTRY_DSN=
+GA_MEASUREMENT_ID=
 ```
+
+## ⚙️ Configuration des intégrations tierces
+
+### HubSpot (Marketing & CRM)
+
+1. **Créez un compte HubSpot** sur [hubspot.com](https://hubspot.com)
+2. **Obtenez votre Portal ID** :
+   - Allez dans **Settings** → **Account Setup** → **Account Defaults**
+   - Notez votre **Hub ID** (Portal ID)
+3. **Obtenez votre API Key** :
+   - Allez dans **Settings** → **Integrations** → **API Key**
+   - Générez une nouvelle clé API
+4. **Configurez les variables** :
+   - `NEXT_PUBLIC_HUBSPOT_ID` : Votre Portal ID (pour le tracking snippet)
+   - `HUBSPOT_API_KEY` : Votre clé API (pour les appels serveur)
+
+**Utilisation** : Le tracking HubSpot est automatiquement injecté dans toutes les pages pour suivre les visiteurs et créer des contacts.
+
+### Brevo (Email Marketing)
+
+1. **Créez un compte Brevo** sur [brevo.com](https://brevo.com) (ex-Sendinblue)
+2. **Obtenez votre API Key** :
+   - Allez dans **SMTP & API** → **API Keys**
+   - Générez une nouvelle clé API v3
+3. **Créez une liste de contacts** :
+   - Allez dans **Contacts** → **Lists**
+   - Créez une liste "Newsletter" et notez son ID
+4. **Configurez les variables** :
+   - `BREVO_API_KEY` : Votre clé API v3
+
+**Utilisation** : Le formulaire newsletter utilise l'API Brevo pour ajouter les contacts et envoyer des emails de bienvenue automatiques.
+
+### Freshdesk (Support Client)
+
+1. **Créez un compte Freshdesk** sur [freshdesk.com](https://freshdesk.com)
+2. **Obtenez votre domaine** :
+   - Votre URL Freshdesk : `yourcompany.freshdesk.com`
+3. **Obtenez votre API Key** :
+   - Allez dans **Profile Settings** → **API Key**
+   - Copiez votre clé API
+4. **Configurez les variables** :
+   - `FRESHDESK_DOMAIN` : Votre sous-domaine (ex: `yourcompany`)
+   - `FRESHDESK_API_KEY` : Votre clé API
+
+**Utilisation** : Permet de créer des tickets support directement depuis l'application et d'afficher un widget de support.
+
+### Stripe (Paiements)
+
+Voir la section [Configuration Stripe](#-configuration-stripe) ci-dessous.
 
 ### Développement
 
