@@ -1,13 +1,13 @@
 ﻿import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2025-09-30.clover" });
-
 export async function POST(request: Request) {
   try {
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json({ error: "Stripe secret key not configured" }, { status: 500 });
     }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2025-09-30.clover" });
     const body = await request.json();
     const { sku, quantity } = body || {};
     const qty = Math.max(1, Number(quantity) || 1);
