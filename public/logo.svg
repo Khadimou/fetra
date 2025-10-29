@@ -1,0 +1,11 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" fill="none">
+  <defs>
+    <style> .brand{ font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; font-weight:700; fill:#1F2937; }</style>
+  </defs>
+  <g transform="translate(20,10)">
+    <circle cx="40" cy="40" r="22" fill="#FCA5A5" opacity="0.12" />
+    <path d="M40 14c7 0 12 5 12 12s-5 12-12 12-12-5-12-12 5-12 12-12z" fill="#F472B6" />
+    <path d="M18 74c8-10 26-18 42-18s34 8 42 18c-10 2-22 4-42 4s-32-2-42-4z" fill="#FB7185" opacity="0.9" />
+  </g>
+  <text x="140" y="72" class="brand" font-size="48">FETRA</text>
+</svg>
