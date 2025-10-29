@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     : `${baseUrl}${product.images[0]}`;
 
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
     title: 'Rituel Visage Liftant — FETRA',
     description: 'Kit Quartz Rose 3-en-1 + Huile RedMoringa — Livraison offerte',
     openGraph: {
