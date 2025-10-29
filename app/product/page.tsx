@@ -2,8 +2,9 @@
 import type { Metadata } from "next";
 import { getProduct } from "../../lib/product";
 import ProductCard from "../../components/ProductCard";
-import ProductGallery from "../../components/ProductGallery";
+import Gallery from "../../components/Gallery";
 import Reviews from "../../components/Reviews";
+import MobileBarBridge from "../../components/MobileBarBridge";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +100,7 @@ export default async function ProductPage() {
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <div className="order-2 md:order-1">
-          <ProductGallery images={product.images} title={product.title} />
+          <Gallery images={product.images} />
           
           <div className="mt-6 bg-white p-6 rounded-xl brand-shadow">
             <h3 className="font-semibold text-lg mb-3">Guide d'utilisation</h3>
@@ -109,7 +110,7 @@ export default async function ProductPage() {
           </div>
         </div>
 
-        <div className="order-1 md:order-2">
+        <div className="order-1 md:order-2 hidden md:block">
           <ProductCard product={product} />
         </div>
       </div>
@@ -117,6 +118,8 @@ export default async function ProductPage() {
       <div className="mt-12">
         <Reviews averageRating={averageRating} reviewCount={reviewCount} />
       </div>
+
+      <MobileBarBridge sku={product.sku} price={product.price} />
     </div>
   );
 }
