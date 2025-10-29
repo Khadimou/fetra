@@ -15,6 +15,29 @@ body { background: var(--bg); color: #111827; }
 :focus-visible { box-shadow: 0 0 0 4px rgba(107,142,35,0.12); border-radius:6px; }
 .brand-shadow { box-shadow: 0 8px 30px rgba(16,24,40,0.06); }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
