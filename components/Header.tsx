@@ -1,54 +1,191 @@
+"use client";
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export default function Header({ cartCount = 0 }: { cartCount?: number }) {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 20);
+    }
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 backdrop-blur bg-white/70 border-b z-40">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-          <a href="/collections" className="hover:text-black">
-            Collections
-          </a>
-          <a href="/about" className="hover:text-black">
-            À propos
-          </a>
-        </nav>
-        <div className="mx-auto">
-          <Image src="/fetra_logo.png" alt="FETRA" width={160} height={40} priority />
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            aria-label="Recherche"
-            className="p-2 rounded-md focus-visible:ring-2 focus-visible:ring-fetra-pink/40"
-          >
-            🔍
-          </button>
-          <a
-            href="/cart"
-            aria-label="Panier"
-            className="relative p-2 rounded-md focus-visible:ring-2 focus-visible:ring-fetra-olive/30"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-fetra-pink text-white text-xs rounded-full px-1.5">
-                {cartCount}
-              </span>
-            )}
-          </a>
-        </div>
+    <>
+      {/* Top announcement bar */}
+      <div className="bg-gradient-to-r from-fetra-olive to-fetra-pink text-white text-center py-2 px-4 text-sm font-medium">
+        🎉 Livraison Gratuite + 10% de réduction avec le code <span className="font-bold">BIENVENUE10</span>
       </div>
-    </header>
+
+      {/* Main header */}
+      <header 
+        className={`sticky top-0 z-40 transition-all duration-300 ${
+          isScrolled 
+            ? 'bg-white/95 backdrop-blur-md shadow-md' 
+            : 'bg-white'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between px-4 lg:px-6 py-4">
+            {/* Left: Logo */}
+            <div className="flex items-center gap-8">
+              <a href="/" className="flex-shrink-0 transition-transform hover:scale-105">
+                <Image 
+                  src="/fetra_logo.png" 
+                  alt="FETRA" 
+                  width={140} 
+                  height={35} 
+                  priority 
+                  className="h-8 w-auto"
+                />
+              </a>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center gap-8">
+                <a 
+                  href="/product" 
+                  className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
+                >
+                  Nos Rituels
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
+                </a>
+                <a 
+                  href="/collections" 
+                  className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
+                >
+                  Collections
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
+                </a>
+                <a 
+                  href="/about" 
+                  className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
+                >
+                  Notre Histoire
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
+                </a>
+                <a 
+                  href="/blog" 
+                  className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
+                >
+                  Conseils
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
+                </a>
+              </nav>
+            </div>
+
+            {/* Right: Icons */}
+            <div className="flex items-center gap-4">
+              {/* Search */}
+              <button
+                aria-label="Recherche"
+                className="hidden md:flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+
+              {/* Account */}
+              <button
+                aria-label="Mon compte"
+                className="hidden md:flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
+
+              {/* Cart */}
+              <a
+                href="/cart"
+                aria-label={`Panier ${cartCount > 0 ? `(${cartCount} articles)` : ''}`}
+                className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-fetra-pink text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </a>
+
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Menu"
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
+              >
+                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <nav className="lg:hidden border-t border-gray-100 bg-white animate-fade-in">
+              <div className="px-4 py-4 space-y-1">
+                <a 
+                  href="/product" 
+                  className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
+                >
+                  Nos Rituels
+                </a>
+                <a 
+                  href="/collections" 
+                  className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
+                >
+                  Collections
+                </a>
+                <a 
+                  href="/about" 
+                  className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
+                >
+                  Notre Histoire
+                </a>
+                <a 
+                  href="/blog" 
+                  className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
+                >
+                  Conseils
+                </a>
+                <div className="border-t border-gray-100 pt-4 mt-4">
+                  <a 
+                    href="/account" 
+                    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Mon Compte
+                  </a>
+                  <a 
+                    href="/search" 
+                    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Rechercher
+                  </a>
+                </div>
+              </div>
+            </nav>
+          )}
+        </div>
+      </header>
+    </>
   );
 }
-

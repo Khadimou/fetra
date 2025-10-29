@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import NewsletterPopup from "../components/NewsletterPopup";
 
 export const metadata: Metadata = {
   title: "FETRA  Rituel Visage Liftant",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header cartCount={0} />
         <main id="main-content" className="bg-gray-50 min-h-screen">{children}</main>
         <Footer />
+        <NewsletterPopup />
       </body>
     </html>
   );
