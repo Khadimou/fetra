@@ -1,10 +1,14 @@
+import Logo from './Logo';
+
 export default function Footer() {
   return (
     <footer className="bg-white border-t mt-12">
       <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
         <div>
-          <h4 className="font-semibold mb-3">FETRA</h4>
-          <p>Rituel Visage • Livraison offerte • Retour 14 jours</p>
+          <div className="mb-4 scale-90 origin-left">
+            <Logo />
+          </div>
+          <p className="text-gray-600">Rituel Visage • Livraison offerte • Retour 14 jours</p>
         </div>
         <div>
           <h4 className="font-semibold mb-3">Aide</h4>

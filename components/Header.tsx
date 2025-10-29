@@ -1,6 +1,6 @@
 "use client";
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import Logo from './Logo';
 
 export default function Header({ cartCount = 0 }: { cartCount?: number }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,15 +34,8 @@ export default function Header({ cartCount = 0 }: { cartCount?: number }) {
           <div className="flex items-center justify-between px-4 lg:px-6 py-4">
             {/* Left: Logo */}
             <div className="flex items-center gap-8">
-              <a href="/" className="flex-shrink-0 transition-transform hover:scale-105">
-                <Image 
-                  src="/fetra_logo.png" 
-                  alt="FETRA" 
-                  width={140} 
-                  height={35} 
-                  priority 
-                  className="h-8 w-auto"
-                />
+              <a href="/" className="flex-shrink-0 transition-transform hover:scale-[1.02] active:scale-95">
+                <Logo />
               </a>
 
               {/* Desktop Navigation */}
