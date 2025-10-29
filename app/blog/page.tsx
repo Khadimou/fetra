@@ -93,15 +93,15 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Video 1 */}
             <div className="bg-gray-50 rounded-2xl overflow-hidden brand-shadow">
-              <div className="aspect-video bg-gradient-to-br from-fetra-olive/20 to-fetra-pink/20 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 brand-shadow">
-                    <svg className="w-10 h-10 text-fetra-olive ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-600 font-medium">Tutoriel vidéo à venir</p>
-                </div>
+              <div className="aspect-video bg-black">
+                <video 
+                  controls 
+                  className="w-full h-full"
+                  poster="/application.webp"
+                >
+                  <source src="/Routine_Matinale_Visage_Rouleau_Jade.mp4" type="video/mp4" />
+                  Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
               </div>
               <div className="p-6">
                 <span className="inline-block px-3 py-1 bg-fetra-olive/10 text-fetra-olive text-xs font-semibold rounded-full mb-3">
@@ -137,15 +137,15 @@ export default function BlogPage() {
 
             {/* Video 2 */}
             <div className="bg-gray-50 rounded-2xl overflow-hidden brand-shadow">
-              <div className="aspect-video bg-gradient-to-br from-purple-100 to-fetra-pink/20 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 brand-shadow">
-                    <svg className="w-10 h-10 text-fetra-pink ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-600 font-medium">Tutoriel vidéo à venir</p>
-                </div>
+              <div className="aspect-video bg-black">
+                <video 
+                  controls 
+                  className="w-full h-full"
+                  poster="/main.webp"
+                >
+                  <source src="/Gua_Sha_Homme_Noir.mp4" type="video/mp4" />
+                  Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
               </div>
               <div className="p-6">
                 <span className="inline-block px-3 py-1 bg-fetra-pink/10 text-fetra-pink text-xs font-semibold rounded-full mb-3">
