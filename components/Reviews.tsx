@@ -11,17 +11,17 @@ type Review = {
 const mockReviews: Review[] = [
   {
     id: "1",
-    author: "Sophie M.",
+    author: "Alice",
     rating: 5,
     comment: "Produit incroyable ! Ma peau est beaucoup plus ferme après seulement 2 semaines d'utilisation. Le rouleau en quartz est très agréable à utiliser.",
-    date: "2024-01-15",
+    date: "2025-05-01",
   },
   {
     id: "2",
-    author: "Marie L.",
+    author: "Sophie M.",
     rating: 5,
     comment: "Excellent rapport qualité-prix. L'huile est très nourrissante et le kit complet permet un rituel vraiment relaxant.",
-    date: "2024-01-10",
+    date: "2024-01-15",
   },
   {
     id: "3",

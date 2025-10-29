@@ -47,37 +47,53 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProductPage() {
   const product = await getProduct();
 
-  const averageRating = 4.8;
-  const reviewCount = 124;
+  const averageRating = 4.7;
+  const reviewCount = 128;
 
   const jsonLd = {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.title,
-    image: product.images.map((img) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img}`),
+    image: Array.isArray(product.images) && typeof product.images[0] === 'object' 
+      ? product.images.map((img: any) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img.src || img}`)
+      : product.images.map((img: string) => `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${img}`),
     description: product.descriptionShort,
     sku: product.sku,
     brand: { "@type": "Brand", name: "FETRA" },
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: averageRating.toString(),
-      reviewCount: reviewCount.toString(),
-      bestRating: "5",
-      worstRating: "1",
+      ratingValue: "4.7",
+      reviewCount: "128",
     },
     review: [
       {
         "@type": "Review",
-        author: {
-          "@type": "Person",
-          name: "Sophie M.",
-        },
-        datePublished: "2024-01-15",
-        reviewBody: "Produit incroyable ! Ma peau est beaucoup plus ferme après seulement 2 semaines d'utilisation.",
+        author: "Alice",
+        datePublished: "2025-05-01",
+        reviewBody: "Produit incroyable ! Ma peau est beaucoup plus ferme après seulement 2 semaines d'utilisation. Le rouleau en quartz est très agréable à utiliser.",
         reviewRating: {
           "@type": "Rating",
           ratingValue: "5",
-          bestRating: "5",
+        },
+      },
+      {
+        "@type": "Review",
+        author: "Sophie M.",
+        datePublished: "2024-01-15",
+        reviewBody: "Excellent rapport qualité-prix. L'huile est très nourrissante et le kit complet permet un rituel vraiment relaxant.",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+        },
+      },
+      {
+        "@type": "Review",
+        author: "Claire D.",
+        datePublished: "2024-01-05",
+        reviewBody: "Très satisfaite, même si je trouve que le rouleau pourrait être un peu plus grand. Le résultat est visible rapidement.",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "4",
         },
       },
     ],
@@ -116,7 +132,7 @@ export default async function ProductPage() {
       </div>
 
       <div className="mt-12">
-        <Reviews averageRating={averageRating} reviewCount={reviewCount} />
+        <Reviews averageRating={4.7} reviewCount={128} />
       </div>
 
       <MobileBarBridge sku={product.sku} price={product.price} />
