@@ -52,13 +52,45 @@ export default function ProductCard({ product }: Props) {
     }
   }
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (!product || product.stock <= 0) return;
     const qty = Math.max(1, Math.min(quantity, product.stock));
     setQuantity(qty);
     setLoading(true);
 
     try {
+      // Track begin_checkout event
+      try {
+        // Push to dataLayer for Google Analytics
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+          (window as any).dataLayer.push({
+            event: 'begin_checkout',
+            ecommerce: {
+              items: [{
+                item_id: product.sku,
+                item_name: product.title,
+                price: product.price,
+                quantity: qty
+              }]
+            }
+          });
+        }
+
+        // Send to backend for HubSpot tracking
+        await fetch('/api/events/begin_checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sku: product.sku,
+            price: product.price,
+            quantity: qty
+          })
+        });
+      } catch (analyticsError) {
+        // Non-blocking - continue even if analytics fail
+        console.error('Analytics tracking error:', analyticsError);
+      }
+
       // Get first image for cart display
       const firstImage = Array.isArray(product.images) && product.images.length > 0
         ? (typeof product.images[0] === 'object' && 'src' in product.images[0]
