@@ -7,7 +7,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Stripe secret key not configured" }, { status: 500 });
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2025-09-30.clover" });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-11-20.acacia" });
     const body = await request.json();
     const { sku, quantity } = body || {};
     const qty = Math.max(1, Number(quantity) || 1);

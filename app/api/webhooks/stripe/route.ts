@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     // Verify webhook signature if secret is configured
     if (webhookSecret && process.env.STRIPE_SECRET_KEY) {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: '2025-09-30.clover'
+        apiVersion: '2024-11-20.acacia'
       });
 
       try {
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
       if (process.env.STRIPE_SECRET_KEY) {
         try {
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-            apiVersion: '2025-09-30.clover'
+            apiVersion: '2024-11-20.acacia'
           });
           
           const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
