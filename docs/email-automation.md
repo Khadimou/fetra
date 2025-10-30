@@ -13,6 +13,7 @@ BREVO_SENDER_EMAIL=contact@fetrabeauty.com
 BREVO_SENDER_NAME=FETRA BEAUTY
 BREVO_TEMPLATE_ORDER_CONFIRM=2
 BREVO_TEMPLATE_SHIPPED=3
+BREVO_TEMPLATE_NEWSLETTER_WELCOME=4
 ```
 
 ### Templates Brevo configurés
@@ -24,6 +25,11 @@ BREVO_TEMPLATE_SHIPPED=3
 2. **Template ID 3** - Commande expédiée
    - Objet: `En route vers vous ! Suivi de votre colis FETRA`
    - Variables: `FIRSTNAME`, `ORDERNUMBER`, `TRACKINGURL`
+
+3. **Template ID 4** - Bienvenue newsletter (à créer)
+   - Objet: `Bienvenue dans la communauté FETRA ! 🌿`
+   - Variables: `EMAIL`
+   - Contenu suggéré: Message de bienvenue, présentation de la marque, code promo optionnel
 
 ## Fonctionnement automatique
 

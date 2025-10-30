@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { sendNewsletterWelcomeEmail } from '@/lib/integrations/brevo';
 
 export async function POST(request: Request) {
   try {
@@ -65,6 +66,15 @@ export async function POST(request: Request) {
           // Still consider it a success if status was ok
         }
       }
+    }
+    
+    // Send welcome email after successful subscription
+    try {
+      await sendNewsletterWelcomeEmail(email);
+      console.log('Newsletter welcome email sent to:', email);
+    } catch (emailError: any) {
+      // Log but don't fail the subscription if email fails
+      console.error('Failed to send welcome email:', emailError.message);
     }
     
     return NextResponse.json({ ok: true, data });

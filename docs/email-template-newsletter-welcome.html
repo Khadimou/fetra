@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue chez FETRA</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background-color: #8B7355;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header img {
+            max-width: 180px;
+            height: auto;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            color: #8B7355;
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+        .hero p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .emoji {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        .section {
+            margin: 30px 0;
+        }
+        .section h2 {
+            color: #8B7355;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .section p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 0 0 15px 0;
+        }
+        .promo-box {
+            background: linear-gradient(135deg, #8B7355 0%, #6B5846 100%);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(139, 115, 85, 0.2);
+        }
+        .promo-box h3 {
+            color: #ffffff;
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+        .promo-code {
+            background-color: #ffffff;
+            color: #8B7355;
+            font-size: 24px;
+            font-weight: 700;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 15px 0;
+            letter-spacing: 2px;
+            border: 2px dashed #8B7355;
+        }
+        .promo-box p {
+            color: #ffffff;
+            font-size: 14px;
+            margin: 10px 0 0 0;
+        }
+        .values {
+            display: table;
+            width: 100%;
+            margin: 25px 0;
+        }
+        .value-item {
+            display: table-row;
+            margin-bottom: 15px;
+        }
+        .value-emoji {
+            display: table-cell;
+            width: 40px;
+            font-size: 24px;
+            vertical-align: top;
+            padding-right: 15px;
+        }
+        .value-text {
+            display: table-cell;
+            vertical-align: top;
+        }
+        .value-text strong {
+            color: #8B7355;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .value-text span {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #8B7355;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover {
+            background-color: #6B5846;
+        }
+        .cta-center {
+            text-align: center;
+        }
+        .social-section {
+            background-color: #f9f9f9;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .social-section h3 {
+            color: #8B7355;
+            font-size: 18px;
+            margin: 0 0 20px 0;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-link {
+            display: inline-block;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .social-link img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .social-link:hover img {
+            transform: scale(1.1);
+        }
+        .footer {
+            background-color: #f4f4f4;
+            padding: 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #8B7355;
+            text-decoration: none;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header with Logo -->
+        <div class="header">
+            <img src="https://fetrabeauty.com/fetra_logo.png" alt="FETRA Beauty Logo">
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Hero Section -->
+            <div class="hero">
+                <div class="emoji">🌿✨</div>
+                <h1>Bienvenue dans la communauté FETRA !</h1>
+                <p>Merci de nous rejoindre dans cette aventure vers une beauté naturelle et authentique.</p>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="section">
+                <p>Bonjour et bienvenue !</p>
+                <p>Nous sommes ravis de vous compter parmi notre communauté. Chez FETRA, nous croyons en une beauté qui respecte votre peau et notre planète. Chaque produit est pensé avec soin pour vous offrir le meilleur de la nature malgache.</p>
+            </div>
+
+            <!-- Promo Code -->
+            <div class="promo-box">
+                <h3>🎁 Cadeau de bienvenue</h3>
+                <p>Pour vous remercier, voici un code promo exclusif :</p>
+                <div class="promo-code">BIENVENUE10</div>
+                <p><strong>10% de réduction</strong> sur votre première commande</p>
+                <p style="font-size: 12px; opacity: 0.9;">Code valable 30 jours • Minimum d'achat : 35€</p>
+            </div>
+
+            <!-- Values Section -->
+            <div class="section">
+                <h2>Pourquoi FETRA ?</h2>
+                
+                <div class="values">
+                    <div class="value-item">
+                        <div class="value-emoji">🌱</div>
+                        <div class="value-text">
+                            <strong>100% Naturel & Bio</strong>
+                            <span>Nos produits sont élaborés à partir d'ingrédients naturels et biologiques, sans additifs chimiques nocifs.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="values">
+                    <div class="value-item">
+                        <div class="value-emoji">🇲🇬</div>
+                        <div class="value-text">
+                            <strong>Trésor de Madagascar</strong>
+                            <span>L'huile de Moringa et nos pierres de massage proviennent directement de Madagascar, garantissant qualité et authenticité.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="values">
+                    <div class="value-item">
+                        <div class="value-emoji">♻️</div>
+                        <div class="value-text">
+                            <strong>Éco-responsable</strong>
+                            <span>Emballages recyclables, production éthique et respect de l'environnement sont au cœur de nos valeurs.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="values">
+                    <div class="value-item">
+                        <div class="value-emoji">✨</div>
+                        <div class="value-text">
+                            <strong>Résultats Visibles</strong>
+                            <span>Des milliers de clients satisfaits témoignent de l'efficacité de nos rituels beauté quotidiens.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Product Highlight -->
+            <div class="section">
+                <h2>Notre best-seller : Le Rituel Complet</h2>
+                <p><strong>Rouleau de Jade + Gua Sha + Huile de Moringa Bio</strong></p>
+                <p>Un trio parfait pour sublimer votre peau au quotidien. Le massage facial stimule la circulation, réduit les tensions et révèle votre éclat naturel. L'huile de Moringa nourrit intensément pour une peau douce et rayonnante.</p>
+                
+                <div class="cta-center">
+                    <a href="https://fetrabeauty.com/product" class="cta-button">Découvrir notre rituel</a>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Social Section -->
+            <div class="social-section">
+                <h3>Rejoignez notre communauté</h3>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Suivez-nous pour des conseils beauté, des rituels bien-être et des offres exclusives !</p>
+                
+                <div class="social-links">
+                    <a href="https://www.instagram.com/fetrabeauty/" class="social-link" target="_blank">
+                        <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram">
+                    </a>
+                    <a href="https://www.facebook.com/fetrabeauty" class="social-link" target="_blank">
+                        <img src="https://cdn-icons-png.flaticon.com/512/174/174848.png" alt="Facebook">
+                    </a>
+                    <a href="https://www.tiktok.com/@fetrabeauty" class="social-link" target="_blank">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok">
+                    </a>
+                </div>
+            </div>
+
+            <!-- Final Message -->
+            <div class="section" style="text-align: center; padding-top: 20px;">
+                <p style="font-size: 15px; color: #8B7355; font-weight: 600;">À très bientôt pour de nouvelles découvertes beauté ! ✨</p>
+                <p style="font-size: 14px; color: #999;">L'équipe FETRA Beauty</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>FETRA BEAUTY</strong></p>
+            <p>Beauté Naturelle • Rituels Authentiques • Made with ❤️</p>
+            <p style="margin-top: 15px;">
+                <a href="https://fetrabeauty.com">Visiter notre boutique</a> | 
+                <a href="https://fetrabeauty.com/contact">Nous contacter</a> | 
+                <a href="mailto:{{ params.EMAIL }}">Se désabonner</a>
+            </p>
+            <p style="margin-top: 15px; font-size: 11px;">
+                Vous recevez cet email car vous êtes inscrit(e) à notre newsletter sur fetrabeauty.com<br>
+                Email : {{ params.EMAIL }}
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

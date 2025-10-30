@@ -204,6 +204,28 @@ export async function sendOrderConfirmationEmail(
 }
 
 /**
+ * Send newsletter welcome email
+ */
+export async function sendNewsletterWelcomeEmail(
+  email: string
+): Promise<any> {
+  const templateId = Number(process.env.BREVO_TEMPLATE_NEWSLETTER_WELCOME);
+  
+  if (!templateId) {
+    console.warn('BREVO_TEMPLATE_NEWSLETTER_WELCOME not configured - skipping welcome email');
+    return null;
+  }
+
+  return sendTransactionalEmail(
+    email,
+    templateId,
+    {
+      EMAIL: email
+    }
+  );
+}
+
+/**
  * Send shipping confirmation email
  */
 export async function sendShippingConfirmationEmail(
