@@ -11,18 +11,5 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "fetrabeauty.com"
-        }
-      ],
-      "destination": "https://www.fetrabeauty.com/$1",
-      "permanent": true
-    }
-  ]
 }
 
