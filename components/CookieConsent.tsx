@@ -39,21 +39,9 @@ export default function CookieConsent() {
     setOpen(false);
   }
 
-  // If consent exists, show small manage button
+  // If consent exists, do not display floating manage button (access via footer/page links if any)
   if (consent) {
-    return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <button
-          onClick={() => setOpen(true)}
-          className="px-4 py-2 bg-fetra-olive text-white rounded-full shadow-md"
-          aria-label="Gérer les cookies"
-        >
-          Gérer les cookies
-        </button>
-
-        {open && <PreferencesModal defaultConsent={consent} onClose={()=>setOpen(false)} onSave={savePreferences} />}
-      </div>
-    );
+    return null;
   }
 
   // Banner when no consent

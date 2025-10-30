@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       price_data: {
         currency: "eur",
         product_data: { name: "Rituel Visage Liftant  Bundle FETRA" },
-        unit_amount: 90, // 0,90 € pour test
+        unit_amount: 4990,
       },
       quantity: qty,
     } as const;
