@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import OrderDetails from '../../components/OrderDetails';
+import ClearCartOnSuccess from '../../components/ClearCartOnSuccess';
 
 export const metadata: Metadata = {
   title: 'Commande confirmée — FETRA BEAUTY',
@@ -12,6 +13,9 @@ export const metadata: Metadata = {
 function SuccessContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-fetra-olive/5 via-white to-fetra-pink/5 py-12 px-4">
+      {/* Clear cart on success */}
+      <ClearCartOnSuccess />
+      
       <div className="max-w-4xl mx-auto">
         {/* Header Success */}
         <div className="text-center mb-12">
