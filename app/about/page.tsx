@@ -153,6 +153,25 @@ export default function AboutPage() {
             </div>
           </div>
 
+          {/* Contact Section */}
+          <div className="bg-gradient-to-br from-fetra-olive/5 to-fetra-pink/5 rounded-3xl p-8 md:p-12 border border-fetra-olive/20">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Une question ?</h2>
+              <p className="text-gray-600 mb-6">
+                Notre équipe est là pour vous accompagner dans votre découverte du rituel FETRA.
+              </p>
+              <a
+                href="mailto:contact@fetrabeauty.com"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-fetra-olive text-white rounded-xl font-semibold hover:bg-fetra-olive/90 transition-all hover:scale-[1.02] active:scale-95 shadow-md"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                contact@fetrabeauty.com
+              </a>
+            </div>
+          </div>
+
           {/* CTA */}
           <div className="text-center bg-white rounded-3xl p-12 brand-shadow">
             <h2 className="text-3xl font-bold mb-4">Bienvenue dans notre univers</h2>

@@ -23,6 +23,11 @@ export default function Footer() {
             <li>
               <a href="/faq">FAQ</a>
             </li>
+            <li>
+              <a href="mailto:contact@fetrabeauty.com" className="text-fetra-olive hover:text-fetra-olive/80">
+                contact@fetrabeauty.com
+              </a>
+            </li>
           </ul>
         </div>
         <div>
