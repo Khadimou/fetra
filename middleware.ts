@@ -4,7 +4,12 @@ import type { NextRequest } from "next/server";
 const ALLOWED_HOSTNAMES = ["fetrabeauty.com", "www.fetrabeauty.com"];
 
 export function middleware(request: NextRequest) {
-  const host = request.headers.get("host") || "";
+  if (process.env.NODE_ENV !== "production") {
+    return NextResponse.next();
+  }
+
+  const hostHeader = request.headers.get("host") || "";
+  const host = hostHeader.split(":")[0];
   const proto = request.headers.get("x-forwarded-proto") || request.nextUrl.protocol.replace(":", "");
 
   // If already on allowed hostname with HTTPS, continue
