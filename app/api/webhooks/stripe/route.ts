@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { upsertContactHubspot } from '../../../../lib/integrations/hubspot';
-import { addContactBrevo } from '../../../../lib/integrations/brevo';
+import { addContactBrevo, sendOrderConfirmationEmail } from '../../../../lib/integrations/brevo';
 import { saveOrder } from '../../../../lib/db/orders';
 
 export async function POST(request: Request) {
@@ -127,10 +127,30 @@ export async function POST(request: Request) {
             items: fullSession.line_items?.data.length || 0
           });
 
-          // Here you could:
-          // - Create a ticket in Freshdesk for order confirmation
-          // - Send order confirmation email via Brevo
-          // - Log order in a database
+          // 3) Send order confirmation email via Brevo
+          try {
+            const orderDate = new Date().toLocaleDateString('fr-FR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            });
+
+            await sendOrderConfirmationEmail(
+              customerEmail,
+              customerName,
+              {
+                orderNumber: `FETRA-${orderId.slice(-8).toUpperCase()}`,
+                orderDate: orderDate,
+                orderTotal: amountTotal.toFixed(2).replace('.', ','),
+                currency: '€'
+              }
+            );
+
+            console.log('Order confirmation email sent:', customerEmail);
+          } catch (err: any) {
+            // Non-blocking - log error but continue
+            console.error('Order confirmation email error:', err.message);
+          }
         } catch (err: any) {
           console.error('Error retrieving full session:', err.message);
         }

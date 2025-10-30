@@ -11,13 +11,16 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const product = await getProduct();
-  const canonicalUrl = 'https://www.fetrabeauty.com/product';
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://www.fetrabeauty.com' 
+    : 'http://localhost:3000';
+  const canonicalUrl = `${baseUrl}/product`;
   
   // Get first image for Open Graph
   const firstImageSrc = Array.isArray(product.images) && typeof product.images[0] === 'object'
     ? (product.images[0] as any).src
     : product.images[0];
-  const imageUrl = `https://www.fetrabeauty.com${firstImageSrc}`;
+  const imageUrl = `${baseUrl}${firstImageSrc}`;
 
   return {
     title: product.title,
@@ -28,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: canonicalUrl,
       siteName: "FETRA",
       images: product.images.map((img: any) => ({
-        url: `https://www.fetrabeauty.com${typeof img === 'object' ? img.src : img}`,
+        url: `${baseUrl}${typeof img === 'object' ? img.src : img}`,
         width: 1200,
         height: 900,
         alt: product.title
@@ -54,13 +57,17 @@ export default async function ProductPage() {
   const averageRating = 4.7;
   const reviewCount = 128;
 
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://www.fetrabeauty.com' 
+    : 'http://localhost:3000';
+
   const jsonLd = {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.title,
     image: Array.isArray(product.images) && product.images.length > 0 && typeof product.images[0] === 'object' 
-      ? product.images.map((img: any) => `https://www.fetrabeauty.com${img.src || img}`)
-      : (product.images as string[]).map((img: string) => `https://www.fetrabeauty.com${img}`),
+      ? product.images.map((img: any) => `${baseUrl}${img.src || img}`)
+      : (product.images as string[]).map((img: string) => `${baseUrl}${img}`),
     description: product.descriptionShort,
     sku: product.sku,
     brand: { "@type": "Brand", name: "FETRA" },
@@ -103,7 +110,7 @@ export default async function ProductPage() {
     ],
     offers: {
       "@type": "Offer",
-      url: "https://www.fetrabeauty.com/product",
+      url: `${baseUrl}/product`,
       priceCurrency: "EUR",
       price: Number(product.price.toFixed(2)),
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",

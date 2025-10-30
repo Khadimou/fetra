@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Logo from './Logo';
 import SearchModal from './SearchModal';
 import CartCounter from './CartCounter';
@@ -37,9 +38,9 @@ export default function Header() {
           <div className="flex items-center justify-between px-4 lg:px-6 py-4">
             {/* Left: Logo */}
             <div className="flex items-center gap-8">
-              <a href="/" className="flex-shrink-0 transition-transform hover:scale-[1.02] active:scale-95">
+              <Link href="/" className="flex-shrink-0 transition-transform hover:scale-[1.02] active:scale-95">
                 <Logo />
-              </a>
+              </Link>
 
               {/* Desktop Navigation */}
               <nav className="hidden lg:flex items-center gap-8">
@@ -62,13 +63,6 @@ export default function Header() {
                   className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
                 >
                   Conseils
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
-                </a>
-                <a 
-                  href="/contact" 
-                  className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
-                >
-                  Contact
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
                 </a>
               </nav>
@@ -148,12 +142,6 @@ export default function Header() {
                   className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                 >
                   Conseils
-                </a>
-                <a 
-                  href="/contact" 
-                  className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
-                >
-                  Contact
                 </a>
                 <div className="border-t border-gray-100 pt-4 mt-4">
                   <a 

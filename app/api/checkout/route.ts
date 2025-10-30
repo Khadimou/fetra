@@ -21,10 +21,12 @@ export async function POST(request: Request) {
       quantity: qty,
     } as const;
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com')
+      : 'http://localhost:3000';
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: ["card", "paypal"],
       mode: "payment",
       line_items: [line_item],
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,

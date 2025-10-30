@@ -128,37 +128,109 @@ export async function addContactToList(
 export async function sendTransactionalEmail(
   to: string,
   templateId: number,
-  params?: Record<string, any>
+  params?: Record<string, any>,
+  toName?: string
 ): Promise<any> {
-  const apiKey = process.env.BREVO_API_KEY;
-  const apiBase = process.env.BREVO_API_BASE || 'https://api.brevo.com';
+  return retryWithBackoff(async () => {
+    const apiKey = process.env.BREVO_API_KEY;
+    const apiBase = process.env.BREVO_API_BASE || 'https://api.brevo.com';
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || 'contact@fetrabeauty.com';
+    const senderName = process.env.BREVO_SENDER_NAME || 'FETRA BEAUTY';
 
-  if (!apiKey) {
-    throw new Error('BREVO_API_KEY not configured');
-  }
+    if (!apiKey) {
+      throw new Error('BREVO_API_KEY not configured');
+    }
 
-  const endpoint = `${apiBase}/v3/smtp/email`;
+    const endpoint = `${apiBase}/v3/smtp/email`;
 
-  const payload = {
-    to: [{ email: to }],
-    templateId,
-    params: params || {}
-  };
+    const payload = {
+      to: [{ email: to, name: toName }],
+      sender: { email: senderEmail, name: senderName },
+      templateId,
+      params: params || {}
+    };
 
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'api-key': apiKey
-    },
-    body: JSON.stringify(payload)
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': apiKey
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Brevo email send error (${res.status}): ${errorText}`);
+    }
+
+    return res.json();
   });
+}
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Brevo email send error: ${errorText}`);
+/**
+ * Send order confirmation email
+ */
+export async function sendOrderConfirmationEmail(
+  customerEmail: string,
+  customerName: string,
+  orderData: {
+    orderNumber: string;
+    orderDate: string;
+    orderTotal: string;
+    currency: string;
+  }
+): Promise<any> {
+  const templateId = Number(process.env.BREVO_TEMPLATE_ORDER_CONFIRM);
+  
+  if (!templateId) {
+    throw new Error('BREVO_TEMPLATE_ORDER_CONFIRM not configured');
   }
 
-  return res.json();
+  const firstName = customerName.split(' ')[0] || customerName || 'Client';
+
+  return sendTransactionalEmail(
+    customerEmail,
+    templateId,
+    {
+      FIRSTNAME: firstName,
+      ORDERNUMBER: orderData.orderNumber,
+      ORDERDATE: orderData.orderDate,
+      ORDERTOTAL: orderData.orderTotal,
+      CURRENCY: orderData.currency
+    },
+    customerName
+  );
+}
+
+/**
+ * Send shipping confirmation email
+ */
+export async function sendShippingConfirmationEmail(
+  customerEmail: string,
+  customerName: string,
+  orderData: {
+    orderNumber: string;
+    trackingUrl: string;
+  }
+): Promise<any> {
+  const templateId = Number(process.env.BREVO_TEMPLATE_SHIPPED);
+  
+  if (!templateId) {
+    throw new Error('BREVO_TEMPLATE_SHIPPED not configured');
+  }
+
+  const firstName = customerName.split(' ')[0] || customerName || 'Client';
+
+  return sendTransactionalEmail(
+    customerEmail,
+    templateId,
+    {
+      FIRSTNAME: firstName,
+      ORDERNUMBER: orderData.orderNumber,
+      TRACKINGURL: orderData.trackingUrl
+    },
+    customerName
+  );
 }
 
