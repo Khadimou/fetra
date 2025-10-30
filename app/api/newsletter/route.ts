@@ -51,7 +51,21 @@ export async function POST(request: Request) {
       );
     }
 
-    const data = await res.json();
+    // Check if response has content before parsing JSON
+    const contentType = res.headers.get('content-type');
+    let data = null;
+    
+    if (contentType && contentType.includes('application/json')) {
+      const responseText = await res.text();
+      if (responseText && responseText.trim()) {
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse Brevo response:', responseText);
+          // Still consider it a success if status was ok
+        }
+      }
+    }
     
     return NextResponse.json({ ok: true, data });
   } catch (error: any) {
