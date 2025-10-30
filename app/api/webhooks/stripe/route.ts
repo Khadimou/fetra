@@ -107,6 +107,31 @@ export async function POST(request: Request) {
         console.error('Brevo upsert error:', err.message);
       }
 
+      // 3) Send order confirmation email via Brevo (do this regardless of fetching line items)
+      try {
+        const orderDate = new Date().toLocaleDateString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+
+        await sendOrderConfirmationEmail(
+          customerEmail,
+          customerName,
+          {
+            orderNumber: `FETRA-${orderId.slice(-8).toUpperCase()}`,
+            orderDate: orderDate,
+            orderTotal: amountTotal.toFixed(2).replace('.', ','),
+            currency: '€'
+          }
+        );
+
+        console.log('Order confirmation email sent:', customerEmail);
+      } catch (err: any) {
+        // Non-blocking - log error but continue
+        console.error('Order confirmation email error:', err.message);
+      }
+
       // Optionally: retrieve full session with line items
       if (process.env.STRIPE_SECRET_KEY) {
         try {
@@ -122,31 +147,6 @@ export async function POST(request: Request) {
             amount: amountTotal,
             items: fullSession.line_items?.data.length || 0
           });
-
-          // 3) Send order confirmation email via Brevo
-          try {
-            const orderDate = new Date().toLocaleDateString('fr-FR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            });
-
-            await sendOrderConfirmationEmail(
-              customerEmail,
-              customerName,
-              {
-                orderNumber: `FETRA-${orderId.slice(-8).toUpperCase()}`,
-                orderDate: orderDate,
-                orderTotal: amountTotal.toFixed(2).replace('.', ','),
-                currency: '€'
-              }
-            );
-
-            console.log('Order confirmation email sent:', customerEmail);
-          } catch (err: any) {
-            // Non-blocking - log error but continue
-            console.error('Order confirmation email error:', err.message);
-          }
         } catch (err: any) {
           console.error('Error retrieving full session:', err.message);
         }
