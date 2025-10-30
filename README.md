@@ -82,6 +82,22 @@ npm install
 
 ### Variables d'environnement
 
+## 📈 Monitoring & Analytics
+
+### Sentry
+1. Créez un projet sur `sentry.io`
+2. Copiez le DSN et ajoutez-le dans Vercel → Project → Settings → Environment Variables : `SENTRY_DSN`
+3. Déployez. Pour tester la capture d'erreurs, déclenchez temporairement une erreur dans une route API (en développement), puis validez en production.
+
+### Google Analytics 4 (GA4)
+1. Créez une propriété GA4
+2. Copiez l'ID de mesure (format `G-XXXX...`) et ajoutez-le dans Vercel en tant que `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+3. Déployez. Ouvrez le panneau Realtime dans Analytics pour vérifier les événements
+
+Notes:
+- L'initialisation Sentry est un no-op si `SENTRY_DSN` est vide
+- GA4 ne s'initialise que lorsque `process.env.NODE_ENV === 'production'`
+
 Créez un fichier `.env.local` à la racine du projet (copiez `.env.example`) :
 
 ```env
