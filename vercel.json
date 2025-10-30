@@ -1,25 +1,21 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "next.config.js", "use": "@vercel/next" }
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    }
   ],
-  "routes": [
+  "redirects": [
     {
-      "src": "/(.*)",
-      "headers": {
-        "strict-transport-security": "max-age=63072000; includeSubDomains; preload"
-      },
-      "continue": true
-    },
-    {
-      "src": "https://fetrabeauty.com/(.*)",
-      "dest": "https://www.fetrabeauty.com/$1",
-      "status": 308
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1",
-      "continue": true
+      "source": "https://fetrabeauty.com/(.*)",
+      "destination": "https://www.fetrabeauty.com/$1",
+      "permanent": true
     }
   ]
 }
