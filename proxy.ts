@@ -3,7 +3,8 @@ import type { NextRequest } from "next/server";
 
 const ALLOWED_HOSTNAMES = ["fetrabeauty.com", "www.fetrabeauty.com"];
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
+  // Always bypass in development
   if (process.env.NODE_ENV !== "production") {
     return NextResponse.next();
   }
@@ -17,7 +18,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirect to www.fetrabeauty.com with HTTPS
+  // Redirect to www.fetrabeauty.com with HTTPS (production only)
   const url = request.nextUrl.clone();
   url.hostname = "www.fetrabeauty.com";
   url.protocol = "https";
