@@ -86,17 +86,117 @@ npm install
 
 ### Sentry
 1. Créez un projet sur `sentry.io`
-2. Copiez le DSN et ajoutez-le dans Vercel → Project → Settings → Environment Variables : `SENTRY_DSN`
+2. Copiez le DSN et ajoutez dans Vercel → Project → Settings → Environment Variables :
+   - `SENTRY_DSN` (server-side, toujours actif)
+   - `NEXT_PUBLIC_SENTRY_DSN` (client-side, nécessite consentement analytics)
 3. Déployez. Pour tester la capture d'erreurs, déclenchez temporairement une erreur dans une route API (en développement), puis validez en production.
+
+**Distinction Server vs Client :**
+- **Server Sentry** (`sentry.server.config.js`) reste toujours activé - utile pour les erreurs backend
+- **Client Sentry** ne s'initialise qu'après consentement utilisateur - capture d'erreurs front-end sans consentement non recommandé
 
 ### Google Analytics 4 (GA4)
 1. Créez une propriété GA4
 2. Copiez l'ID de mesure (format `G-XXXX...`) et ajoutez-le dans Vercel en tant que `NEXT_PUBLIC_GA_MEASUREMENT_ID`
 3. Déployez. Ouvrez le panneau Realtime dans Analytics pour vérifier les événements
 
+### Google Tag Manager (GTM)
+1. Créez un compte GTM sur [tagmanager.google.com](https://tagmanager.google.com)
+2. Créez un conteneur pour votre site web
+3. Copiez l'ID du conteneur (format `GTM-XXXXXXX`) et ajoutez-le dans Vercel en tant que `NEXT_PUBLIC_GTM_ID`
+4. GTM se chargera automatiquement après consentement analytics ou marketing
+5. Vous pouvez ensuite ajouter tous vos tags (Meta, TikTok, LinkedIn, etc.) directement depuis GTM
+
+### 🍪 Cookies & Consentement (RGPD)
+
+#### Système de gestion des cookies
+
+Le site implémente un système professionnel de gestion des cookies conforme au RGPD :
+
+- **Bannière de consentement** : Apparaît au premier visit
+- **Panneau de préférences** : Bouton "Gérer les cookies" toujours accessible
+- **Stockage sécurisé** : Cookie `fetra_consent` avec SameSite=Lax et Secure (HTTPS)
+- **Chargement conditionnel** : GA4 et Sentry client ne se chargent qu'après consentement
+
+#### Types de cookies
+
+1. **Nécessaires** : Toujours activés (fonctionnement du site)
+2. **Analytics** : Google Analytics + Sentry client (après consentement)
+3. **Marketing** : Publicités et retargeting (après consentement)
+
+#### Test du système
+
+1. Ouvrez le site en navigation privée : la bannière doit apparaître
+2. Cliquez "Refuser" → GA ne doit pas se charger (onglet Network)
+3. Cliquez "Accepter tout" → GA se charge, `gtag` est défini
+4. Si `NEXT_PUBLIC_SENTRY_DSN` est défini, Sentry client s'initialise après consentement analytics
+
+#### Variables d'environnement
+
+```bash
+# Analytics (chargés seulement après consentement utilisateur)
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXXXX
+NEXT_PUBLIC_SENTRY_DSN=https://...@sentry.io/...
+
+# Monitoring serveur (toujours actif)
+SENTRY_DSN=https://...@sentry.io/...
+
+# Support Client (Freshdesk)
+FRESHDESK_API_KEY=your_freshdesk_api_key
+FRESHDESK_DOMAIN=your_company
+FRESHDESK_API_BASE=https://your_company.freshdesk.com
+```
+
+#### Intégration CMP tierce
+
+Si vous souhaitez utiliser un système CMP tiers (ex: OneTrust, Cookiebot) :
+1. Remplacez `CookieConsent` par votre solution
+2. Adaptez les événements `consent-analytics` et `consent-marketing` à leur API
+3. Conservez les helpers `lib/cookies.ts` pour la gestion locale
+
 Notes:
-- L'initialisation Sentry est un no-op si `SENTRY_DSN` est vide
-- GA4 ne s'initialise que lorsque `process.env.NODE_ENV === 'production'`
+- L'initialisation Sentry serveur est un no-op si `SENTRY_DSN` est vide
+- GA4 et Sentry client ne s'initialisent qu'après consentement utilisateur
+
+## 🎧 Support Client & Freshdesk
+
+### Widget de Support
+
+Le site intègre un widget de support flottant alimenté par Freshdesk :
+
+- **Widget flottant** : Bouton en bas à droite de chaque page
+- **Modale responsive** : Formulaire adaptatif avec animations Framer Motion
+- **Dark/Light mode** : S'adapte automatiquement au thème
+- **API sécurisée** : Création de tickets via `/api/freshdesk/create-ticket`
+- **Validation complète** : Champs requis + validation email
+- **Gestion d'erreurs** : Logging Sentry + messages utilisateur
+
+### Configuration Freshdesk
+
+1. **Obtenez vos credentials Freshdesk** :
+   - Connectez-vous à votre compte Freshdesk
+   - Allez dans **Admin** → **API** → **API Key**
+   - Copiez votre API Key
+
+2. **Ajoutez les variables dans Vercel** :
+   ```bash
+   FRESHDESK_API_KEY=your_api_key_here
+   FRESHDESK_DOMAIN=your_company  # Si votre URL est company.freshdesk.com
+   FRESHDESK_API_BASE=https://your_company.freshdesk.com  # Optionnel
+   ```
+
+3. **Configuration des tickets** :
+   - **Priority** : 1 (Low)
+   - **Status** : 2 (Open)
+   - **Source** : 2 (Portal)
+
+### Test du système
+
+1. Cliquez sur le bouton de support (💬)
+2. Remplissez le formulaire
+3. Vérifiez la création du ticket dans Freshdesk
+4. Testez la responsivité mobile et le mode sombre
 
 Créez un fichier `.env.local` à la racine du projet (copiez `.env.example`) :
 
@@ -125,6 +225,7 @@ FRESHDESK_API_BASE=https://{domain}.freshdesk.com
 # Optional analytics
 SENTRY_DSN=
 GA_MEASUREMENT_ID=
+NEXT_PUBLIC_GTM_ID=
 ```
 
 ## ⚙️ Configuration des intégrations tierces
