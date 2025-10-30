@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PRIMARY_HOSTNAME = "www.fetrabeauty.com";
+const PRIMARY_HOSTNAME = "fetrabeauty.com";
 
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
