@@ -19,7 +19,7 @@ export async function getProduct(): Promise<Product> {
   return {
     sku: "FETRA-RIT-001",
     title: "Le Rituel Visage Liftant FETRA : Kit Quartz Rose 3-en-1 & Huile Régénérante",
-    price: 0.9,
+    price: 49.9,
     value: 54.8,
     stock: 13,
     images: [
