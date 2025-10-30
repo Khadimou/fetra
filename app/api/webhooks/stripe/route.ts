@@ -14,9 +14,7 @@ export async function POST(request: Request) {
 
     // Verify webhook signature if secret is configured
     if (webhookSecret && process.env.STRIPE_SECRET_KEY) {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: '2024-11-20.acacia'
-      });
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
       try {
         event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
@@ -112,9 +110,7 @@ export async function POST(request: Request) {
       // Optionally: retrieve full session with line items
       if (process.env.STRIPE_SECRET_KEY) {
         try {
-          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-            apiVersion: '2024-11-20.acacia'
-          });
+          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
           
           const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
             expand: ['line_items']

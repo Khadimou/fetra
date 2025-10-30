@@ -15,9 +15,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Configuration Stripe manquante' }, { status: 500 });
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2024-11-20.acacia'
-    });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     // Récupérer la session Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
