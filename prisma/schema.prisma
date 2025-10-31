@@ -1,0 +1,207 @@
+// Prisma schema for FETRA e-commerce platform
+// NextJS 16 + NextAuth + PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")      // Connection pooling (pour les requêtes)
+  directUrl = env("DIRECT_URL")        // Direct connection (pour les migrations)
+}
+
+// ============================================
+// NextAuth Models
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  password      String? // Hashed password for credentials provider
+  image         String?
+  role          UserRole  @default(ADMIN)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  accounts Account[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum UserRole {
+  ADMIN
+  SUPER_ADMIN
+}
+
+// ============================================
+// E-commerce Models
+// ============================================
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String?  @map("first_name")
+  lastName  String?  @map("last_name")
+  phone     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  orders Order[]
+
+  // External IDs for integrations
+  hubspotId String? @map("hubspot_id")
+  brevoId   String? @map("brevo_id")
+
+  @@map("customers")
+}
+
+model Order {
+  id                 String      @id @default(cuid())
+  orderNumber        String      @unique @map("order_number") // Human-readable: FETRA-XXXXXXXX
+  customerId         String      @map("customer_id")
+  customer           Customer    @relation(fields: [customerId], references: [id])
+
+  // Order details
+  status             OrderStatus @default(PENDING)
+  amount             Decimal     @db.Decimal(10, 2)
+  currency           String      @default("EUR")
+
+  // Stripe data
+  stripeSessionId    String?     @unique @map("stripe_session_id")
+  stripePaymentIntent String?    @map("stripe_payment_intent")
+
+  // Timestamps
+  createdAt          DateTime    @default(now()) @map("created_at")
+  paidAt             DateTime?   @map("paid_at")
+  shippedAt          DateTime?   @map("shipped_at")
+  deliveredAt        DateTime?   @map("delivered_at")
+  cancelledAt        DateTime?   @map("cancelled_at")
+  updatedAt          DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  items              OrderItem[]
+  shipping           ShippingInfo?
+
+  // Metadata (for additional info)
+  metadata           Json?
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String  @map("order_id")
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productSku  String  @map("product_sku")
+  productName String  @map("product_name")
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(10, 2) @map("unit_price")
+  totalPrice  Decimal @db.Decimal(10, 2) @map("total_price")
+
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model ShippingInfo {
+  id              String         @id @default(cuid())
+  orderId         String         @unique @map("order_id")
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Tracking
+  trackingNumber  String?        @map("tracking_number")
+  carrier         ShippingCarrier @default(COLISSIMO)
+  trackingUrl     String?        @map("tracking_url")
+
+  // Recipient
+  recipientName   String         @map("recipient_name")
+  recipientEmail  String         @map("recipient_email")
+  recipientPhone  String?        @map("recipient_phone")
+
+  // Address
+  street          String
+  street2         String?
+  city            String
+  postalCode      String         @map("postal_code")
+  country         String         @default("FR")
+
+  // Timestamps
+  shippedAt       DateTime?      @map("shipped_at")
+  deliveredAt     DateTime?      @map("delivered_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  @@index([trackingNumber])
+  @@map("shipping_info")
+}
+
+// ============================================
+// Enums
+// ============================================
+
+enum OrderStatus {
+  PENDING       // Payment pending
+  PAID          // Payment confirmed, ready to ship
+  PROCESSING    // Being prepared
+  SHIPPED       // Shipped with carrier
+  DELIVERED     // Successfully delivered
+  CANCELLED     // Cancelled by admin or customer
+  REFUNDED      // Payment refunded
+}
+
+enum ShippingCarrier {
+  COLISSIMO
+  CHRONOPOST
+  DHL
+  UPS
+  FEDEX
+  OTHER
+}

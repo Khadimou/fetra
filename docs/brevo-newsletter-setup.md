@@ -28,9 +28,9 @@ Ce guide vous explique comment configurer l'email de bienvenue pour les nouveaux
 1. Sélectionnez **Edit in HTML**
 2. Copiez-collez le contenu du fichier `email-template-newsletter-welcome.html`
 3. **Important** : Remplacez les URL des réseaux sociaux par vos vraies URLs :
-   - Instagram : `https://www.instagram.com/fetrabeauty/`
-   - Facebook : `https://www.facebook.com/fetrabeauty`
-   - TikTok : `https://www.tiktok.com/@fetrabeauty`
+   - Instagram : `https://www.instagram.com/fetra_beauty/`
+   - Facebook : `https://www.facebook.com/fetra_beauty`
+   - TikTok : `https://www.tiktok.com/@fetra_beauty`
 
 ### 2.3 Variables utilisées
 

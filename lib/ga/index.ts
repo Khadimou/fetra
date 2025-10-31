@@ -1,5 +1,5 @@
 // lib/ga/index.ts
-export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
+export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-LK1VT2ZLFN';
 
 export async function initGA(): Promise<void> {
   if (!GA_MEASUREMENT_ID) return;
