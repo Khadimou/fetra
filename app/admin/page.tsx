@@ -39,9 +39,11 @@ export default function AdminDashboard() {
         throw new Error('Erreur lors du chargement des commandes');
       }
       const data = await res.json();
-      setOrders(data.orders || []);
+      // Ensure orders is always an array
+      setOrders(Array.isArray(data.orders) ? data.orders : []);
     } catch (err: any) {
       setError(err.message);
+      setOrders([]); // Reset to empty array on error
     } finally {
       setLoading(false);
     }
@@ -84,24 +86,24 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">Total commandes</p>
-            <p className="text-3xl font-bold text-gray-900">{orders.length}</p>
+            <p className="text-3xl font-bold text-gray-900">{Array.isArray(orders) ? orders.length : 0}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">En attente</p>
             <p className="text-3xl font-bold text-yellow-600">
-              {orders.filter(o => o.status === 'paid').length}
+              {Array.isArray(orders) ? orders.filter(o => o.status === 'paid').length : 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">Expédiées</p>
             <p className="text-3xl font-bold text-blue-600">
-              {orders.filter(o => o.status === 'shipped').length}
+              {Array.isArray(orders) ? orders.filter(o => o.status === 'shipped').length : 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">Livrées</p>
             <p className="text-3xl font-bold text-green-600">
-              {orders.filter(o => o.status === 'delivered').length}
+              {Array.isArray(orders) ? orders.filter(o => o.status === 'delivered').length : 0}
             </p>
           </div>
         </div>
