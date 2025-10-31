@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { upsertContactHubspot } from '../../../../lib/integrations/hubspot';
 import { addContactBrevo, sendOrderConfirmationEmail } from '../../../../lib/integrations/brevo';
 import { upsertCustomer, createOrder, updateOrderStatus } from '../../../../lib/db/orders';
+import { getProductBySku, decrementStock } from '../../../../lib/db/products';
 import { OrderStatus } from '@prisma/client';
 
 export async function POST(request: Request) {
@@ -115,6 +116,26 @@ export async function POST(request: Request) {
             shippingDetails: (session as any).shipping_details
           }
         });
+
+        // Decrement stock for each order item
+        for (const item of orderItems) {
+          try {
+            const product = await getProductBySku(item.productSku);
+            if (product) {
+              const result = await decrementStock(product.id, item.quantity);
+              if (result) {
+                console.log(`Stock decremented for ${item.productSku}: ${item.quantity} units`);
+              } else {
+                console.warn(`Insufficient stock for ${item.productSku}, but order was already paid`);
+              }
+            } else {
+              console.warn(`Product not found in database: ${item.productSku}`);
+            }
+          } catch (stockErr: any) {
+            console.error(`Error decrementing stock for ${item.productSku}:`, stockErr.message);
+            // Non-blocking - order is already created and paid
+          }
+        }
 
         // Mark as paid
         await updateOrderStatus(order.id, OrderStatus.PAID);

@@ -1,18 +1,23 @@
 "use client";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Logo from "../../components/Logo";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    phone: "",
     acceptTerms: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;
@@ -24,26 +29,64 @@ export default function SignupPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+    setError("");
+
+    // Validation
+    if (formData.password.length < 8) {
+      setError("Le mot de passe doit contenir au moins 8 caractères");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Les mots de passe ne correspondent pas");
+      setError("Les mots de passe ne correspondent pas");
       return;
     }
 
     if (!formData.acceptTerms) {
-      alert("Veuillez accepter les conditions d'utilisation");
+      setError("Veuillez accepter les conditions d'utilisation");
       return;
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // In a real app, handle registration here
-    console.log("Signup attempt:", formData);
-    
-    setIsLoading(false);
+
+    try {
+      // Create account
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erreur lors de la création du compte');
+      }
+
+      // Auto-login after signup
+      const signInResult = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false
+      });
+
+      if (signInResult?.error) {
+        // Account created but login failed
+        router.push('/login?message=Compte créé avec succès, veuillez vous connecter');
+      } else {
+        // Success - redirect to account page
+        router.push('/account?welcome=true');
+      }
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -60,6 +103,12 @@ export default function SignupPage() {
         <div className="bg-white rounded-2xl brand-shadow p-8">
           <h1 className="text-2xl font-bold text-center mb-2">Créer un compte</h1>
           <p className="text-gray-600 text-center mb-8">Rejoignez la communauté FETRA</p>
+
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* First & Last Name */}
@@ -144,6 +193,22 @@ export default function SignupPage() {
                 onChange={handleChange}
                 required
                 placeholder="••••••••"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 transition-all"
+              />
+            </div>
+
+            {/* Phone (optional) */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Téléphone <span className="text-gray-400 font-normal">(optionnel)</span>
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+33 6 12 34 56 78"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 transition-all"
               />
             </div>
