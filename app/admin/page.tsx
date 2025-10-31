@@ -109,6 +109,39 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <button
+            onClick={() => router.push('/admin/products')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left group"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Gestion des Produits</h3>
+                <p className="text-sm text-gray-600">Gérer le stock et les produits</p>
+              </div>
+              <svg className="w-6 h-6 text-fetra-olive group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/admin/orders')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left group"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Toutes les Commandes</h3>
+                <p className="text-sm text-gray-600">Voir l'historique complet</p>
+              </div>
+              <svg className="w-6 h-6 text-fetra-olive group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+        </div>
+
         {/* Orders table */}
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
