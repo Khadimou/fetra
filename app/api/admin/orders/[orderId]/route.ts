@@ -9,11 +9,11 @@ import { getOrder } from '@/lib/db/orders';
  */
 export async function GET(
   request: Request,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
   // Check admin authentication
   const session = await getServerSession(authOptions);
-  
+
   if (!session?.user || (session.user as any).role !== 'ADMIN') {
     return NextResponse.json(
       { error: 'Non autorisé' },
@@ -22,8 +22,8 @@ export async function GET(
   }
 
   try {
-    const { orderId } = params;
-    const order = getOrder(orderId);
+    const { orderId } = await params;
+    const order = await getOrder(orderId);
 
     if (!order) {
       return NextResponse.json(

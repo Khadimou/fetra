@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Order } from '@/lib/db/orders';
+import { OrderStatus } from '@prisma/client';
+import type { OrderWithRelations } from '@/lib/db/orders';
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -91,19 +92,19 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">En attente</p>
             <p className="text-3xl font-bold text-yellow-600">
-              {Array.isArray(orders) ? orders.filter(o => o.status === 'paid').length : 0}
+              {Array.isArray(orders) ? orders.filter(o => o.status === OrderStatus.PAID).length : 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">Expédiées</p>
             <p className="text-3xl font-bold text-blue-600">
-              {Array.isArray(orders) ? orders.filter(o => o.status === 'shipped').length : 0}
+              {Array.isArray(orders) ? orders.filter(o => o.status === OrderStatus.SHIPPED).length : 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <p className="text-sm text-gray-600">Livrées</p>
             <p className="text-3xl font-bold text-green-600">
-              {Array.isArray(orders) ? orders.filter(o => o.status === 'delivered').length : 0}
+              {Array.isArray(orders) ? orders.filter(o => o.status === OrderStatus.DELIVERED).length : 0}
             </p>
           </div>
         </div>
@@ -155,22 +156,26 @@ export default function AdminDashboard() {
                         #{order.id.slice(-8).toUpperCase()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{order.customerName || 'N/A'}</div>
-                        <div className="text-sm text-gray-500">{order.email}</div>
+                        <div className="text-sm text-gray-900">
+                          {order.customer?.firstName || order.customer?.lastName
+                            ? `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim()
+                            : 'N/A'}
+                        </div>
+                        <div className="text-sm text-gray-500">{order.customer?.email || 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {order.amount.toFixed(2)} {order.currency.toUpperCase()}
+                        {Number(order.amount).toFixed(2)} {order.currency.toUpperCase()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                          order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                          order.status === 'paid' ? 'bg-yellow-100 text-yellow-800' :
+                          order.status === OrderStatus.DELIVERED ? 'bg-green-100 text-green-800' :
+                          order.status === OrderStatus.SHIPPED ? 'bg-blue-100 text-blue-800' :
+                          order.status === OrderStatus.PAID ? 'bg-yellow-100 text-yellow-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
-                          {order.status === 'delivered' ? 'Livrée' :
-                           order.status === 'shipped' ? 'Expédiée' :
-                           order.status === 'paid' ? 'Payée' :
+                          {order.status === OrderStatus.DELIVERED ? 'Livrée' :
+                           order.status === OrderStatus.SHIPPED ? 'Expédiée' :
+                           order.status === OrderStatus.PAID ? 'Payée' :
                            order.status}
                         </span>
                       </td>

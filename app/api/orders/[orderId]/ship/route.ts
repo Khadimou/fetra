@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { OrderStatus } from '@prisma/client';
 import { getOrder, markAsShipped } from '@/lib/db/orders';
 import { sendShippingConfirmationEmail } from '@/lib/integrations/brevo';
 import { upsertContactHubspot } from '@/lib/integrations/hubspot';
@@ -10,10 +11,10 @@ import { upsertContactHubspot } from '@/lib/integrations/hubspot';
  */
 export async function POST(
   request: Request,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
-    const { orderId } = params;
+    const { orderId } = await params;
     const body = await request.json();
     const { trackingNumber, carrier = 'colissimo' } = body;
 
@@ -26,7 +27,7 @@ export async function POST(
     }
 
     // Check if order exists
-    const order = getOrder(orderId);
+    const order = await getOrder(orderId);
     if (!order) {
       return NextResponse.json(
         { error: 'Commande introuvable' },
@@ -35,27 +36,33 @@ export async function POST(
     }
 
     // Check if already shipped
-    if (order.status === 'shipped' || order.status === 'delivered') {
+    if (order.status === OrderStatus.SHIPPED || order.status === OrderStatus.DELIVERED) {
       return NextResponse.json(
         { error: 'Commande déjà expédiée' },
         { status: 400 }
       );
     }
 
-    // Mark as shipped in database
-    const success = markAsShipped(orderId, trackingNumber, carrier);
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Erreur lors de la mise à jour de la commande' },
-        { status: 500 }
-      );
-    }
+    // Extract shipping details from order metadata
+    const metadata = order.metadata as any;
+    const shippingDetails = metadata?.shippingDetails || {};
 
-    // Get updated order
-    const updatedOrder = getOrder(orderId);
+    // Mark as shipped in database
+    const updatedOrder = await markAsShipped(orderId, {
+      trackingNumber,
+      carrier: carrier?.toUpperCase() as any || 'COLISSIMO',
+      recipientName: shippingDetails.name || `${order.customer.firstName} ${order.customer.lastName}`.trim() || 'Client',
+      recipientEmail: order.customer.email,
+      recipientPhone: shippingDetails.phone,
+      street: shippingDetails.address?.line1 || 'N/A',
+      street2: shippingDetails.address?.line2,
+      city: shippingDetails.address?.city || 'N/A',
+      postalCode: shippingDetails.address?.postal_code || '00000',
+      country: shippingDetails.address?.country || 'FR'
+    });
     if (!updatedOrder) {
       return NextResponse.json(
-        { error: 'Erreur lors de la récupération de la commande' },
+        { error: 'Erreur lors de la mise à jour de la commande' },
         { status: 500 }
       );
     }
@@ -66,15 +73,15 @@ export async function POST(
       const trackingUrl = `https://www.laposte.fr/outils/suivre-vos-envois?code=${trackingNumber}`;
 
       await sendShippingConfirmationEmail(
-        order.email,
-        order.customerName || 'Client',
+        updatedOrder.customer.email,
+        updatedOrder.customer.firstName || 'Client',
         {
           orderNumber,
           trackingUrl
         }
       );
 
-      console.log('Shipping confirmation email sent:', order.email);
+      console.log('Shipping confirmation email sent:', updatedOrder.customer.email);
     } catch (emailError: any) {
       console.error('Error sending shipping email:', emailError.message);
       // Non-blocking - continue even if email fails
@@ -82,13 +89,13 @@ export async function POST(
 
     // Update HubSpot contact (non-blocking)
     try {
-      await upsertContactHubspot(order.email, {
-        email: order.email,
+      await upsertContactHubspot(updatedOrder.customer.email, {
+        email: updatedOrder.customer.email,
         last_order_status: 'shipped',
         last_tracking_number: trackingNumber
       });
 
-      console.log('HubSpot contact updated with shipping info:', order.email);
+      console.log('HubSpot contact updated with shipping info:', updatedOrder.customer.email);
     } catch (hubspotError: any) {
       console.error('Error updating HubSpot:', hubspotError.message);
       // Non-blocking - continue even if HubSpot fails

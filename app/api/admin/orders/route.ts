@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const orders = getAllOrders();
+    const orders = await getAllOrders();
 
     return NextResponse.json({
       orders,

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import type { Order } from '@/lib/db/orders';
+import { OrderStatus } from '@prisma/client';
+import type { OrderWithRelations } from '@/lib/db/orders';
 import TrackingStatus from '@/components/admin/TrackingStatus';
 
 export default function OrderDetail() {
@@ -10,7 +11,7 @@ export default function OrderDetail() {
   const params = useParams();
   const orderId = params.orderId as string;
 
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<OrderWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -137,30 +138,34 @@ export default function OrderDetail() {
           <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <dt className="text-sm font-medium text-gray-500">Client</dt>
-              <dd className="mt-1 text-sm text-gray-900">{order.customerName || 'N/A'}</dd>
+              <dd className="mt-1 text-sm text-gray-900">
+                {order.customer?.firstName || order.customer?.lastName
+                  ? `${order.customer.firstName} ${order.customer.lastName}`.trim()
+                  : 'N/A'}
+              </dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Email</dt>
-              <dd className="mt-1 text-sm text-gray-900">{order.email}</dd>
+              <dd className="mt-1 text-sm text-gray-900">{order.customer?.email || 'N/A'}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Montant</dt>
               <dd className="mt-1 text-sm text-gray-900">
-                {order.amount.toFixed(2)} {order.currency.toUpperCase()}
+                {Number(order.amount).toFixed(2)} {order.currency.toUpperCase()}
               </dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Statut</dt>
               <dd className="mt-1">
                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                  order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                  order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                  order.status === 'paid' ? 'bg-yellow-100 text-yellow-800' :
+                  order.status === OrderStatus.DELIVERED ? 'bg-green-100 text-green-800' :
+                  order.status === OrderStatus.SHIPPED ? 'bg-blue-100 text-blue-800' :
+                  order.status === OrderStatus.PAID ? 'bg-yellow-100 text-yellow-800' :
                   'bg-gray-100 text-gray-800'
                 }`}>
-                  {order.status === 'delivered' ? 'Livrée' :
-                   order.status === 'shipped' ? 'Expédiée' :
-                   order.status === 'paid' ? 'Payée' :
+                  {order.status === OrderStatus.DELIVERED ? 'Livrée' :
+                   order.status === OrderStatus.SHIPPED ? 'Expédiée' :
+                   order.status === OrderStatus.PAID ? 'Payée' :
                    order.status}
                 </span>
               </dd>
@@ -183,7 +188,7 @@ export default function OrderDetail() {
         </div>
 
         {/* Shipping section */}
-        {order.status === 'paid' && (
+        {order.status === OrderStatus.PAID && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Marquer comme expédiée</h2>
             <form onSubmit={handleShip} className="space-y-4">

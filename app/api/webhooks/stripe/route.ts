@@ -2,7 +2,8 @@ import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { upsertContactHubspot } from '../../../../lib/integrations/hubspot';
 import { addContactBrevo, sendOrderConfirmationEmail } from '../../../../lib/integrations/brevo';
-import { saveOrder } from '../../../../lib/db/orders';
+import { upsertCustomer, createOrder, updateOrderStatus } from '../../../../lib/db/orders';
+import { OrderStatus } from '@prisma/client';
 
 export async function POST(request: Request) {
   try {
@@ -51,21 +52,74 @@ export async function POST(request: Request) {
         return NextResponse.json({ received: true });
       }
 
-      // 0) Save order to local database
+      // 0) Save order to database with Prisma
       try {
-        saveOrder({
-          id: orderId,
-          email: customerEmail,
-          customerName,
+        // Split customer name
+        const nameParts = customerName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        // Create or get customer
+        const customer = await upsertCustomer(customerEmail, {
+          firstName,
+          lastName
+        });
+
+        // Get line items from Stripe to save order items
+        let orderItems: Array<{
+          productSku: string;
+          productName: string;
+          quantity: number;
+          unitPrice: number;
+        }> = [];
+        if (process.env.STRIPE_SECRET_KEY) {
+          try {
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+            const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+              expand: ['line_items']
+            });
+
+            if (fullSession.line_items?.data) {
+              orderItems = fullSession.line_items.data.map((item) => ({
+                productSku: item.price?.product as string || 'FETRA-RIT-001',
+                productName: item.description || 'Rituel Visage Liftant',
+                quantity: item.quantity || 1,
+                unitPrice: (item.price?.unit_amount || 0) / 100
+              }));
+            }
+          } catch (err: any) {
+            console.error('Error fetching line items:', err.message);
+          }
+        }
+
+        // Fallback: if no line items, use default product
+        if (orderItems.length === 0) {
+          orderItems = [{
+            productSku: 'FETRA-RIT-001',
+            productName: 'Rituel Visage Liftant',
+            quantity: 1,
+            unitPrice: amountTotal
+          }];
+        }
+
+        // Create order
+        const order = await createOrder({
+          customerId: customer.id,
           amount: amountTotal,
-          currency: session.currency || 'eur',
-          status: session.payment_status || 'unknown',
-          createdAt: new Date().toISOString(),
+          currency: session.currency || 'EUR',
+          stripeSessionId: session.id,
+          stripePaymentIntent: session.payment_intent as string || undefined,
+          items: orderItems,
           metadata: {
-            stripeSessionId: session.id,
-            paymentIntent: session.payment_intent
+            paymentStatus: session.payment_status,
+            shippingDetails: (session as any).shipping_details
           }
         });
+
+        // Mark as paid
+        await updateOrderStatus(order.id, OrderStatus.PAID);
+
+        console.log('Order created in database:', order.orderNumber);
       } catch (err: any) {
         console.error('Error saving order:', err.message);
       }
@@ -132,25 +186,6 @@ export async function POST(request: Request) {
         console.error('Order confirmation email error:', err.message);
       }
 
-      // Optionally: retrieve full session with line items
-      if (process.env.STRIPE_SECRET_KEY) {
-        try {
-          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-          
-          const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-            expand: ['line_items']
-          });
-
-          console.log('Order details:', {
-            orderId: fullSession.id,
-            email: customerEmail,
-            amount: amountTotal,
-            items: fullSession.line_items?.data.length || 0
-          });
-        } catch (err: any) {
-          console.error('Error retrieving full session:', err.message);
-        }
-      }
     }
 
     // Handle payment_intent.succeeded event
