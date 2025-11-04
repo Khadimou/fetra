@@ -1,6 +1,6 @@
 // app/success/page.tsx
 import { Suspense } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
 import OrderDetails from '../../../components/OrderDetails';
 import ClearCartOnSuccess from '../../../components/ClearCartOnSuccess';

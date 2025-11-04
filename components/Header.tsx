@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import Logo from './Logo';
 import SearchModal from './SearchModal';
@@ -47,27 +47,27 @@ export default function Header() {
 
               {/* Desktop Navigation */}
               <nav className="hidden lg:flex items-center gap-8">
-                <a
+                <Link
                   href="/product"
                   className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
                 >
                   {t('ritual')}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/about"
                   className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
                 >
                   {t('ourStory')}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/blog"
                   className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
                 >
                   {t('tips')}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
-                </a>
+                </Link>
               </nav>
             </div>
 
@@ -85,7 +85,7 @@ export default function Header() {
               </button>
 
               {/* Account */}
-              <a
+              <Link
                 href="/login"
                 aria-label={t('myAccount')}
                 className="hidden md:flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
@@ -93,7 +93,7 @@ export default function Header() {
                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-              </a>
+              </Link>
 
               {/* Language Switcher */}
               <div className="hidden md:block">
@@ -101,7 +101,7 @@ export default function Header() {
               </div>
 
               {/* Cart */}
-              <a
+              <Link
                 href="/cart"
                 aria-label={t('cart')}
                 className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
@@ -110,7 +110,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 <CartCounterBadge />
-              </a>
+              </Link>
 
               {/* Mobile menu button */}
               <button
@@ -133,26 +133,26 @@ export default function Header() {
           {isMobileMenuOpen && (
             <nav className="lg:hidden border-t border-gray-100 bg-white animate-fade-in">
               <div className="px-4 py-4 space-y-1">
-                <a
+                <Link
                   href="/product"
                   className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                 >
                   {t('ritual')}
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/about"
                   className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                 >
                   {t('ourStory')}
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/blog"
                   className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                 >
                   {t('tips')}
-                </a>
+                </Link>
                 <div className="border-t border-gray-100 pt-4 mt-4">
-                  <a
+                  <Link
                     href="/account"
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                   >
@@ -160,8 +160,8 @@ export default function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     {t('myAccount')}
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/search"
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                   >
@@ -169,7 +169,7 @@ export default function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     {t('search')}
-                  </a>
+                  </Link>
                   <div className="px-4 py-3">
                     <LanguageSwitcher />
                   </div>
