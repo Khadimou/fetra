@@ -73,7 +73,9 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold">{t('chapter3Title')}</h2>
             </div>
             <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
-              <p dangerouslySetInnerHTML={{ __html: t('chapter3Para1') }} />
+              <p>
+                {t('chapter3Para1')}
+              </p>
               <p>
                 {t('chapter3Para2')}
               </p>
