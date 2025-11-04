@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from 'next-intl';
 
 type Review = {
   id: string;
@@ -8,36 +9,39 @@ type Review = {
   date: string;
 };
 
-const mockReviews: Review[] = [
-  {
-    id: "1",
-    author: "Alice",
-    rating: 5,
-    comment: "Produit incroyable ! Ma peau est beaucoup plus ferme après seulement 2 semaines d'utilisation. Le rouleau en quartz est très agréable à utiliser.",
-    date: "2025-05-01",
-  },
-  {
-    id: "2",
-    author: "Sophie M.",
-    rating: 5,
-    comment: "Excellent rapport qualité-prix. L'huile est très nourrissante et le kit complet permet un rituel vraiment relaxant.",
-    date: "2024-01-15",
-  },
-  {
-    id: "3",
-    author: "Claire D.",
-    rating: 4,
-    comment: "Très satisfaite, même si je trouve que le rouleau pourrait être un peu plus grand. Le résultat est visible rapidement.",
-    date: "2024-01-05",
-  },
-];
-
-function formatDate(dateString: string): string {
+function formatDate(dateString: string, locale: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" });
+  return date.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" });
 }
 
 export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { averageRating?: number; reviewCount?: number }) {
+  const t = useTranslations('Reviews');
+  const locale = typeof window !== 'undefined' ? (window.location.pathname.includes('/en') ? 'en-US' : window.location.pathname.includes('/pt') ? 'pt-PT' : 'fr-FR') : 'fr-FR';
+
+  const mockReviews: Review[] = [
+    {
+      id: "1",
+      author: t('review1Author'),
+      rating: 5,
+      comment: t('review1Comment'),
+      date: "2025-05-01",
+    },
+    {
+      id: "2",
+      author: t('review2Author'),
+      rating: 5,
+      comment: t('review2Comment'),
+      date: "2024-01-15",
+    },
+    {
+      id: "3",
+      author: t('review3Author'),
+      rating: 4,
+      comment: t('review3Comment'),
+      date: "2024-01-05",
+    },
+  ];
+
   const fullStars = Math.floor(averageRating);
   const hasHalfStar = averageRating % 1 >= 0.5;
 
@@ -45,7 +49,7 @@ export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { av
     <div className="mt-8 bg-white p-6 rounded-xl brand-shadow">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold mb-2">Avis clients</h2>
+          <h2 className="text-xl font-bold mb-2">{t('title')}</h2>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -66,11 +70,11 @@ export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { av
               ))}
             </div>
             <span className="text-lg font-semibold">{averageRating.toFixed(1)}</span>
-            <span className="text-sm text-gray-600">({reviewCount} avis)</span>
+            <span className="text-sm text-gray-600">{t('reviewCount', { count: reviewCount })}</span>
           </div>
         </div>
         <button className="px-4 py-2 bg-fetra-olive text-white rounded-lg hover:bg-fetra-olive/90 transition-colors focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 text-sm font-medium">
-          Écrire un avis
+          {t('writeReview')}
         </button>
       </div>
 
@@ -93,7 +97,7 @@ export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { av
                       </svg>
                     ))}
                   </div>
-                  <span className="text-xs text-gray-500">{formatDate(review.date)}</span>
+                  <span className="text-xs text-gray-500">{formatDate(review.date, locale)}</span>
                 </div>
               </div>
             </div>
@@ -104,4 +108,3 @@ export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { av
     </div>
   );
 }
-

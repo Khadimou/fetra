@@ -1,25 +1,23 @@
+'use client';
 import Link from "next/link";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Retours & Remboursements — FETRA BEAUTY",
-  description: "Droit de rétractation de 14 jours. Retour gratuit et facile. Remboursement sous 5-10 jours ouvrés après réception.",
-};
+import { useTranslations } from 'next-intl';
 
 export default function ReturnsPage() {
+  const t = useTranslations('Returns');
+
   return (
     <div className="bg-gradient-to-b from-white via-gray-50 to-white min-h-screen">
       {/* Hero Section */}
       <section className="relative py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <span className="inline-block px-4 py-2 bg-fetra-pink/10 text-fetra-pink rounded-full text-sm font-semibold mb-6">
-            Retours & Remboursements
+            {t('badge')}
           </span>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Retours & Remboursements FETRA — Votre Satisfaction, Notre Priorité
+            {t('title')}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Chez FETRA, nous souhaitons que vous soyez entièrement satisfait de votre Rituel Visage Liftant. Si, pour une raison quelconque, vous n'êtes pas pleinement conquis, vous disposez d'un délai pour nous retourner votre commande.
+            {t('subtitle')}
           </p>
         </div>
       </section>
@@ -29,10 +27,8 @@ export default function ReturnsPage() {
         <div className="space-y-12">
           {/* Return Policy Banner */}
           <div className="bg-gradient-to-r from-fetra-pink to-fetra-olive text-white rounded-3xl p-8 text-center brand-shadow">
-            <h2 className="text-3xl font-bold mb-4">✨ Retour Gratuit et Facile</h2>
-            <p className="text-xl">
-              Nous nous engageons à rendre le processus de retour aussi simple que possible pour vous.
-            </p>
+            <h2 className="text-3xl font-bold mb-4">{t('bannerTitle')}</h2>
+            <p className="text-xl">{t('bannerText')}</p>
           </div>
 
           {/* Withdrawal Period */}
@@ -43,51 +39,45 @@ export default function ReturnsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold">Délai de Rétractation</h2>
+              <h2 className="text-3xl font-bold">{t('periodTitle')}</h2>
             </div>
             <div className="space-y-4 text-gray-700 text-lg">
-              <p>
-                Conformément à la législation européenne, vous disposez d'un délai de <strong>14 jours calendaires</strong> à compter de la date de réception de votre commande pour exercer votre droit de rétractation et nous retourner le(s) produit(s).
-              </p>
+              <p>{t('periodText')}</p>
             </div>
           </div>
 
           {/* Return Conditions */}
           <div className="bg-white rounded-3xl p-8 md:p-12 brand-shadow">
-            <h2 className="text-3xl font-bold mb-6">Conditions de Retour</h2>
-            <p className="text-lg text-gray-600 mb-6">
-              Pour être éligible à un retour, votre article doit être :
-            </p>
+            <h2 className="text-3xl font-bold mb-6">{t('conditionsTitle')}</h2>
+            <p className="text-lg text-gray-600 mb-6">{t('conditionsSubtitle')}</p>
             <ul className="space-y-4 text-gray-700 text-lg">
               <li className="flex items-start gap-3">
                 <svg className="w-6 h-6 text-fetra-olive flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span><strong>Inutilisé</strong> et dans le même état où vous l'avez reçu</span>
+                <span dangerouslySetInnerHTML={{ __html: t('conditionUnused') }} />
               </li>
               <li className="flex items-start gap-3">
                 <svg className="w-6 h-6 text-fetra-olive flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Dans son <strong>emballage d'origine complet et intact</strong> (boîte, pochette, notice, etc.)</span>
+                <span dangerouslySetInnerHTML={{ __html: t('conditionPackaging') }} />
               </li>
               <li className="flex items-start gap-3">
                 <svg className="w-6 h-6 text-fetra-olive flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Accompagné de la <strong>preuve d'achat</strong> (facture ou confirmation de commande)</span>
+                <span dangerouslySetInnerHTML={{ __html: t('conditionProof') }} />
               </li>
             </ul>
             <div className="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-xl">
-              <p className="text-sm text-gray-800">
-                <strong>⚠️ Important :</strong> Nous nous réservons le droit de refuser un retour si ces conditions ne sont pas respectées.
-              </p>
+              <p className="text-sm text-gray-800">{t('conditionsWarning')}</p>
             </div>
           </div>
 
           {/* Return Process */}
           <div className="bg-white rounded-3xl p-8 md:p-12 brand-shadow">
-            <h2 className="text-3xl font-bold mb-8">Processus de Retour</h2>
+            <h2 className="text-3xl font-bold mb-8">{t('processTitle')}</h2>
             <div className="space-y-8">
               {/* Step 1 */}
               <div className="flex gap-6">
@@ -97,17 +87,9 @@ export default function ReturnsPage() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-3">Contactez-nous</h3>
-                  <p className="text-gray-700 text-lg mb-2">
-                    Envoyez un e-mail à{" "}
-                    <a href="mailto:contact@fetrabeauty.com" className="text-fetra-olive hover:text-fetra-olive/80 font-semibold underline">
-                      contact@fetrabeauty.com
-                    </a>{" "}
-                    en précisant votre numéro de commande et le motif de votre retour.
-                  </p>
-                  <p className="text-gray-700 text-lg">
-                    Notre service client vous enverra un bon de retour prépayé.
-                  </p>
+                  <h3 className="text-xl font-bold mb-3">{t('step1Title')}</h3>
+                  <p className="text-gray-700 text-lg mb-2">{t('step1Text')}</p>
+                  <p className="text-gray-700 text-lg">{t('step1Extra')}</p>
                 </div>
               </div>
 
@@ -119,10 +101,8 @@ export default function ReturnsPage() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-3">Préparez votre colis</h3>
-                  <p className="text-gray-700 text-lg">
-                    Emballez soigneusement le(s) produit(s) dans son/leur emballage d'origine.
-                  </p>
+                  <h3 className="text-xl font-bold mb-3">{t('step2Title')}</h3>
+                  <p className="text-gray-700 text-lg">{t('step2Text')}</p>
                 </div>
               </div>
 
@@ -134,10 +114,8 @@ export default function ReturnsPage() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-3">Expédiez</h3>
-                  <p className="text-gray-700 text-lg">
-                    Déposez votre colis au point de collecte le plus proche de <strong>Mondial Relay</strong> ou <strong>La Poste</strong> (selon le transporteur indiqué dans votre bon de retour).
-                  </p>
+                  <h3 className="text-xl font-bold mb-3">{t('step3Title')}</h3>
+                  <p className="text-gray-700 text-lg">{t('step3Text')}</p>
                 </div>
               </div>
             </div>
@@ -151,50 +129,30 @@ export default function ReturnsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold">Remboursements</h2>
+              <h2 className="text-3xl font-bold">{t('refundsTitle')}</h2>
             </div>
             <div className="space-y-4 text-gray-700 text-lg">
-              <p>
-                Une fois votre retour reçu et inspecté, nous vous enverrons un e-mail pour vous informer de l'approbation ou du rejet de votre remboursement.
-              </p>
-              <p>
-                En cas d'approbation, votre remboursement sera traité et un crédit sera automatiquement appliqué à votre carte de crédit ou à votre mode de paiement original, dans un délai de <strong>5 à 10 jours ouvrés</strong>.
-              </p>
+              <p>{t('refundsText1')}</p>
+              <p>{t('refundsText2')}</p>
               <div className="bg-gray-50 border-l-4 border-gray-400 p-4 rounded-r-xl mt-4">
-                <p className="text-sm text-gray-800">
-                  <strong>Note :</strong> Les frais de livraison initiaux ne sont pas remboursables (sauf erreur de notre part ou produit défectueux).
-                </p>
+                <p className="text-sm text-gray-800">{t('refundsNote')}</p>
               </div>
             </div>
           </div>
 
           {/* Exchanges */}
           <div className="bg-white rounded-3xl p-8 md:p-12 brand-shadow">
-            <h2 className="text-3xl font-bold mb-6">Échanges</h2>
+            <h2 className="text-3xl font-bold mb-6">{t('exchangesTitle')}</h2>
             <div className="space-y-4 text-gray-700 text-lg">
-              <p>
-                Nous ne proposons pas d'échanges directs. Si vous souhaitez échanger un article, veuillez le retourner pour un remboursement et passer une nouvelle commande.
-              </p>
+              <p>{t('exchangesText')}</p>
             </div>
           </div>
-
-          {/* Non-Returnable Items */}
-          {/* <div className="bg-white rounded-3xl p-8 md:p-12 brand-shadow">
-            <h2 className="text-3xl font-bold mb-6">Articles Non Retournables</h2>
-            <div className="space-y-4 text-gray-700 text-lg">
-              <p>
-                Certains types de produits ne peuvent être retournés : cartes cadeaux, produits personnalisés, etc.
-              </p>
-            </div>
-          </div> */}
 
           {/* Contact CTA */}
           <div className="bg-gradient-to-br from-fetra-olive/5 to-fetra-pink/5 rounded-3xl p-8 md:p-12 border border-fetra-olive/20">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Une question sur les retours ?</h2>
-              <p className="text-gray-600 mb-6">
-                Notre équipe est là pour vous accompagner à chaque étape.
-              </p>
+              <h2 className="text-2xl font-bold mb-4">{t('questionTitle')}</h2>
+              <p className="text-gray-600 mb-6">{t('questionText')}</p>
               <a
                 href="mailto:contact@fetrabeauty.com"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-fetra-olive text-white rounded-xl font-semibold hover:bg-fetra-olive/90 transition-all hover:scale-[1.02] active:scale-95 shadow-md"
@@ -209,15 +167,13 @@ export default function ReturnsPage() {
 
           {/* CTA */}
           <div className="text-center bg-white rounded-3xl p-12 brand-shadow">
-            <h2 className="text-3xl font-bold mb-4">Découvrez le Rituel FETRA</h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Retrouvez l'éclat naturel de votre peau en 5 minutes par jour
-            </p>
+            <h2 className="text-3xl font-bold mb-4">{t('ctaTitle')}</h2>
+            <p className="text-xl text-gray-600 mb-8">{t('ctaSubtitle')}</p>
             <Link
               href="/product"
               className="inline-block px-8 py-4 bg-fetra-olive text-white rounded-2xl font-semibold hover:bg-fetra-olive/90 transition-all hover:scale-[1.02] active:scale-95 shadow-lg text-lg"
             >
-              Voir le Produit
+              {t('ctaButton')}
             </Link>
           </div>
         </div>
@@ -225,4 +181,3 @@ export default function ReturnsPage() {
     </div>
   );
 }
-
