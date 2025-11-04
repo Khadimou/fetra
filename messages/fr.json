@@ -613,5 +613,25 @@
     "ctaSubtitle": "Découvrez le Kit Quartz Rose 3-en-1 et transformez votre routine beauté",
     "ctaButton": "Voir le Rituel FETRA • 49,90 €",
     "videoNotSupported": "Votre navigateur ne supporte pas la lecture de vidéos."
+  },
+  "ProductCard": {
+    "normalPrice": "Prix normal",
+    "save": "Économisez {percent}%",
+    "stockWarning": "⚠️ Attention : Plus que {stock} en stock !",
+    "freeShipping": "Livraison offerte",
+    "return14Days": "Retour 14 jours",
+    "securePayment": "Paiement sécurisé",
+    "quantity": "Quantité",
+    "adding": "Ajout en cours...",
+    "iWantMyGlow": "Je veux mon glow",
+    "outOfStock": "Rupture de stock",
+    "guaranteeTitle": "Satisfait ou Remboursé 14 jours",
+    "guaranteeSubtitle": "Retour gratuit et remboursement intégral si vous n'êtes pas satisfait(e)",
+    "paymentMethods": "Moyens de paiement acceptés",
+    "securePaymentFull": "Paiement 100% sécurisé",
+    "freeDeliveryText": "Livraison offerte",
+    "decreaseQuantity": "Diminuer la quantité",
+    "increaseQuantity": "Augmenter la quantité",
+    "addToCartError": "Erreur lors de l'ajout au panier"
   }
 }

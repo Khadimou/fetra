@@ -613,5 +613,25 @@
     "ctaSubtitle": "Discover the 3-in-1 Rose Quartz Kit and transform your beauty routine",
     "ctaButton": "See the FETRA Ritual • €49.90",
     "videoNotSupported": "Your browser does not support video playback."
+  },
+  "ProductCard": {
+    "normalPrice": "Normal price",
+    "save": "Save {percent}%",
+    "stockWarning": "⚠️ Warning: Only {stock} left in stock!",
+    "freeShipping": "Free shipping",
+    "return14Days": "14-day returns",
+    "securePayment": "Secure payment",
+    "quantity": "Quantity",
+    "adding": "Adding...",
+    "iWantMyGlow": "I want my glow",
+    "outOfStock": "Out of stock",
+    "guaranteeTitle": "14-Day Satisfaction Guarantee",
+    "guaranteeSubtitle": "Free return and full refund if you're not satisfied",
+    "paymentMethods": "Accepted payment methods",
+    "securePaymentFull": "100% secure payment",
+    "freeDeliveryText": "Free delivery",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "addToCartError": "Error adding to cart"
   }
 }

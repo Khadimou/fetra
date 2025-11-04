@@ -613,5 +613,25 @@
     "ctaSubtitle": "Descubra o Kit de Quartzo Rosa 3 em 1 e transforme sua rotina de beleza",
     "ctaButton": "Ver o Ritual FETRA • € 49,90",
     "videoNotSupported": "Seu navegador não suporta reprodução de vídeo."
+  },
+  "ProductCard": {
+    "normalPrice": "Preço normal",
+    "save": "Economize {percent}%",
+    "stockWarning": "⚠️ Atenção: Apenas {stock} restantes em estoque!",
+    "freeShipping": "Entrega gratuita",
+    "return14Days": "Devolução em 14 dias",
+    "securePayment": "Pagamento seguro",
+    "quantity": "Quantidade",
+    "adding": "Adicionando...",
+    "iWantMyGlow": "Quero meu brilho",
+    "outOfStock": "Fora de estoque",
+    "guaranteeTitle": "Garantia de Satisfação de 14 Dias",
+    "guaranteeSubtitle": "Devolução gratuita e reembolso total se não estiver satisfeito",
+    "paymentMethods": "Métodos de pagamento aceitos",
+    "securePaymentFull": "Pagamento 100% seguro",
+    "freeDeliveryText": "Entrega gratuita",
+    "decreaseQuantity": "Diminuir quantidade",
+    "increaseQuantity": "Aumentar quantidade",
+    "addToCartError": "Erro ao adicionar ao carrinho"
   }
 }

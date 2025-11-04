@@ -1,6 +1,7 @@
 ﻿"use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import type { Product } from "../lib/product";
 import { addToCart } from "../lib/cart";
 import Badges from "./Badges";
@@ -11,6 +12,7 @@ type Props = { product: Product };
 
 export default function ProductCard({ product }: Props) {
   const router = useRouter();
+  const t = useTranslations('ProductCard');
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -112,7 +114,7 @@ export default function ProductCard({ product }: Props) {
         router.push('/cart');
       }, 500);
     } catch (e: any) {
-      alert(e?.message || "Erreur lors de l'ajout au panier");
+      alert(e?.message || t('addToCartError'));
       setLoading(false);
     }
   }
@@ -122,26 +124,49 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <div className="sticky top-24 bg-white rounded-2xl p-6 brand-shadow border border-gray-100">
-      <h1 className="text-2xl font-bold">{product.title}</h1>
-      <p className="mt-2 text-gray-600">{product.descriptionShort}</p>
+      {/* Prix avec urgence */}
+      <div className="mb-4">
+        <div className="text-sm text-gray-500 mb-1">{t('normalPrice')}</div>
+        <div className="flex items-baseline gap-3">
+          <div className="text-xl line-through text-gray-400">{Number(product.value).toFixed(2)} €</div>
+          <div className="text-4xl font-extrabold text-fetra-olive">{Number(product.price).toFixed(2)} €</div>
+        </div>
+        <div className="mt-2 inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold">
+          {t('save', { percent: Math.round((1 - product.price / product.value) * 100) })} 🔥
+        </div>
+      </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-600">
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-fetra-olive/10 text-fetra-olive">Livraison off.</span>
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-fetra-pink/10 text-fetra-pink">Retour 14j</span>
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-100 text-blue-700">Stripe & PayPal</span>
+      {/* Stock urgency - plus visible */}
+      {product.stock <= 20 && (
+        <div className="mb-4 p-3 bg-orange-100 border border-orange-300 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-orange-600">⚠️</span>
+            <span className="text-sm font-bold text-orange-800">
+              {t('stockWarning', { stock: product.stock })}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-4">
+        <p className="text-gray-700 font-medium">{product.descriptionShort}</p>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+          ✓ {t('freeShipping')}
+        </span>
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-100 text-purple-700 font-medium">
+          ✓ {t('return14Days')}
+        </span>
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
+          🔒 {t('securePayment')}
+        </span>
       </div>
 
       <Badges />
 
       <div className="mt-6">
-        <div className="text-sm text-gray-500">Valeur produit</div>
-        <div className="flex items-baseline gap-3 mt-1">
-          <div className="text-sm line-through text-gray-400">{Number(product.value).toFixed(2)} €</div>
-          <div className="text-3xl font-extrabold">{Number(product.price).toFixed(2)} €</div>
-          <div className="ml-auto text-sm text-fetra-olive font-semibold">Vous économisez {Math.round((1 - product.price / product.value) * 100)}%</div>
-        </div>
-
-        <div className="mt-3 text-sm text-gray-500">Stock: {product.stock} disponibles</div>
 
         <Scarcity stock={product.stock} />
 
@@ -149,7 +174,7 @@ export default function ProductCard({ product }: Props) {
 
         <div className="mt-6">
           <label htmlFor="quantity" className="text-sm font-medium block mb-2">
-            Quantité
+            {t('quantity')}
           </label>
           <div className="flex items-center gap-2">
             <button
@@ -157,7 +182,7 @@ export default function ProductCard({ product }: Props) {
               onClick={handleDecrease}
               onKeyDown={(e) => handleKeyDown(e, 'decrease')}
               disabled={quantity <= 1 || isOutOfStock}
-              aria-label="Diminuer la quantité"
+              aria-label={t('decreaseQuantity')}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +197,7 @@ export default function ProductCard({ product }: Props) {
               onClick={handleIncrease}
               onKeyDown={(e) => handleKeyDown(e, 'increase')}
               disabled={quantity >= product.stock || isOutOfStock}
-              aria-label="Augmenter la quantité"
+              aria-label={t('increaseQuantity')}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,14 +210,25 @@ export default function ProductCard({ product }: Props) {
         <button
           onClick={handleAddToCart}
           disabled={loading || isOutOfStock || !isValidQuantity}
-          className="mt-6 w-full py-3 rounded-2xl px-6 font-semibold shadow-sm transition-transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-md bg-fetra-olive hover:bg-fetra-olive/90 text-white"
+          className="mt-6 w-full py-4 rounded-2xl px-6 font-bold text-lg shadow-lg transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-xl bg-gradient-to-r from-fetra-olive to-fetra-pink hover:from-fetra-olive/90 hover:to-fetra-pink/90 text-white"
         >
-          {loading ? "Ajout au panier..." : isOutOfStock ? "Rupture de stock" : `Ajouter au panier • ${Number(product.price * quantity).toFixed(2)} €`}
+          {loading ? `✨ ${t('adding')}` : isOutOfStock ? t('outOfStock') : `✨ ${t('iWantMyGlow')} • ${Number(product.price * quantity).toFixed(2)} €`}
         </button>
+        
+        {/* Garantie visible */}
+        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-start gap-2">
+            <span className="text-green-600 text-lg">✓</span>
+            <div className="text-sm">
+              <p className="font-bold text-green-800">{t('guaranteeTitle')}</p>
+              <p className="text-green-700">{t('guaranteeSubtitle')}</p>
+            </div>
+          </div>
+        </div>
 
         {/* Moyens de paiement acceptés */}
         <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
-          <div className="text-xs font-medium text-gray-700 mb-2 text-center">Moyens de paiement acceptés</div>
+          <div className="text-xs font-medium text-gray-700 mb-2 text-center">{t('paymentMethods')}</div>
           <div className="flex items-center justify-center gap-3">
             {/* Stripe */}
             <div className="flex items-center gap-2 px-3 py-2 bg-white rounded border border-gray-200">
@@ -218,10 +254,10 @@ export default function ProductCard({ product }: Props) {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
-            Paiement 100% sécurisé
+            {t('securePaymentFull')}
           </span>
           <span>•</span>
-          <span>Livraison offerte</span>
+          <span>{t('freeDeliveryText')}</span>
         </div>
       </div>
     </div>
