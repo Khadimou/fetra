@@ -1,6 +1,8 @@
 ﻿export type ProductImage = {
   src: string;
   lqip?: string;
+  type?: 'image' | 'video';
+  poster?: string;
 };
 
 export type Product = {

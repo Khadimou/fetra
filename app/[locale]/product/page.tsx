@@ -137,17 +137,24 @@ export default async function ProductPage() {
       {/* Hero Section - Above the fold */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-12">
         <div className="order-2 md:order-1">
-          {/* Vidéo en premier (version simple sans galerie pour test) */}
+          {/* Vidéo du rituel - Complètement fonctionnelle et cliquable */}
           <div className="mb-4 bg-white rounded-2xl overflow-hidden brand-shadow">
-            <video controls className="w-full" poster="/main.webp">
+            <video 
+              controls 
+              playsInline
+              className="w-full" 
+              poster="/main.webp"
+              preload="metadata"
+            >
               <source src="/rituel.mp4" type="video/mp4" />
               {t('videoNotSupported')}
             </video>
           </div>
           
+          {/* Galerie d'images uniquement (sans vidéo) */}
           <Gallery 
-            images={product.images.slice(1)} 
-            lqips={product.images.slice(1).map((img: any) => typeof img === 'object' ? img.lqip : undefined)}
+            images={product.images} 
+            lqips={product.images.map((img: any) => typeof img === 'object' ? img.lqip : undefined)}
           />
         </div>
 
@@ -178,9 +185,9 @@ export default async function ProductPage() {
                 <p className="text-sm font-semibold text-orange-800">
                   {t('urgencyBanner', { stock: product.stock })}
                 </p>
-              </div>
-            )}
-
+            </div>
+          )}
+          
             <ProductCard product={product} />
           </div>
         </div>
