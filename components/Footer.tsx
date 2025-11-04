@@ -1,5 +1,6 @@
 'use client';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import Logo from './Logo';
 import NewsletterForm from './NewsletterForm';
 
@@ -18,19 +19,19 @@ export default function Footer() {
           <h4 className="font-semibold mb-3">{t('helpContact')}</h4>
           <ul className="space-y-2">
             <li>
-              <a href="/shipping" className="hover:text-fetra-olive transition-colors">{t('shipping')}</a>
+              <Link href="/shipping" className="hover:text-fetra-olive transition-colors">{t('shipping')}</Link>
             </li>
             <li>
-              <a href="/returns" className="hover:text-fetra-olive transition-colors">{t('returns')}</a>
+              <Link href="/returns" className="hover:text-fetra-olive transition-colors">{t('returns')}</Link>
             </li>
             <li>
-              <a href="/faq" className="hover:text-fetra-olive transition-colors">{t('faq')}</a>
+              <Link href="/faq" className="hover:text-fetra-olive transition-colors">{t('faq')}</Link>
             </li>
             <li>
-              <a href="/support" className="hover:text-fetra-olive transition-colors">{t('support')}</a>
+              <Link href="/support" className="hover:text-fetra-olive transition-colors">{t('support')}</Link>
             </li>
             <li>
-              <a href="/contact" className="hover:text-fetra-olive transition-colors">{t('contact')}</a>
+              <Link href="/contact" className="hover:text-fetra-olive transition-colors">{t('contact')}</Link>
             </li>
             <li>
               <a href="mailto:contact@fetrabeauty.com" className="text-fetra-olive hover:text-fetra-olive/80">
