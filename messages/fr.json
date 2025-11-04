@@ -224,5 +224,45 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "required": "Requis"
+  },
+  "Cart": {
+    "title": "Panier ({count})",
+    "empty": {
+      "title": "Votre panier est vide",
+      "description": "Ajoutez des produits pour commencer votre rituel beauté",
+      "cta": "Découvrir nos produits"
+    },
+    "quantity": "Quantité",
+    "remove": "Retirer",
+    "subtotal": "Sous-total",
+    "discount": "Réduction",
+    "shipping": "Livraison",
+    "freeShipping": "Gratuite",
+    "total": "Total",
+    "promoCode": "Code promo",
+    "promoPlaceholder": "Entrez votre code",
+    "apply": "Appliquer",
+    "invalidCode": "Code promo invalide",
+    "checkout": "Passer commande",
+    "continueShopping": "Continuer mes achats"
+  },
+  "Footer": {
+    "description": "Rituel Visage • Livraison offerte • Retour 14 jours",
+    "helpContact": "Aide & Contact",
+    "shipping": "Livraison",
+    "returns": "Retour",
+    "faq": "FAQ",
+    "support": "Support",
+    "contact": "Contact",
+    "newsletter": "Newsletter",
+    "emailPlaceholder": "Votre email",
+    "subscribe": "S'inscrire",
+    "followUs": "Suivez-nous",
+    "followInstagram": "Suivez-nous sur Instagram",
+    "followTikTok": "Suivez-nous sur TikTok",
+    "securePayment": "Paiement sécurisé",
+    "freeDelivery": "Livraison gratuite",
+    "paymentMethods": "Moyens de paiement :",
+    "copyright": "© 2025 FETRA — Tous droits réservés"
   }
 }

@@ -224,5 +224,45 @@
     "search": "Search",
     "filter": "Filter",
     "required": "Required"
+  },
+  "Cart": {
+    "title": "Cart ({count})",
+    "empty": {
+      "title": "Your cart is empty",
+      "description": "Add products to start your beauty ritual",
+      "cta": "Discover our products"
+    },
+    "quantity": "Quantity",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "freeShipping": "Free",
+    "total": "Total",
+    "promoCode": "Promo code",
+    "promoPlaceholder": "Enter your code",
+    "apply": "Apply",
+    "invalidCode": "Invalid promo code",
+    "checkout": "Checkout",
+    "continueShopping": "Continue shopping"
+  },
+  "Footer": {
+    "description": "Face Ritual • Free delivery • 14-day returns",
+    "helpContact": "Help & Contact",
+    "shipping": "Shipping",
+    "returns": "Returns",
+    "faq": "FAQ",
+    "support": "Support",
+    "contact": "Contact",
+    "newsletter": "Newsletter",
+    "emailPlaceholder": "Your email",
+    "subscribe": "Subscribe",
+    "followUs": "Follow us",
+    "followInstagram": "Follow us on Instagram",
+    "followTikTok": "Follow us on TikTok",
+    "securePayment": "Secure payment",
+    "freeDelivery": "Free delivery",
+    "paymentMethods": "Payment methods:",
+    "copyright": "© 2025 FETRA — All rights reserved"
   }
 }

@@ -224,5 +224,45 @@
     "search": "Pesquisar",
     "filter": "Filtrar",
     "required": "Obrigatório"
+  },
+  "Cart": {
+    "title": "Carrinho ({count})",
+    "empty": {
+      "title": "Seu carrinho está vazio",
+      "description": "Adicione produtos para começar seu ritual de beleza",
+      "cta": "Descobrir nossos produtos"
+    },
+    "quantity": "Quantidade",
+    "remove": "Remover",
+    "subtotal": "Subtotal",
+    "discount": "Desconto",
+    "shipping": "Entrega",
+    "freeShipping": "Gratuita",
+    "total": "Total",
+    "promoCode": "Código promocional",
+    "promoPlaceholder": "Digite seu código",
+    "apply": "Aplicar",
+    "invalidCode": "Código promocional inválido",
+    "checkout": "Finalizar compra",
+    "continueShopping": "Continuar comprando"
+  },
+  "Footer": {
+    "description": "Ritual Facial • Entrega gratuita • Devolução em 14 dias",
+    "helpContact": "Ajuda & Contato",
+    "shipping": "Entrega",
+    "returns": "Devolução",
+    "faq": "FAQ",
+    "support": "Suporte",
+    "contact": "Contato",
+    "newsletter": "Newsletter",
+    "emailPlaceholder": "Seu e-mail",
+    "subscribe": "Inscrever-se",
+    "followUs": "Siga-nos",
+    "followInstagram": "Siga-nos no Instagram",
+    "followTikTok": "Siga-nos no TikTok",
+    "securePayment": "Pagamento seguro",
+    "freeDelivery": "Entrega gratuita",
+    "paymentMethods": "Métodos de pagamento:",
+    "copyright": "© 2025 FETRA — Todos os direitos reservados"
   }
 }

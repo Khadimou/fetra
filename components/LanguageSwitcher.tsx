@@ -32,13 +32,19 @@ export default function LanguageSwitcher() {
   }, [isOpen]);
 
   const switchLocale = (newLocale: string) => {
+    // Get the full pathname from window.location to ensure we have the locale prefix
+    const fullPath = window.location.pathname;
+
     // Remove current locale from pathname if it exists
-    const pathnameWithoutLocale = pathname.replace(/^\/(fr|en|pt)/, '') || '/';
+    const pathnameWithoutLocale = fullPath.replace(/^\/(fr|en|pt)(\/|$)/, '/');
+
+    // Ensure we have a clean path (no double slashes)
+    const cleanPath = pathnameWithoutLocale === '/' ? '/' : pathnameWithoutLocale;
 
     // Add new locale to path (unless it's the default 'fr')
     const newPath = newLocale === 'fr'
-      ? pathnameWithoutLocale
-      : `/${newLocale}${pathnameWithoutLocale}`;
+      ? cleanPath
+      : `/${newLocale}${cleanPath}`;
 
     router.push(newPath);
     setIsOpen(false);
