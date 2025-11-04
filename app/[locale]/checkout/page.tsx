@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getCart, type Cart } from "../../lib/cart";
+import { getCart, type Cart } from "../../../lib/cart";
 
 export default function CheckoutPage() {
   const router = useRouter();

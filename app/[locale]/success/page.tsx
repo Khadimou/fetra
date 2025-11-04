@@ -2,8 +2,8 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import OrderDetails from '../../components/OrderDetails';
-import ClearCartOnSuccess from '../../components/ClearCartOnSuccess';
+import OrderDetails from '../../../components/OrderDetails';
+import ClearCartOnSuccess from '../../../components/ClearCartOnSuccess';
 
 export const metadata: Metadata = {
   title: 'Commande confirmée — FETRA BEAUTY',

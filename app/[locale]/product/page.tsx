@@ -1,11 +1,11 @@
 ﻿import Image from "next/image";
 import type { Metadata } from "next";
-import { getProduct } from "../../lib/product";
-import ProductCard from "../../components/ProductCard";
-import Gallery from "../../components/Gallery";
-import Reviews from "../../components/Reviews";
-import MobileBarBridge from "../../components/MobileBarBridge";
-import FAQ from "../../components/FAQ";
+import { getProduct } from "../../../lib/product";
+import ProductCard from "../../../components/ProductCard";
+import Gallery from "../../../components/Gallery";
+import Reviews from "../../../components/Reviews";
+import MobileBarBridge from "../../../components/MobileBarBridge";
+import FAQ from "../../../components/FAQ";
 
 export const dynamic = "force-dynamic";
 

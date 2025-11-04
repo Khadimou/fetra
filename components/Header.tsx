@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Logo from './Logo';
 import SearchModal from './SearchModal';
 import CartCounter from './CartCounter';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -92,6 +93,11 @@ export default function Header() {
                 </svg>
               </a>
 
+              {/* Language Switcher */}
+              <div className="hidden md:block">
+                <LanguageSwitcher />
+              </div>
+
               {/* Cart */}
               <a
                 href="/cart"
@@ -153,8 +159,8 @@ export default function Header() {
                     </svg>
                     Mon Compte
                   </a>
-                  <a 
-                    href="/search" 
+                  <a
+                    href="/search"
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,6 +168,9 @@ export default function Header() {
                     </svg>
                     Rechercher
                   </a>
+                  <div className="px-4 py-3">
+                    <LanguageSwitcher />
+                  </div>
                 </div>
               </div>
             </nav>

@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import type { Metadata } from "next";
-import Logo from "../../components/Logo";
+import { useTranslations } from "next-intl";
+import Logo from "../../../components/Logo";
 
 export default function LoginPage() {
+  const t = useTranslations('Auth.login');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -12,13 +13,13 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsLoading(true);
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // In a real app, handle authentication here
     console.log("Login attempt:", { email, password });
-    
+
     setIsLoading(false);
   }
 
@@ -34,14 +35,14 @@ export default function LoginPage() {
 
         {/* Card */}
         <div className="bg-white rounded-2xl brand-shadow p-8">
-          <h1 className="text-2xl font-bold text-center mb-2">Bon retour !</h1>
-          <p className="text-gray-600 text-center mb-8">Connectez-vous à votre compte FETRA</p>
+          <h1 className="text-2xl font-bold text-center mb-2">{t('title')}</h1>
+          <p className="text-gray-600 text-center mb-8">{t('subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+                {t('email')}
               </label>
               <input
                 id="email"
@@ -58,10 +59,10 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Mot de passe
+                  {t('password')}
                 </label>
                 <a href="/forgot-password" className="text-sm text-fetra-olive hover:text-fetra-olive/80">
-                  Mot de passe oublié ?
+                  {t('forgotPassword')}
                 </a>
               </div>
               <input
@@ -83,7 +84,7 @@ export default function LoginPage() {
                 className="w-4 h-4 text-fetra-olive border-gray-300 rounded focus:ring-fetra-olive/30"
               />
               <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
-                Se souvenir de moi
+                {t('rememberMe')}
               </label>
             </div>
 
@@ -93,7 +94,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="w-full py-3 bg-fetra-olive text-white rounded-xl font-semibold hover:bg-fetra-olive/90 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Connexion..." : "Se connecter"}
+              {isLoading ? t('loggingIn') : t('loginButton')}
             </button>
           </form>
 
@@ -103,7 +104,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Ou continuer avec</span>
+              <span className="px-4 bg-white text-gray-500">{t('orContinue')}</span>
             </div>
           </div>
 
@@ -140,9 +141,9 @@ export default function LoginPage() {
 
           {/* Sign up link */}
           <p className="mt-6 text-center text-sm text-gray-600">
-            Pas encore de compte ?{" "}
+            {t('noAccount')}{" "}
             <Link href="/signup" className="font-medium text-fetra-olive hover:text-fetra-olive/80">
-              Créer un compte
+              {t('createAccount')}
             </Link>
           </p>
         </div>
@@ -150,7 +151,7 @@ export default function LoginPage() {
         {/* Back to home */}
         <div className="mt-6 text-center">
           <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
-            ← Retour à l'accueil
+            ← {t('backToHome')}
           </Link>
         </div>
       </div>

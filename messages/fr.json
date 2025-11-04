@@ -1,0 +1,228 @@
+{
+  "Header": {
+    "announcement": "Livraison Gratuite + 10% de réduction avec le code {code}",
+    "promoCode": "BIENVENUE10",
+    "ritual": "Le Rituel",
+    "ourStory": "Notre Histoire",
+    "tips": "Conseils",
+    "search": "Recherche",
+    "myAccount": "Mon compte",
+    "cart": "Panier",
+    "menu": "Menu"
+  },
+  "Home": {
+    "meta": {
+      "title": "FETRA — Rituel Visage Liftant & Beauté Naturelle",
+      "description": "Découvrez le rituel visage FETRA : Kit Quartz Rose 3-en-1 & Huile Régénérante. Un moment de bien-être pour révéler l'éclat naturel de votre peau."
+    },
+    "hero": {
+      "launchOffer": "Offre de Lancement",
+      "title": "Révélez l'éclat",
+      "titleGradient": "naturel de votre peau",
+      "subtitle": "Un rituel de 5 minutes pour drainer, sculpter et illuminer votre visage. Adapté à tous les types de peau et tous les genres.",
+      "discoverRitual": "Découvrir le Rituel",
+      "learnMore": "En savoir plus",
+      "freeDelivery": "Livraison gratuite",
+      "returns": "Retour 14 jours",
+      "customerRating": "Note client"
+    },
+    "benefits": {
+      "title": "Un Rituel Unique",
+      "subtitle": "Découvrez les bienfaits du Quartz Rose et de notre huile régénérante pour une peau visiblement transformée",
+      "drainage": {
+        "title": "Drainage Lymphatique",
+        "description": "Réduit les poches et les cernes, stimule la circulation sanguine pour un visage reposé et frais."
+      },
+      "lifting": {
+        "title": "Effet Liftant",
+        "description": "Sculpte et raffermit les contours du visage pour un effet liftant visible dès les premières utilisations."
+      },
+      "radiance": {
+        "title": "Éclat Naturel",
+        "description": "Illumine et unifie le teint grâce aux propriétés régénérantes de l'huile et du Quartz Rose."
+      }
+    },
+    "cta": {
+      "title": "Prêt à transformer votre routine beauté ?",
+      "subtitle": "Rejoignez les centaines de personnes qui ont déjà adopté le rituel FETRA",
+      "orderNow": "Commander maintenant • 49,90 €",
+      "guarantee": "Livraison gratuite • Retour sous 14 jours"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Bon retour !",
+      "subtitle": "Connectez-vous à votre compte FETRA",
+      "email": "Email",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "rememberMe": "Se souvenir de moi",
+      "loginButton": "Se connecter",
+      "loggingIn": "Connexion...",
+      "orContinue": "Ou continuer avec",
+      "noAccount": "Pas encore de compte ?",
+      "createAccount": "Créer un compte",
+      "backToHome": "Retour à l'accueil"
+    },
+    "signup": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez la communauté FETRA",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "phone": "Téléphone",
+      "phoneOptional": "Téléphone (optionnel)",
+      "acceptTerms": "J'accepte les",
+      "terms": "conditions générales",
+      "and": "et",
+      "privacy": "politique de confidentialité",
+      "createButton": "Créer mon compte",
+      "creating": "Création du compte...",
+      "orContinue": "Ou continuer avec",
+      "alreadyAccount": "Déjà un compte ?",
+      "login": "Se connecter",
+      "backToHome": "Retour à l'accueil",
+      "passwordMin": "Minimum 8 caractères",
+      "errors": {
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "acceptTermsRequired": "Veuillez accepter les conditions générales"
+      }
+    }
+  },
+  "Account": {
+    "title": "Mon Compte",
+    "home": "Accueil",
+    "logout": "Déconnexion",
+    "welcome": "Bienvenue ! Votre compte a été créé avec succès.",
+    "information": "Informations",
+    "name": "Nom",
+    "email": "Email",
+    "myOrders": "Mes Commandes",
+    "loading": "Chargement...",
+    "noOrders": "Vous n'avez pas encore de commandes",
+    "discoverProducts": "Découvrir nos produits",
+    "order": "Commande",
+    "total": "Total",
+    "trackOrder": "Suivre ma commande",
+    "status": {
+      "delivered": "Livrée",
+      "shipped": "Expédiée",
+      "processing": "En préparation"
+    }
+  },
+  "Admin": {
+    "dashboard": "Dashboard Admin",
+    "logout": "Déconnexion",
+    "verifying": "Vérification...",
+    "totalOrders": "Total commandes",
+    "pending": "En attente",
+    "shipped": "Expédiées",
+    "delivered": "Livrées",
+    "productManagement": "Gestion des Produits",
+    "manageStock": "Gérer le stock et les produits",
+    "allOrders": "Toutes les Commandes",
+    "viewHistory": "Voir l'historique complet",
+    "recentOrders": "Commandes récentes",
+    "loading": "Chargement...",
+    "noOrders": "Aucune commande",
+    "order": "Commande",
+    "customer": "Client",
+    "amount": "Montant",
+    "status": "Statut",
+    "date": "Date",
+    "actions": "Actions",
+    "viewDetails": "Voir détails",
+    "paid": "Payée",
+    "login": {
+      "title": "Connexion Admin",
+      "subtitle": "FETRA Dashboard",
+      "email": "Email",
+      "password": "Mot de passe",
+      "loginButton": "Se connecter",
+      "loggingIn": "Connexion...",
+      "invalidCredentials": "Identifiants invalides",
+      "connectionError": "Erreur de connexion",
+      "authError": "Erreur d'authentification"
+    },
+    "products": {
+      "title": "Gestion des Produits",
+      "backToDashboard": "Retour au dashboard",
+      "allProducts": "Tous les produits",
+      "newProduct": "Nouveau produit",
+      "loading": "Chargement...",
+      "noProducts": "Aucun produit",
+      "product": "Produit",
+      "sku": "SKU",
+      "price": "Prix",
+      "stock": "Stock",
+      "stockStatus": "Statut Stock",
+      "actions": "Actions",
+      "save": "Sauver",
+      "edit": "Modifier",
+      "inactive": "Inactif",
+      "stockUpdated": "Stock mis à jour avec succès",
+      "outOfStock": "Stock épuisé",
+      "lowStock": "Il ne reste que {count} produit",
+      "lowStockPlural": "Il ne reste que {count} produits",
+      "inStock": "En stock ({count})"
+    },
+    "orders": {
+      "title": "Toutes les Commandes",
+      "backToDashboard": "Retour au dashboard",
+      "total": "Total",
+      "pending": "En attente",
+      "paid": "Payées",
+      "shipped": "Expédiées",
+      "delivered": "Livrées",
+      "search": "Rechercher",
+      "searchPlaceholder": "Numéro, email, nom...",
+      "filterByStatus": "Filtrer par statut",
+      "allStatuses": "Tous les statuts",
+      "processing": "En préparation",
+      "cancelled": "Annulées",
+      "refunded": "Remboursées",
+      "refresh": "Actualiser",
+      "order": "Commande",
+      "orderCount": "{count} commande",
+      "orderCountPlural": "{count} commandes",
+      "noOrdersMatch": "Aucune commande ne correspond aux filtres",
+      "noOrders": "Aucune commande"
+    },
+    "newProduct": {
+      "title": "Nouveau Produit",
+      "backToProducts": "Retour aux produits",
+      "sku": "SKU",
+      "skuHelper": "Identifiant unique du produit (ex: FETRA-RIT-001)",
+      "productName": "Nom du produit",
+      "description": "Description",
+      "descriptionPlaceholder": "Description détaillée du produit...",
+      "price": "Prix (€)",
+      "initialStock": "Stock initial",
+      "lowStockThreshold": "Seuil de stock faible",
+      "lowStockHelper": "Alerte \"Il ne reste que X produits\" sera affichée quand le stock atteint ce seuil",
+      "imageUrl": "URL de l'image",
+      "activeProduct": "Produit actif (visible pour les clients)",
+      "cancel": "Annuler",
+      "create": "Créer le produit",
+      "creating": "Création...",
+      "fillRequired": "Veuillez remplir tous les champs obligatoires",
+      "createError": "Erreur lors de la création du produit"
+    }
+  },
+  "Common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "required": "Requis"
+  }
+}

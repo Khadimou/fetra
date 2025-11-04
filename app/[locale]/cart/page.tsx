@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getCart, updateQuantity, removeFromCart, type Cart } from "../../lib/cart";
+import { getCart, updateQuantity, removeFromCart, type Cart } from "../../../lib/cart";
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart>({ items: [], total: 0, itemCount: 0 });

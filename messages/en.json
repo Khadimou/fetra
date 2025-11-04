@@ -1,0 +1,228 @@
+{
+  "Header": {
+    "announcement": "Free Delivery + 10% off with code {code}",
+    "promoCode": "WELCOME10",
+    "ritual": "The Ritual",
+    "ourStory": "Our Story",
+    "tips": "Tips",
+    "search": "Search",
+    "myAccount": "My account",
+    "cart": "Cart",
+    "menu": "Menu"
+  },
+  "Home": {
+    "meta": {
+      "title": "FETRA — Lifting Face Ritual & Natural Beauty",
+      "description": "Discover the FETRA face ritual: Rose Quartz 3-in-1 Kit & Regenerating Oil. A wellness moment to reveal your skin's natural radiance."
+    },
+    "hero": {
+      "launchOffer": "Launch Offer",
+      "title": "Reveal the radiance",
+      "titleGradient": "of your natural skin",
+      "subtitle": "A 5-minute ritual to drain, sculpt and illuminate your face. Suitable for all skin types and genders.",
+      "discoverRitual": "Discover the Ritual",
+      "learnMore": "Learn more",
+      "freeDelivery": "Free delivery",
+      "returns": "14-day returns",
+      "customerRating": "Customer rating"
+    },
+    "benefits": {
+      "title": "A Unique Ritual",
+      "subtitle": "Discover the benefits of Rose Quartz and our regenerating oil for visibly transformed skin",
+      "drainage": {
+        "title": "Lymphatic Drainage",
+        "description": "Reduces puffiness and dark circles, stimulates blood circulation for a rested and fresh face."
+      },
+      "lifting": {
+        "title": "Lifting Effect",
+        "description": "Sculpts and firms facial contours for a visible lifting effect from the first uses."
+      },
+      "radiance": {
+        "title": "Natural Radiance",
+        "description": "Illuminates and evens skin tone thanks to the regenerating properties of the oil and Rose Quartz."
+      }
+    },
+    "cta": {
+      "title": "Ready to transform your beauty routine?",
+      "subtitle": "Join the hundreds of people who have already adopted the FETRA ritual",
+      "orderNow": "Order now • €49.90",
+      "guarantee": "Free delivery • 14-day returns"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Welcome back!",
+      "subtitle": "Log in to your FETRA account",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "rememberMe": "Remember me",
+      "loginButton": "Log in",
+      "loggingIn": "Logging in...",
+      "orContinue": "Or continue with",
+      "noAccount": "Don't have an account yet?",
+      "createAccount": "Create an account",
+      "backToHome": "Back to home"
+    },
+    "signup": {
+      "title": "Create an Account",
+      "subtitle": "Join the FETRA community",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "phone": "Phone",
+      "phoneOptional": "Phone (optional)",
+      "acceptTerms": "I accept the",
+      "terms": "terms and conditions",
+      "and": "and",
+      "privacy": "privacy policy",
+      "createButton": "Create my account",
+      "creating": "Creating account...",
+      "orContinue": "Or continue with",
+      "alreadyAccount": "Already have an account?",
+      "login": "Log in",
+      "backToHome": "Back to home",
+      "passwordMin": "Minimum 8 characters",
+      "errors": {
+        "passwordTooShort": "Password must contain at least 8 characters",
+        "passwordMismatch": "Passwords do not match",
+        "acceptTermsRequired": "Please accept the terms and conditions"
+      }
+    }
+  },
+  "Account": {
+    "title": "My Account",
+    "home": "Home",
+    "logout": "Log out",
+    "welcome": "Welcome! Your account has been created successfully.",
+    "information": "Information",
+    "name": "Name",
+    "email": "Email",
+    "myOrders": "My Orders",
+    "loading": "Loading...",
+    "noOrders": "You don't have any orders yet",
+    "discoverProducts": "Discover our products",
+    "order": "Order",
+    "total": "Total",
+    "trackOrder": "Track my order",
+    "status": {
+      "delivered": "Delivered",
+      "shipped": "Shipped",
+      "processing": "Processing"
+    }
+  },
+  "Admin": {
+    "dashboard": "Admin Dashboard",
+    "logout": "Log out",
+    "verifying": "Verifying...",
+    "totalOrders": "Total orders",
+    "pending": "Pending",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "productManagement": "Product Management",
+    "manageStock": "Manage stock and products",
+    "allOrders": "All Orders",
+    "viewHistory": "View complete history",
+    "recentOrders": "Recent orders",
+    "loading": "Loading...",
+    "noOrders": "No orders",
+    "order": "Order",
+    "customer": "Customer",
+    "amount": "Amount",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions",
+    "viewDetails": "View details",
+    "paid": "Paid",
+    "login": {
+      "title": "Admin Login",
+      "subtitle": "FETRA Dashboard",
+      "email": "Email",
+      "password": "Password",
+      "loginButton": "Log in",
+      "loggingIn": "Logging in...",
+      "invalidCredentials": "Invalid credentials",
+      "connectionError": "Connection error",
+      "authError": "Authentication error"
+    },
+    "products": {
+      "title": "Product Management",
+      "backToDashboard": "Back to dashboard",
+      "allProducts": "All products",
+      "newProduct": "New product",
+      "loading": "Loading...",
+      "noProducts": "No products",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "stock": "Stock",
+      "stockStatus": "Stock Status",
+      "actions": "Actions",
+      "save": "Save",
+      "edit": "Edit",
+      "inactive": "Inactive",
+      "stockUpdated": "Stock updated successfully",
+      "outOfStock": "Out of stock",
+      "lowStock": "Only {count} product left",
+      "lowStockPlural": "Only {count} products left",
+      "inStock": "In stock ({count})"
+    },
+    "orders": {
+      "title": "All Orders",
+      "backToDashboard": "Back to dashboard",
+      "total": "Total",
+      "pending": "Pending",
+      "paid": "Paid",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "search": "Search",
+      "searchPlaceholder": "Number, email, name...",
+      "filterByStatus": "Filter by status",
+      "allStatuses": "All statuses",
+      "processing": "Processing",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded",
+      "refresh": "Refresh",
+      "order": "Order",
+      "orderCount": "{count} order",
+      "orderCountPlural": "{count} orders",
+      "noOrdersMatch": "No orders match the filters",
+      "noOrders": "No orders"
+    },
+    "newProduct": {
+      "title": "New Product",
+      "backToProducts": "Back to products",
+      "sku": "SKU",
+      "skuHelper": "Unique product identifier (e.g., FETRA-RIT-001)",
+      "productName": "Product name",
+      "description": "Description",
+      "descriptionPlaceholder": "Detailed product description...",
+      "price": "Price (€)",
+      "initialStock": "Initial stock",
+      "lowStockThreshold": "Low stock threshold",
+      "lowStockHelper": "Alert \"Only X products left\" will be displayed when stock reaches this threshold",
+      "imageUrl": "Image URL",
+      "activeProduct": "Active product (visible to customers)",
+      "cancel": "Cancel",
+      "create": "Create product",
+      "creating": "Creating...",
+      "fillRequired": "Please fill in all required fields",
+      "createError": "Error creating product"
+    }
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "required": "Required"
+  }
+}

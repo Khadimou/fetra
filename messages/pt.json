@@ -1,0 +1,228 @@
+{
+  "Header": {
+    "announcement": "Entrega Gratuita + 10% de desconto com o código {code}",
+    "promoCode": "BEMVINDO10",
+    "ritual": "O Ritual",
+    "ourStory": "Nossa História",
+    "tips": "Dicas",
+    "search": "Pesquisar",
+    "myAccount": "Minha conta",
+    "cart": "Carrinho",
+    "menu": "Menu"
+  },
+  "Home": {
+    "meta": {
+      "title": "FETRA — Ritual Facial Lifting & Beleza Natural",
+      "description": "Descubra o ritual facial FETRA: Kit Quartzo Rosa 3 em 1 & Óleo Regenerador. Um momento de bem-estar para revelar o brilho natural da sua pele."
+    },
+    "hero": {
+      "launchOffer": "Oferta de Lançamento",
+      "title": "Revele o brilho",
+      "titleGradient": "natural da sua pele",
+      "subtitle": "Um ritual de 5 minutos para drenar, esculpir e iluminar seu rosto. Adequado para todos os tipos de pele e gêneros.",
+      "discoverRitual": "Descobrir o Ritual",
+      "learnMore": "Saiba mais",
+      "freeDelivery": "Entrega gratuita",
+      "returns": "Devolução em 14 dias",
+      "customerRating": "Avaliação dos clientes"
+    },
+    "benefits": {
+      "title": "Um Ritual Único",
+      "subtitle": "Descubra os benefícios do Quartzo Rosa e do nosso óleo regenerador para uma pele visivelmente transformada",
+      "drainage": {
+        "title": "Drenagem Linfática",
+        "description": "Reduz bolsas e olheiras, estimula a circulação sanguínea para um rosto descansado e fresco."
+      },
+      "lifting": {
+        "title": "Efeito Lifting",
+        "description": "Esculpe e firma os contornos faciais para um efeito lifting visível desde os primeiros usos."
+      },
+      "radiance": {
+        "title": "Brilho Natural",
+        "description": "Ilumina e uniformiza o tom da pele graças às propriedades regeneradoras do óleo e do Quartzo Rosa."
+      }
+    },
+    "cta": {
+      "title": "Pronto para transformar sua rotina de beleza?",
+      "subtitle": "Junte-se às centenas de pessoas que já adotaram o ritual FETRA",
+      "orderNow": "Peça agora • €49,90",
+      "guarantee": "Entrega gratuita • Devolução em 14 dias"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Bem-vindo de volta!",
+      "subtitle": "Faça login na sua conta FETRA",
+      "email": "E-mail",
+      "password": "Senha",
+      "forgotPassword": "Esqueceu a senha?",
+      "rememberMe": "Lembrar de mim",
+      "loginButton": "Entrar",
+      "loggingIn": "Entrando...",
+      "orContinue": "Ou continue com",
+      "noAccount": "Não tem uma conta ainda?",
+      "createAccount": "Criar uma conta",
+      "backToHome": "Voltar para o início"
+    },
+    "signup": {
+      "title": "Criar uma Conta",
+      "subtitle": "Junte-se à comunidade FETRA",
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "email": "E-mail",
+      "password": "Senha",
+      "confirmPassword": "Confirmar Senha",
+      "phone": "Telefone",
+      "phoneOptional": "Telefone (opcional)",
+      "acceptTerms": "Eu aceito os",
+      "terms": "termos e condições",
+      "and": "e",
+      "privacy": "política de privacidade",
+      "createButton": "Criar minha conta",
+      "creating": "Criando conta...",
+      "orContinue": "Ou continue com",
+      "alreadyAccount": "Já tem uma conta?",
+      "login": "Entrar",
+      "backToHome": "Voltar para o início",
+      "passwordMin": "Mínimo 8 caracteres",
+      "errors": {
+        "passwordTooShort": "A senha deve conter pelo menos 8 caracteres",
+        "passwordMismatch": "As senhas não coincidem",
+        "acceptTermsRequired": "Por favor, aceite os termos e condições"
+      }
+    }
+  },
+  "Account": {
+    "title": "Minha Conta",
+    "home": "Início",
+    "logout": "Sair",
+    "welcome": "Bem-vindo! Sua conta foi criada com sucesso.",
+    "information": "Informações",
+    "name": "Nome",
+    "email": "E-mail",
+    "myOrders": "Meus Pedidos",
+    "loading": "Carregando...",
+    "noOrders": "Você ainda não tem pedidos",
+    "discoverProducts": "Descobrir nossos produtos",
+    "order": "Pedido",
+    "total": "Total",
+    "trackOrder": "Rastrear meu pedido",
+    "status": {
+      "delivered": "Entregue",
+      "shipped": "Enviado",
+      "processing": "Em preparação"
+    }
+  },
+  "Admin": {
+    "dashboard": "Painel Admin",
+    "logout": "Sair",
+    "verifying": "Verificando...",
+    "totalOrders": "Total de pedidos",
+    "pending": "Pendente",
+    "shipped": "Enviados",
+    "delivered": "Entregues",
+    "productManagement": "Gestão de Produtos",
+    "manageStock": "Gerenciar estoque e produtos",
+    "allOrders": "Todos os Pedidos",
+    "viewHistory": "Ver histórico completo",
+    "recentOrders": "Pedidos recentes",
+    "loading": "Carregando...",
+    "noOrders": "Nenhum pedido",
+    "order": "Pedido",
+    "customer": "Cliente",
+    "amount": "Valor",
+    "status": "Status",
+    "date": "Data",
+    "actions": "Ações",
+    "viewDetails": "Ver detalhes",
+    "paid": "Pago",
+    "login": {
+      "title": "Login Admin",
+      "subtitle": "Painel FETRA",
+      "email": "E-mail",
+      "password": "Senha",
+      "loginButton": "Entrar",
+      "loggingIn": "Entrando...",
+      "invalidCredentials": "Credenciais inválidas",
+      "connectionError": "Erro de conexão",
+      "authError": "Erro de autenticação"
+    },
+    "products": {
+      "title": "Gestão de Produtos",
+      "backToDashboard": "Voltar ao painel",
+      "allProducts": "Todos os produtos",
+      "newProduct": "Novo produto",
+      "loading": "Carregando...",
+      "noProducts": "Nenhum produto",
+      "product": "Produto",
+      "sku": "SKU",
+      "price": "Preço",
+      "stock": "Estoque",
+      "stockStatus": "Status do Estoque",
+      "actions": "Ações",
+      "save": "Salvar",
+      "edit": "Editar",
+      "inactive": "Inativo",
+      "stockUpdated": "Estoque atualizado com sucesso",
+      "outOfStock": "Sem estoque",
+      "lowStock": "Apenas {count} produto restante",
+      "lowStockPlural": "Apenas {count} produtos restantes",
+      "inStock": "Em estoque ({count})"
+    },
+    "orders": {
+      "title": "Todos os Pedidos",
+      "backToDashboard": "Voltar ao painel",
+      "total": "Total",
+      "pending": "Pendente",
+      "paid": "Pagos",
+      "shipped": "Enviados",
+      "delivered": "Entregues",
+      "search": "Pesquisar",
+      "searchPlaceholder": "Número, e-mail, nome...",
+      "filterByStatus": "Filtrar por status",
+      "allStatuses": "Todos os status",
+      "processing": "Em preparação",
+      "cancelled": "Cancelados",
+      "refunded": "Reembolsados",
+      "refresh": "Atualizar",
+      "order": "Pedido",
+      "orderCount": "{count} pedido",
+      "orderCountPlural": "{count} pedidos",
+      "noOrdersMatch": "Nenhum pedido corresponde aos filtros",
+      "noOrders": "Nenhum pedido"
+    },
+    "newProduct": {
+      "title": "Novo Produto",
+      "backToProducts": "Voltar aos produtos",
+      "sku": "SKU",
+      "skuHelper": "Identificador único do produto (ex: FETRA-RIT-001)",
+      "productName": "Nome do produto",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Descrição detalhada do produto...",
+      "price": "Preço (€)",
+      "initialStock": "Estoque inicial",
+      "lowStockThreshold": "Limite de estoque baixo",
+      "lowStockHelper": "Alerta \"Apenas X produtos restantes\" será exibido quando o estoque atingir esse limite",
+      "imageUrl": "URL da imagem",
+      "activeProduct": "Produto ativo (visível para clientes)",
+      "cancel": "Cancelar",
+      "create": "Criar produto",
+      "creating": "Criando...",
+      "fillRequired": "Por favor, preencha todos os campos obrigatórios",
+      "createError": "Erro ao criar produto"
+    }
+  },
+  "Common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "create": "Criar",
+    "search": "Pesquisar",
+    "filter": "Filtrar",
+    "required": "Obrigatório"
+  }
+}
