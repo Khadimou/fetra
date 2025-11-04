@@ -137,23 +137,9 @@ export default async function ProductPage() {
       {/* Hero Section - Above the fold */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-12">
         <div className="order-2 md:order-1">
-          {/* Vidéo du rituel - Complètement fonctionnelle et cliquable */}
-          <div className="mb-4 bg-white rounded-2xl brand-shadow isolate">
-            <video 
-              controls 
-              playsInline
-              className="w-full rounded-2xl" 
-              poster="/main.webp"
-              preload="metadata"
-            >
-              <source src="/rituel.mp4" type="video/mp4" />
-              {t('videoNotSupported')}
-            </video>
-          </div>
-          
-          {/* Galerie d'images uniquement (sans vidéo) */}
-          <Gallery 
-            images={product.images} 
+          {/* Galerie d'images */}
+          <Gallery
+            images={product.images}
             lqips={product.images.map((img: any) => typeof img === 'object' ? img.lqip : undefined)}
           />
         </div>
@@ -292,6 +278,28 @@ export default async function ProductPage() {
           <div className="flex gap-3 items-start">
             <span className="text-fetra-pink font-bold">✓</span>
             <p className="text-gray-700">{t('technical6')}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Section Vidéo 1 - Rituel Visage */}
+      <div className="mt-16">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-3">Découvrez le Rituel en Vidéo</h2>
+          <p className="text-lg text-gray-700">Apprenez à utiliser votre kit en quelques minutes</p>
+        </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="relative rounded-2xl overflow-hidden brand-shadow bg-white">
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-auto rounded-2xl"
+              poster="/main.webp"
+            >
+              <source src="/rituel.mp4" type="video/mp4" />
+              {t('videoNotSupported')}
+            </video>
           </div>
         </div>
       </div>
