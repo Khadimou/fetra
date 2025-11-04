@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 type Review = {
   id: string;
@@ -9,6 +9,13 @@ type Review = {
   date: string;
 };
 
+// Map next-intl locale codes to full locale strings for date formatting
+const localeMap: Record<string, string> = {
+  fr: 'fr-FR',
+  en: 'en-US',
+  pt: 'pt-PT',
+};
+
 function formatDate(dateString: string, locale: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" });
@@ -16,7 +23,8 @@ function formatDate(dateString: string, locale: string): string {
 
 export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { averageRating?: number; reviewCount?: number }) {
   const t = useTranslations('Reviews');
-  const locale = typeof window !== 'undefined' ? (window.location.pathname.includes('/en') ? 'en-US' : window.location.pathname.includes('/pt') ? 'pt-PT' : 'fr-FR') : 'fr-FR';
+  const localeCode = useLocale();
+  const dateLocale = localeMap[localeCode] || 'fr-FR';
 
   const mockReviews: Review[] = [
     {
@@ -97,7 +105,7 @@ export default function Reviews({ averageRating = 4.8, reviewCount = 124 }: { av
                       </svg>
                     ))}
                   </div>
-                  <span className="text-xs text-gray-500">{formatDate(review.date, locale)}</span>
+                  <span className="text-xs text-gray-500">{formatDate(review.date, dateLocale)}</span>
                 </div>
               </div>
             </div>

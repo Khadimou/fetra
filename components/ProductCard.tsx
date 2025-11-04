@@ -1,6 +1,6 @@
 ﻿"use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "@/i18n/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { Product } from "../lib/product";
 import { addToCart } from "../lib/cart";
