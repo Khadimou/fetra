@@ -138,11 +138,11 @@ export default async function ProductPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-12">
         <div className="order-2 md:order-1">
           {/* Vidéo du rituel - Complètement fonctionnelle et cliquable */}
-          <div className="mb-4 bg-white rounded-2xl overflow-hidden brand-shadow">
+          <div className="mb-4 bg-white rounded-2xl brand-shadow isolate">
             <video 
               controls 
               playsInline
-              className="w-full" 
+              className="w-full rounded-2xl" 
               poster="/main.webp"
               preload="metadata"
             >
