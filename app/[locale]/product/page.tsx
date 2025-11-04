@@ -282,53 +282,6 @@ export default async function ProductPage() {
         </div>
       </div>
 
-      {/* Section Vidéo 1 - Rituel Visage */}
-      <div className="mt-16">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-3">Découvrez le Rituel en Vidéo</h2>
-          <p className="text-lg text-gray-700">Apprenez à utiliser votre kit en quelques minutes</p>
-        </div>
-        <div className="max-w-4xl mx-auto">
-          <div className="relative rounded-2xl overflow-hidden brand-shadow bg-white">
-            <video
-              controls
-              playsInline
-              preload="metadata"
-              className="w-full h-auto rounded-2xl"
-              poster="/main.webp"
-            >
-              <source src="/rituel.mp4" type="video/mp4" />
-              {t('videoNotSupported')}
-            </video>
-          </div>
-        </div>
-      </div>
-
-      {/* Section Vidéo 2 - Gua Sha Homme */}
-      <div className="mt-16">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-3">{t('videoSection2Title')}</h2>
-          <p className="text-lg text-gray-700">{t('videoSection2Subtitle')}</p>
-        </div>
-        <div className="max-w-4xl mx-auto">
-          <div className="relative rounded-2xl overflow-hidden brand-shadow bg-black">
-            <video
-              controls
-              playsInline
-              preload="metadata"
-              className="w-full h-auto"
-              poster="/guasha_champi.webp"
-            >
-              <source src="/Gua_Sha_Homme_Noir.mp4" type="video/mp4" />
-              {t('videoNotSupported')}
-            </video>
-          </div>
-        </div>
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 font-medium">{t('videoUniversal')}</p>
-        </div>
-      </div>
-
       {/* Guide d'utilisation */}
       <div className="mt-12 bg-white p-8 rounded-xl brand-shadow">
         <h3 className="text-2xl font-bold mb-2 text-center">{t('usageGuide')}</h3>
