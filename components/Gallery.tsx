@@ -33,9 +33,11 @@ export default function Gallery({ images, lqips }: { images: MediaData[]; lqips?
     return undefined;
   };
 
+  const currentMediaType = images[index] ? getMediaType(images[index]) : 'image';
+
   return (
-    <div>
-      <div className="bg-white rounded-2xl overflow-hidden brand-shadow">
+    <div className="relative isolate">
+      <div className={`bg-white rounded-2xl brand-shadow ${currentMediaType === 'video' ? 'overflow-visible' : 'overflow-hidden'}`}>
         {/* Render ALL items but only show the active one */}
         {images.map((img, i) => {
           const mediaSrc = getMediaSrc(img);
@@ -46,19 +48,17 @@ export default function Gallery({ images, lqips }: { images: MediaData[]; lqips?
           return (
             <div
               key={i}
-              className={i === index ? 'block' : 'hidden'}
-              style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
+              className={`relative ${i === index ? 'block' : 'hidden'}`}
             >
               {mediaType === 'video' ? (
-                <div className="aspect-video bg-black rounded-2xl overflow-hidden" style={{ position: 'relative', zIndex: 10 }}>
+                <div className="relative aspect-video bg-black rounded-2xl overflow-hidden">
                   <video
                     controls
                     controlsList="nodownload"
                     playsInline
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover cursor-pointer touch-auto"
                     poster={mediaPoster}
                     preload="metadata"
-                    style={{ position: 'relative', zIndex: 20, pointerEvents: 'auto' }}
                   >
                     <source src={mediaSrc} type="video/mp4" />
                     Votre navigateur ne supporte pas la lecture de vidéos.
