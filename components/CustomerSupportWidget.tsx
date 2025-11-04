@@ -71,7 +71,7 @@ export default function CustomerSupportWidget() {
       {/* Floating Button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-fetra-pink hover:bg-fetra-olive text-white p-4 rounded-full shadow-xl z-40 transition-colors duration-200"
+        className="fixed bottom-24 right-6 md:bottom-6 bg-fetra-pink hover:bg-fetra-olive text-white p-4 rounded-full shadow-xl z-40 transition-colors duration-200"
         aria-label="Ouvrir le support client"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
