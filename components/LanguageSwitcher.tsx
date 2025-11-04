@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { useState, useRef, useEffect } from 'react';
 
 const languages = {
@@ -32,21 +32,9 @@ export default function LanguageSwitcher() {
   }, [isOpen]);
 
   const switchLocale = (newLocale: string) => {
-    // Get the full pathname from window.location to ensure we have the locale prefix
-    const fullPath = window.location.pathname;
-
-    // Remove current locale from pathname if it exists
-    const pathnameWithoutLocale = fullPath.replace(/^\/(fr|en|pt)(\/|$)/, '/');
-
-    // Ensure we have a clean path (no double slashes)
-    const cleanPath = pathnameWithoutLocale === '/' ? '/' : pathnameWithoutLocale;
-
-    // Add new locale to path (unless it's the default 'fr')
-    const newPath = newLocale === 'fr'
-      ? cleanPath
-      : `/${newLocale}${cleanPath}`;
-
-    router.push(newPath);
+    // Use next-intl router's locale parameter to handle locale switching
+    // The router will automatically manage the URL structure based on localePrefix config
+    router.replace(pathname, { locale: newLocale });
     setIsOpen(false);
   };
 
