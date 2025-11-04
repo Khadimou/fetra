@@ -473,7 +473,9 @@
     "videoSection1Subtitle": "2 minutes pour comprendre comment transformer votre peau",
     "videoSection2Title": "Un Rituel Pour Tous",
     "videoSection2Subtitle": "Homme, femme, tous types de peau : le Gua Sha s'adapte à vous",
-    "videoCtaText": "Vous aussi, adoptez ce rituel ancestral"
+    "videoCtaText": "Vous aussi, adoptez ce rituel ancestral",
+    "videoUniversal": "🌟 Le rituel FETRA est universel : 30% de nos clients sont des hommes",
+    "videoNotSupported": "Votre navigateur ne supporte pas la lecture de vidéos."
   },
   "FAQ": {
     "title": "Questions Fréquentes",
