@@ -90,6 +90,31 @@
         "passwordMismatch": "As senhas não coincidem",
         "acceptTermsRequired": "Por favor, aceite os termos e condições"
       }
+    },
+    "forgotPassword": {
+      "title": "Esqueceu a senha?",
+      "subtitle": "Digite seu e-mail e enviaremos um link para redefinir sua senha",
+      "email": "E-mail",
+      "emailHint": "Enviaremos um link de redefinição para este endereço",
+      "sendButton": "Enviar link",
+      "sending": "Enviando...",
+      "successTitle": "E-mail enviado!",
+      "successMessage": "Se existe uma conta com este e-mail, você receberá um link de redefinição em alguns instantes.",
+      "checkSpam": "Lembre-se de verificar sua pasta de spam se não receber nada.",
+      "backToLogin": "Voltar para o login"
+    },
+    "resetPassword": {
+      "title": "Nova Senha",
+      "subtitle": "Digite sua nova senha",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar senha",
+      "passwordHint": "Mínimo 8 caracteres",
+      "resetButton": "Redefinir",
+      "resetting": "Redefinindo...",
+      "successTitle": "Senha alterada!",
+      "successMessage": "Sua senha foi alterada com sucesso.",
+      "redirecting": "Redirecionando para o login...",
+      "backToLogin": "Voltar para o login"
     }
   },
   "Account": {
