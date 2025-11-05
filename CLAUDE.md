@@ -162,10 +162,15 @@ All integrations have retry logic (3 attempts, exponential backoff):
 - **Sandbox**: Test tracking numbers available in `SANDBOX_TRACKING_NUMBERS`
 - **Rate limiting**: 10 second timeout per request, max 10 IDs per multi-query
 
-#### 11. Admin Dashboard with NextAuth
-- **Authentication**: NextAuth v4 with Credentials Provider
-- **Session Strategy**: JWT (works seamlessly with credentials)
-- **Password**: Hashed with bcrypt (10 rounds)
+#### 11. Authentication with NextAuth
+- **Library**: NextAuth v4 with multiple providers
+- **Providers**:
+  - **Credentials**: Email/password authentication (bcrypt hashing, 10 rounds)
+  - **Google OAuth**: Sign in with Google account
+  - **Apple Sign In**: Sign in with Apple ID
+- **Session Strategy**: JWT (works seamlessly with all providers)
+- **Adapter**: Prisma Adapter for database sessions
+- **Customer Creation**: Automatic Customer record created on first OAuth sign-in
 - **Protected Routes**: Use `useSession()` hook or `getServerSession()` in API routes
 - **Routes**:
   - `/admin/login` - Login page
@@ -235,6 +240,12 @@ DATABASE_URL                # PostgreSQL connection string
 # NextAuth
 NEXTAUTH_SECRET             # Secret for JWT signing (generate with: openssl rand -base64 32)
 NEXTAUTH_URL                # Base URL (http://localhost:3000 in dev, https://... in prod)
+
+# OAuth Providers (optional, for social login)
+GOOGLE_CLIENT_ID            # Google OAuth Client ID (from Google Cloud Console)
+GOOGLE_CLIENT_SECRET        # Google OAuth Client Secret
+APPLE_CLIENT_ID             # Apple Sign In Service ID (e.g., com.fetrabeauty.web.service)
+APPLE_CLIENT_SECRET         # Apple Sign In JWT (generate with private key, expires 6 months)
 ```
 
 ## Key Files & Their Purposes
@@ -296,6 +307,10 @@ NEXTAUTH_URL                # Base URL (http://localhost:3000 in dev, https://..
 14. **Shipping Workflow**: When marking order as shipped, system automatically sends email to customer and updates HubSpot. Ensure Brevo template ID `BREVO_TEMPLATE_SHIPPED` is configured.
 
 15. **Session Strategy**: Uses JWT (not database sessions) for better performance with credentials provider.
+
+16. **OAuth Configuration**: Social login (Google/Apple) requires OAuth credentials in env vars. Follow `docs/oauth-setup.md` for setup instructions. Apple JWT expires every 6 months.
+
+17. **Signup Route Location**: Signup route is at `/api/signup` (NOT `/api/auth/signup`) to avoid conflict with NextAuth's `[...nextauth]` catch-all route.
 
 ## Development Workflow Tips
 

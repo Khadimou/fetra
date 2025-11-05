@@ -1,26 +1,42 @@
 "use client";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from "next-intl";
 import Logo from "../../../components/Logo";
 
 export default function LoginPage() {
+  const router = useRouter();
   const t = useTranslations('Auth.login');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false
+      });
 
-    // In a real app, handle authentication here
-    console.log("Login attempt:", { email, password });
-
-    setIsLoading(false);
+      if (result?.error) {
+        setError("Email ou mot de passe incorrect");
+        setIsLoading(false);
+      } else {
+        // Success - redirect to account page
+        router.push('/account');
+      }
+    } catch (err) {
+      setError("Une erreur est survenue. Veuillez réessayer.");
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -37,6 +53,12 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl brand-shadow p-8">
           <h1 className="text-2xl font-bold text-center mb-2">{t('title')}</h1>
           <p className="text-gray-600 text-center mb-8">{t('subtitle')}</p>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
@@ -110,7 +132,11 @@ export default function LoginPage() {
 
           {/* Social login */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+            <button
+              type="button"
+              onClick={() => signIn('google', { callbackUrl: '/account' })}
+              className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+            >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -131,11 +157,15 @@ export default function LoginPage() {
               </svg>
               <span className="text-sm font-medium">Google</span>
             </button>
-            <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+            <button
+              type="button"
+              onClick={() => signIn('apple', { callbackUrl: '/account' })}
+              className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+            >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
-              <span className="text-sm font-medium">Facebook</span>
+              <span className="text-sm font-medium">Apple</span>
             </button>
           </div>
 

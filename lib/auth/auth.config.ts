@@ -1,17 +1,31 @@
 /**
  * NextAuth Configuration
- * Using Prisma Adapter + Credentials Provider
+ * Using Prisma Adapter + Credentials Provider + Social OAuth
  */
 
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
+import AppleProvider from 'next-auth/providers/apple';
 import bcrypt from 'bcrypt';
 import prisma from '@/lib/db/prisma';
+import { upsertCustomer } from '@/lib/db/orders';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   providers: [
+    // Google OAuth
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
+    // Apple Sign In
+    AppleProvider({
+      clientId: process.env.APPLE_CLIENT_ID || '',
+      clientSecret: process.env.APPLE_CLIENT_SECRET || '',
+    }),
+    // Email/Password
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -58,6 +72,41 @@ export const authOptions: NextAuthOptions = {
     error: '/admin/login'
   },
   callbacks: {
+    // Create Customer on first social sign in
+    async signIn({ user, account, profile }) {
+      // Only for OAuth providers (not credentials)
+      if (account?.provider !== 'credentials' && user.email) {
+        try {
+          // Check if user already has a customer
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+            include: { customer: true }
+          });
+
+          // Create customer if doesn't exist
+          if (existingUser && !existingUser.customerId) {
+            const nameParts = user.name?.split(' ') || [];
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            const customer = await upsertCustomer(user.email, {
+              firstName,
+              lastName,
+            });
+
+            // Link user to customer
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: { customerId: customer.id }
+            });
+          }
+        } catch (error) {
+          console.error('Error creating customer on sign in:', error);
+          // Don't block sign in if customer creation fails
+        }
+      }
+      return true;
+    },
     // Add custom fields to JWT token
     async jwt({ token, user }) {
       if (user) {
