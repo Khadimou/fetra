@@ -25,8 +25,9 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.APPLE_CLIENT_ID || '',
       clientSecret: process.env.APPLE_CLIENT_SECRET || '',
     }),
-    // Email/Password
+    // User Credentials (customers)
     CredentialsProvider({
+      id: 'credentials',
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email', placeholder: 'admin@fetrabeauty.com' },
@@ -61,6 +62,42 @@ export const authOptions: NextAuthOptions = {
           role: user.role
         };
       }
+    }),
+    // Admin Credentials (admins only)
+    CredentialsProvider({
+      id: 'admin-credentials',
+      name: 'Admin Credentials',
+      credentials: {
+        email: { label: 'Email', type: 'email', placeholder: 'admin@fetrabeauty.com' },
+        password: { label: 'Password', type: 'password' }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Email et mot de passe requis');
+        }
+
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+        if (!user || !user.password) {
+          throw new Error('Identifiants invalides');
+        }
+
+        const isValidPassword = await bcrypt.compare(credentials.password, user.password);
+        if (!isValidPassword) {
+          throw new Error('Identifiants invalides');
+        }
+
+        // Enforce admin role here
+        if (user.role !== 'ADMIN') {
+          throw new Error('Accès administrateur requis');
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        };
+      }
     })
   ],
   session: {
@@ -68,8 +105,9 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60 // 24 hours
   },
   pages: {
-    signIn: '/admin/login',
-    error: '/admin/login'
+    // Built-in NextAuth pages
+    signIn: '/login',
+    error: '/auth-error'  // Show detailed error page
   },
   callbacks: {
     // Create Customer on first social sign in
