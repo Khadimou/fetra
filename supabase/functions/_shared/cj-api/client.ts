@@ -100,9 +100,51 @@ export async function getProductList(params: {
   if (params.countryCode) queryParams.append('countryCode', params.countryCode);
 
   const endpoint = `/product/listV2?${queryParams.toString()}`;
-  const response = await cjApiCall<CJProductListResponse['data']>(endpoint, { method: 'GET' });
+  const response = await cjApiCall<any>(endpoint, { method: 'GET' });
 
-  return response.data;
+  // The API response structure is different from what we expected:
+  // { code, result, message, data: { pageSize, pageNumber, totalRecords, totalPages, content: [{ productList: [...], ... }] } }
+  const productListData = response.data;
+  
+  // Ensure we have the expected structure
+  if (!productListData) {
+    console.error('Unexpected API response structure:', JSON.stringify(response, null, 2));
+    throw new Error('Invalid API response: missing data property');
+  }
+  
+  // Extract products from content[0].productList
+  let products: any[] = [];
+  if (productListData.content && Array.isArray(productListData.content) && productListData.content.length > 0) {
+    const firstContent = productListData.content[0];
+    if (firstContent.productList && Array.isArray(firstContent.productList)) {
+      products = firstContent.productList;
+    }
+  }
+  
+  // Map the API product structure to our expected format
+  const mappedProducts: CJProduct[] = products.map((apiProduct: any) => ({
+    id: apiProduct.id,
+    pid: apiProduct.id,
+    productNameEn: apiProduct.nameEn || '',
+    productSku: apiProduct.sku || '',
+    productImage: apiProduct.bigImage || '',
+    productImageList: apiProduct.bigImage ? [apiProduct.bigImage] : [],
+    productVideoUrl: apiProduct.videoList && apiProduct.videoList.length > 0 ? apiProduct.videoList[0] : undefined,
+    sellPrice: parseFloat(apiProduct.sellPrice?.split(' -- ')[0] || apiProduct.sellPrice || '0') || 0,
+    categoryId: apiProduct.categoryId || '',
+    categoryName: apiProduct.threeCategoryName || apiProduct.twoCategoryName || apiProduct.oneCategoryName || '',
+    productDescEn: apiProduct.description || '',
+    variants: [], // Will be populated later if needed
+    warehouseInventoryNum: apiProduct.warehouseInventoryNum || 0,
+  }));
+
+  // Return in the expected format
+  return {
+    list: mappedProducts,
+    total: productListData.totalRecords || 0,
+    pageNum: productListData.pageNumber || params.page || 1,
+    pageSize: productListData.pageSize || params.pageSize || 20,
+  };
 }
 
 /**

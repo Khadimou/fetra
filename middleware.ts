@@ -31,16 +31,41 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Bypass NextAuth routes to prevent i18n middleware from interfering with auth callbacks
+  if (request.nextUrl.pathname.startsWith('/api/auth')) {
+    return NextResponse.next();
+  }
+
+  // Bypass all API routes to prevent i18n middleware from interfering
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   // Prevent redirects to production domain in development
   const hostname = request.headers.get('host') || '';
-  if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+  const isDevelopment = hostname.includes('localhost') || hostname.includes('127.0.0.1') || process.env.NODE_ENV === 'development';
+  
+  // Force localhost in development - prevent any redirects to production
+  if (isDevelopment) {
+    // Check if the request is trying to go to production domain
+    const url = request.nextUrl;
+    if (url.hostname && (url.hostname.includes('fetrabeauty.com') || url.hostname.includes('www.'))) {
+      // Redirect back to localhost
+      const localhostUrl = new URL(request.url);
+      localhostUrl.hostname = 'localhost';
+      localhostUrl.port = '3000';
+      localhostUrl.protocol = 'http:';
+      return NextResponse.redirect(localhostUrl);
+    }
+
     // In development, don't allow redirects to production domain
     const response = intlMiddleware(request);
 
-    // If the response is a redirect to production, block it
+    // If the response is a redirect to production, block it and continue normally
     if (response.status === 307 || response.status === 308) {
       const location = response.headers.get('location');
       if (location && (location.includes('fetrabeauty.com') || location.includes('www.'))) {
+        // Return the request as-is without redirect
         return NextResponse.next();
       }
     }

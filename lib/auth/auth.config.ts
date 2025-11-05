@@ -25,8 +25,9 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.APPLE_CLIENT_ID || '',
       clientSecret: process.env.APPLE_CLIENT_SECRET || '',
     }),
-    // Email/Password
+    // User Credentials (customers)
     CredentialsProvider({
+      id: 'credentials',
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email', placeholder: 'admin@fetrabeauty.com' },
@@ -61,6 +62,42 @@ export const authOptions: NextAuthOptions = {
           role: user.role
         };
       }
+    }),
+    // Admin Credentials (admins only)
+    CredentialsProvider({
+      id: 'admin-credentials',
+      name: 'Admin Credentials',
+      credentials: {
+        email: { label: 'Email', type: 'email', placeholder: 'admin@fetrabeauty.com' },
+        password: { label: 'Password', type: 'password' }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Email et mot de passe requis');
+        }
+
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+        if (!user || !user.password) {
+          throw new Error('Identifiants invalides');
+        }
+
+        const isValidPassword = await bcrypt.compare(credentials.password, user.password);
+        if (!isValidPassword) {
+          throw new Error('Identifiants invalides');
+        }
+
+        // Enforce admin role here
+        if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
+          throw new Error('Accès administrateur requis');
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        };
+      }
     })
   ],
   session: {
@@ -75,7 +112,7 @@ export const authOptions: NextAuthOptions = {
     // Create Customer on first social sign in
     async signIn({ user, account, profile }) {
       // Only for OAuth providers (not credentials)
-      if (account?.provider !== 'credentials' && user.email) {
+      if (account?.provider !== 'credentials' && account?.provider !== 'admin-credentials' && user.email) {
         try {
           // Check if user already has a customer
           const existingUser = await prisma.user.findUnique({

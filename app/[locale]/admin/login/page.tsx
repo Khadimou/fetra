@@ -21,7 +21,7 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn('admin-credentials', {
         email,
         password,
         redirect: false

@@ -28,33 +28,45 @@ async function callEdgeFunction<T>(
   body?: Record<string, any>
 ): Promise<T> {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    throw new Error('CJ Dropshipping integration not configured');
+    throw new Error('CJ Dropshipping integration not configured. Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }
 
   const url = `${SUPABASE_URL}/functions/v1/${functionName}`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      'apikey': SUPABASE_ANON_KEY,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  console.log(`Calling Supabase Edge Function: ${functionName}`, { url, body });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Edge Function error: ${response.status} ${errorText}`);
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Edge Function error: ${response.status}`, errorText);
+      throw new Error(`Edge Function error (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success && data.error) {
+      console.error('Edge Function returned error:', data.error);
+      throw new Error(data.error);
+    }
+
+    return data;
+  } catch (error: any) {
+    // Re-throw with more context if it's a network error
+    if (error.message?.includes('fetch')) {
+      throw new Error(`Failed to connect to Supabase Edge Function: ${functionName}. Please check your Supabase URL and network connection.`);
+    }
+    throw error;
   }
-
-  const data = await response.json();
-
-  if (!data.success && data.error) {
-    throw new Error(data.error);
-  }
-
-  return data;
 }
 
 /**

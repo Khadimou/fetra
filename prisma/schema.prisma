@@ -148,6 +148,10 @@ model Order {
   stripeSessionId    String?     @unique @map("stripe_session_id")
   stripePaymentIntent String?    @map("stripe_payment_intent")
 
+  // CJ Dropshipping data
+  cjOrderId          String?     @map("cj_order_id")
+  cjOrderNum         String?     @map("cj_order_num")
+
   // Timestamps
   createdAt          DateTime    @default(now()) @map("created_at")
   paidAt             DateTime?   @map("paid_at")

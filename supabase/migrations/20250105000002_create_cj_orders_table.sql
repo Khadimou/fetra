@@ -34,24 +34,33 @@ CREATE TABLE IF NOT EXISTS orders (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create indexes for better query performance
-CREATE INDEX idx_orders_user_id ON orders(user_id);
-CREATE INDEX idx_orders_cj_order_id ON orders(cj_order_id);
-CREATE INDEX idx_orders_order_number ON orders(order_number);
-CREATE INDEX idx_orders_status ON orders(status);
-CREATE INDEX idx_orders_tracking_number ON orders(tracking_number);
-CREATE INDEX idx_orders_created_at ON orders(created_at DESC);
+-- Create indexes for better query performance (only if columns exist)
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id) WHERE user_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_orders_cj_order_id ON orders(cj_order_id) WHERE cj_order_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number) WHERE order_number IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status) WHERE status IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_orders_tracking_number ON orders(tracking_number) WHERE tracking_number IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 
 -- Create updated_at trigger
+DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
 CREATE TRIGGER update_orders_updated_at
   BEFORE UPDATE ON orders
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
--- Create order status enum constraint
-ALTER TABLE orders
-  ADD CONSTRAINT orders_status_check
-  CHECK (status IN ('pending', 'processing', 'payment_confirmed', 'shipped', 'delivered', 'cancelled', 'failed'));
+-- Create order status enum constraint (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'orders_status_check'
+    ) THEN
+        ALTER TABLE orders
+          ADD CONSTRAINT orders_status_check
+          CHECK (status IN ('pending', 'processing', 'payment_confirmed', 'shipped', 'delivered', 'cancelled', 'failed'));
+    END IF;
+END $$;
 
 -- Add comments
 COMMENT ON TABLE orders IS 'Orders synchronized with CJ Dropshipping API';

@@ -4,10 +4,25 @@
 
 // Authentication Types
 export interface CJAuthTokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number; // seconds
+  code?: number;
+  result?: boolean;
+  message?: string;
+  success?: boolean;
+  requestId?: string;
+  access_token?: string; // Fallback for OAuth2 format
+  token_type?: string;
+  expires_in?: number; // seconds
   scope?: string;
+  data?: {
+    openId?: number;
+    accessToken?: string; // Main format (camelCase)
+    accessTokenExpiryDate?: string;
+    refreshToken?: string;
+    refreshTokenExpiryDate?: string;
+    createDate?: string;
+    access_token?: string; // Fallback
+    expires_in?: number; // Fallback
+  };
 }
 
 export interface CJTokenCache {

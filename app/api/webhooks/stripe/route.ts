@@ -4,7 +4,10 @@ import { upsertContactHubspot } from '../../../../lib/integrations/hubspot';
 import { addContactBrevo, sendOrderConfirmationEmail } from '../../../../lib/integrations/brevo';
 import { upsertCustomer, createOrder, updateOrderStatus } from '../../../../lib/db/orders';
 import { getProductBySku, decrementStock } from '../../../../lib/db/products';
+import { createCjOrder, type CJOrderRequest } from '../../../../lib/integrations/cj-dropshipping';
+import type { CJOrderResponse } from '../../../../lib/types/cj';
 import { OrderStatus } from '@prisma/client';
+import prisma from '../../../../lib/db/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -141,6 +144,111 @@ export async function POST(request: Request) {
         await updateOrderStatus(order.id, OrderStatus.PAID);
 
         console.log('Order created in database:', order.orderNumber);
+
+        // 4) Create order in CJ Dropshipping (if configured)
+        // Check if Supabase is configured (for Edge Functions) or direct API
+        const isCjConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        const isCjDirectApi = process.env.CJ_CLIENT_ID && process.env.CJ_CLIENT_SECRET;
+        
+        if (isCjConfigured || isCjDirectApi) {
+          try {
+            // Get shipping details from Stripe session
+            const shippingDetails = (session as any).shipping_details || session.shipping_details;
+            const shippingAddress = shippingDetails?.address;
+
+            if (!shippingAddress) {
+              console.warn('No shipping address found in Stripe session, skipping CJ order creation');
+            } else {
+              // Map order items to CJ products
+              // NOTE: You need to configure CJ variant IDs (vid) in your product metadata or database
+              // For now, we'll use a default mapping or store vid in order item metadata
+              // Fetch order with items to get order item IDs
+              const orderWithItems = await prisma.order.findUnique({
+                where: { id: order.id },
+                include: { items: true },
+              });
+
+              const cjProducts = await Promise.all(
+                orderItems.map(async (item, index) => {
+                  // Try to get CJ variant ID from product in database
+                  let cjVariantId: string | null = null;
+                  
+                  try {
+                    const product = await getProductBySku(item.productSku);
+                    if (product?.cjVariantId) {
+                      cjVariantId = product.cjVariantId;
+                    }
+                  } catch (err) {
+                    console.warn(`Could not fetch product ${item.productSku}:`, err);
+                  }
+                  
+                  // Fallback to environment variable or metadata
+                  if (!cjVariantId) {
+                    cjVariantId = (item as any).cjVariantId || process.env.CJ_DEFAULT_VARIANT_ID || null;
+                  }
+                  
+                  if (!cjVariantId) {
+                    throw new Error(
+                      `CJ variant ID not found for product ${item.productSku}. ` +
+                      `Please configure cjVariantId in the Product model or set CJ_DEFAULT_VARIANT_ID environment variable.`
+                    );
+                  }
+
+                  return {
+                    vid: cjVariantId,
+                    quantity: item.quantity,
+                    storeLineItemId: orderWithItems?.items[index]?.id || String(index + 1),
+                  };
+                })
+              );
+
+              // Build CJ order request
+              const cjOrderData: CJOrderRequest = {
+                orderNumber: order.orderNumber,
+                shippingCustomerName: customerName || `${firstName} ${lastName}`.trim(),
+                shippingAddress: shippingAddress.line1 || '',
+                shippingAddress2: shippingAddress.line2 || '',
+                shippingCity: shippingAddress.city || '',
+                shippingProvince: shippingAddress.state || '',
+                shippingCountry: shippingAddress.country || 'FR',
+                shippingCountryCode: shippingAddress.country || 'FR',
+                shippingZip: shippingAddress.postal_code || '',
+                shippingPhone: customer.phone || '',
+                email: customerEmail,
+                remark: `Order from Stripe: ${order.orderNumber}`,
+                products: cjProducts,
+                shopAmount: amountTotal,
+              };
+
+              console.log('Creating CJ order for:', order.orderNumber);
+              const cjOrderResponse: CJOrderResponse = await createCjOrder(cjOrderData);
+
+              console.log('CJ order created successfully:', {
+                orderId: order.id,
+                cjOrderId: cjOrderResponse.orderId,
+                cjOrderNum: cjOrderResponse.orderNum,
+              });
+
+              // Update order with CJ order ID
+              await prisma.order.update({
+                where: { id: order.id },
+                data: {
+                  cjOrderId: cjOrderResponse.orderId,
+                  cjOrderNum: cjOrderResponse.orderNum,
+                },
+              });
+
+              console.log('Order updated with CJ order ID');
+            }
+          } catch (cjError: any) {
+            // Non-blocking - log error but don't fail the webhook
+            console.error('Error creating CJ order:', cjError.message);
+            console.error('CJ order creation failed, but order was already created and paid');
+            // Optionally, you could store the error in order metadata for later retry
+          }
+        } else {
+          console.log('CJ Dropshipping not configured. Please configure either Supabase (NEXT_PUBLIC_SUPABASE_URL + NEXT_PUBLIC_SUPABASE_ANON_KEY) or direct API (CJ_CLIENT_ID + CJ_CLIENT_SECRET)');
+        }
       } catch (err: any) {
         console.error('Error saving order:', err.message);
       }

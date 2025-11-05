@@ -13,8 +13,8 @@ interface SupabaseProduct {
   description: string;
   price: number;
   stock: number;
-  images: string[];
-  variants: any[];
+  images?: string[]; // Optional - may be undefined
+  variants?: any[]; // Optional - may be undefined
   category: string;
   category_id: string;
   sku: string;
@@ -92,6 +92,7 @@ export default function AdminCjProducts() {
   async function handleSync() {
     try {
       setSyncResult(null);
+      setError(null);
       const res = await fetch('/api/admin/cj/sync-products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -101,17 +102,33 @@ export default function AdminCjProducts() {
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error('Erreur lors de la synchronisation');
+        // Get detailed error message from API response
+        const errorMessage = data.error || data.message || 'Erreur lors de la synchronisation';
+        setSyncResult({
+          success: false,
+          error: errorMessage,
+          details: data.details,
+        });
+        setError(errorMessage);
+        return;
       }
 
-      const data = await res.json();
       setSyncResult(data);
+      setError(null);
 
       // Reload products
       await loadProducts();
     } catch (err: any) {
-      alert(err.message);
+      const errorMessage = err.message || 'Erreur lors de la synchronisation';
+      setSyncResult({
+        success: false,
+        error: errorMessage,
+      });
+      setError(errorMessage);
+      console.error('Sync error:', err);
     }
   }
 
@@ -210,9 +227,11 @@ export default function AdminCjProducts() {
                   syncResult.success ? 'text-green-900' : 'text-red-900'
                 }`}
               >
-                {syncResult.message || 'Synchronisation terminée'}
+                {syncResult.success
+                  ? syncResult.message || 'Synchronisation terminée'
+                  : syncResult.error || 'Erreur lors de la synchronisation'}
               </p>
-              {syncResult.stats && (
+              {syncResult.success && syncResult.stats && (
                 <div className="mt-2 text-sm text-gray-700 space-y-1">
                   <p>Traités: {syncResult.stats.processed}</p>
                   <p>Créés: {syncResult.stats.created}</p>
@@ -223,6 +242,16 @@ export default function AdminCjProducts() {
                     </p>
                   )}
                 </div>
+              )}
+              {!syncResult.success && syncResult.details && (
+                <details className="mt-2 text-sm text-red-700">
+                  <summary className="cursor-pointer font-medium">
+                    Détails de l'erreur (développement)
+                  </summary>
+                  <pre className="mt-2 p-2 bg-red-100 rounded text-xs overflow-auto">
+                    {syncResult.details}
+                  </pre>
+                </details>
               )}
             </div>
           )}
@@ -266,13 +295,13 @@ export default function AdminCjProducts() {
                       pid: product.cj_product_id,
                       productNameEn: product.name,
                       productSku: product.sku,
-                      productImage: product.images[0] || '',
-                      productImageList: product.images,
+                      productImage: (product.images && Array.isArray(product.images) && product.images.length > 0) ? product.images[0] : '',
+                      productImageList: product.images || [],
                       sellPrice: product.price,
                       categoryName: product.category,
                       categoryId: product.category_id,
                       warehouseInventoryNum: product.stock,
-                      variants: product.variants,
+                      variants: product.variants || [],
                     }}
                     actionLabel="Voir détails"
                     onAction={(p) =>

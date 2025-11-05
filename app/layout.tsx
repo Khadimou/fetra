@@ -15,7 +15,11 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://fetrabeauty.com'),
+  metadataBase: new URL(
+    process.env.NODE_ENV === 'development'
+      ? process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      : process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com'
+  ),
   alternates: {
     canonical: '/',
     languages: {
@@ -27,7 +31,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FETRA Beauty - Rituel Beauté Naturel',
     description: 'Découvrez le rituel beauté FETRA avec notre Gua Sha et huile de Moringa bio.',
-    url: 'https://fetrabeauty.com',
+    url: process.env.NODE_ENV === 'development'
+      ? process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      : process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com',
     siteName: 'FETRA Beauty',
     locale: 'fr_FR',
     type: 'website',

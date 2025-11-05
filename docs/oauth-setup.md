@@ -122,9 +122,9 @@ const token = jwt.sign({}, privateKey, {
   algorithm: 'ES256',
   expiresIn: '180d', // 6 mois (max)
   audience: 'https://appleid.apple.com',
-  issuer: 'YOUR_TEAM_ID', // Trouvez votre Team ID dans Membership
+  issuer: 'B447359FDU', // Trouvez votre Team ID dans Membership
   subject: 'com.fetrabeauty.web.service', // Votre Service ID
-  keyid: 'YOUR_KEY_ID' // Le Key ID de votre clé .p8
+  keyid: 'P93RWF29VZ' // Le Key ID de votre clé .p8
 });
 
 console.log('Apple Client Secret (JWT):');
