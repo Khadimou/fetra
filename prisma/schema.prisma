@@ -120,6 +120,10 @@ model Product {
   imageUrl    String?  @map("image_url")
   isActive    Boolean  @default(true) @map("is_active")
 
+  // CJ Dropshipping integration
+  cjVariantId String?  @map("cj_variant_id") // CJ variant ID for linking
+  cjProductId String?  @map("cj_product_id") // CJ product ID (optional)
+
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
