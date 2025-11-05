@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 import prisma from '@/lib/db/prisma';
-import { sendEmail } from '@/lib/integrations/brevo';
+import { sendTransactionalEmail } from '@/lib/integrations/brevo';
 
 /**
  * POST /api/auth/forgot-password
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
 
       try {
-        await sendEmail({
+        await sendTransactionalEmail({
           to: email,
           subject: 'Réinitialisation de votre mot de passe FETRA',
           htmlContent: `
