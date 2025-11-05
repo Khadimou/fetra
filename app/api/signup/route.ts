@@ -4,7 +4,7 @@ import prisma from '@/lib/db/prisma';
 import { upsertCustomer } from '@/lib/db/orders';
 
 /**
- * POST /api/auth/signup
+ * POST /api/signup
  * Register a new customer account
  */
 export async function POST(request: Request) {
