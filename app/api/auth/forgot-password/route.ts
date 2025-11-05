@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 import prisma from '@/lib/db/prisma';
-import { sendTransactionalEmail } from '@/lib/integrations/brevo';
+import { sendCustomEmail } from '@/lib/integrations/brevo';
 
 /**
  * POST /api/auth/forgot-password
@@ -50,11 +50,7 @@ export async function POST(request: Request) {
       // Send reset email
       const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
 
-      try {
-        await sendTransactionalEmail({
-          to: email,
-          subject: 'Réinitialisation de votre mot de passe FETRA',
-          htmlContent: `
+      const htmlContent = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #7C8363;">Réinitialisation de mot de passe</h2>
               <p>Bonjour ${user.name || ''},</p>
@@ -77,8 +73,9 @@ export async function POST(request: Request) {
                 <a href="https://fetrabeauty.com" style="color: #7C8363;">fetrabeauty.com</a>
               </p>
             </div>
-          `,
-          textContent: `
+          `;
+
+      const textContent = `
 Réinitialisation de mot de passe
 
 Bonjour ${user.name || ''},
@@ -91,8 +88,16 @@ ${resetUrl}
 Ce lien est valable pendant 1 heure. Si vous n'avez pas demandé cette réinitialisation, ignorez simplement cet email.
 
 FETRA Beauty - fetrabeauty.com
-          `
-        });
+          `;
+
+      try {
+        await sendCustomEmail(
+          email,
+          'Réinitialisation de votre mot de passe FETRA',
+          htmlContent,
+          textContent,
+          user.name || undefined
+        );
       } catch (emailError) {
         console.error('Error sending reset email:', emailError);
         // Don't fail the request if email fails
