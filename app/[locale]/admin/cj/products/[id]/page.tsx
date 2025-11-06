@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Product } from '@prisma/client';
 
@@ -36,9 +36,12 @@ interface CJVariantDetail {
 export default function AdminCjProductDetail({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
+  const resolvedParams = use(params);
+  const productId = resolvedParams.id;
+  
   const [product, setProduct] = useState<SupabaseProduct | null>(null);
   const [localProducts, setLocalProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,13 +75,13 @@ export default function AdminCjProductDetail({
     }
 
     checkAuth();
-  }, [router, params.id]);
+  }, [router, productId]);
 
   // Load product details
   async function loadProduct() {
     try {
       setLoading(true);
-      const res = await fetch(`/api/admin/cj/products/${params.id}`);
+      const res = await fetch(`/api/admin/cj/products/${productId}`);
 
       if (!res.ok) {
         throw new Error('Erreur lors du chargement du produit');
