@@ -4,8 +4,8 @@ import { upsertContactHubspot } from '../../../../lib/integrations/hubspot';
 import { addContactBrevo, sendOrderConfirmationEmail } from '../../../../lib/integrations/brevo';
 import { upsertCustomer, createOrder, updateOrderStatus } from '../../../../lib/db/orders';
 import { getProductBySku, decrementStock } from '../../../../lib/db/products';
-import { createCjOrder, type CJOrderRequest } from '../../../../lib/integrations/cj-dropshipping';
-import type { CJOrderResponse } from '../../../../lib/types/cj';
+import { createCjOrder } from '../../../../lib/integrations/cj-dropshipping';
+import type { CJOrderRequest, CJOrderResponse } from '../../../../lib/types/cj';
 import { OrderStatus } from '@prisma/client';
 import prisma from '../../../../lib/db/prisma';
 
@@ -153,7 +153,7 @@ export async function POST(request: Request) {
         if (isCjConfigured || isCjDirectApi) {
           try {
             // Get shipping details from Stripe session
-            const shippingDetails = (session as any).shipping_details || session.shipping_details;
+            const shippingDetails = (session as any).shipping_details;
             const shippingAddress = shippingDetails?.address;
 
             if (!shippingAddress) {

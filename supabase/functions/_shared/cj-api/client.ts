@@ -3,7 +3,7 @@
  * Centralized API client with retry logic and error handling
  */
 
-import { getCjAccessToken } from './auth.ts';
+import { getCjAccessToken } from './auth';
 import {
   CJApiResponse,
   CJProductListResponse,
@@ -11,7 +11,7 @@ import {
   CJOrderRequest,
   CJOrderResponse,
   CJTrackingInfo,
-} from './types.ts';
+} from './types';
 
 const API_BASE_URL = 'https://developers.cjdropshipping.com/api2.0/v1';
 

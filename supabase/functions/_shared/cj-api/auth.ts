@@ -4,7 +4,7 @@
  * Documentation: https://developers.cjdropshipping.cn/en/api/api2/api/auth.html
  */
 
-import { CJAuthTokenResponse, CJTokenCache } from './types.ts';
+import { CJAuthTokenResponse, CJTokenCache } from './types';
 
 const TOKEN_URL = 'https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken';
 
