@@ -16,9 +16,18 @@ export async function GET(request: Request) {
     );
   }
 
+  // Check if user has ADMIN role
+  const userRole = (session.user as any).role;
+  if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
+    return NextResponse.json(
+      { error: 'Accès administrateur requis' },
+      { status: 403 }
+    );
+  }
+
   return NextResponse.json({
     email: session.user.email,
     name: session.user.name,
-    role: (session.user as any).role || 'user'
+    role: userRole
   });
 }

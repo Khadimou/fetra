@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Enforce admin role here
-        if (user.role !== 'ADMIN') {
+        if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
           throw new Error('Accès administrateur requis');
         }
 
@@ -113,7 +113,7 @@ export const authOptions: NextAuthOptions = {
     // Create Customer on first social sign in
     async signIn({ user, account, profile }) {
       // Only for OAuth providers (not credentials)
-      if (account?.provider !== 'credentials' && user.email) {
+      if (account?.provider !== 'credentials' && account?.provider !== 'admin-credentials' && user.email) {
         try {
           // Check if user already has a customer
           const existingUser = await prisma.user.findUnique({

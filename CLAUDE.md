@@ -41,7 +41,7 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 ### Tech Stack
 - **Framework**: Next.js 16 with App Router, React 19, TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Prisma ORM + Supabase (for CJ Dropshipping integration)
 - **Authentication**: NextAuth v4 with Credentials Provider + Prisma Adapter
 - **Styling**: Tailwind CSS with custom color tokens (`fetra-olive`, `fetra-pink`)
 - **Payments**: Stripe Checkout (card payments only, EUR)
@@ -50,6 +50,8 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 - **Email**: Brevo (transactional emails, newsletter)
 - **Support**: Freshdesk (ticket creation)
 - **Shipping**: Colissimo API (La Poste Suivi v2 for tracking)
+- **Dropshipping**: CJ Dropshipping API (K-Beauty products sync, order fulfillment)
+- **Edge Functions**: Supabase Edge Functions (Deno runtime for CJ API integration)
 - **Admin**: NextAuth-powered dashboard with JWT sessions
 - **Monitoring**: Sentry (server-side always on, client-side consent-gated)
 - **Testing**: Vitest + Testing Library
@@ -196,7 +198,37 @@ All integrations have retry logic (3 attempts, exponential backoff):
 - **Studio**: Run `npx prisma studio` to view/edit database with web UI
 - **Client Generation**: Auto-generated on `npx prisma generate` and `npm install`
 
-#### 13. Environment Variables Architecture
+#### 13. CJ Dropshipping Integration (Supabase Edge Functions)
+- **Platform**: Supabase Edge Functions (Deno runtime)
+- **API Version**: CJ Dropshipping API v2.0
+- **Authentication**: OAuth2 with `client_id` and `client_secret`
+- **Location**: `supabase/functions/`
+- **Shared Modules**: `supabase/functions/_shared/cj-api/`
+  - `auth.ts`: OAuth2 token management with automatic refresh
+  - `client.ts`: API client with retry logic (3 attempts, exponential backoff)
+  - `types.ts`: TypeScript definitions for CJ API
+- **Edge Functions**:
+  - `sync-cj-products`: Sync K-Beauty products from CJ to Supabase
+  - `create-cj-order`: Submit orders to CJ for fulfillment
+  - `get-cj-tracking`: Retrieve order tracking and status from CJ
+- **Database Tables** (Supabase):
+  - `products`: CJ products catalog with variants, pricing, stock
+  - `orders`: Orders with CJ order IDs and tracking info
+  - `cj_sync_logs`: Sync history and statistics
+- **Workflow**:
+  1. **Product Sync**: Cron job calls `sync-cj-products` → fetches K-Beauty products → upserts to Supabase
+  2. **Order Creation**: Customer places order → stored in Supabase → `create-cj-order` submits to CJ
+  3. **Tracking**: Customer views order → `get-cj-tracking` fetches status → updates Supabase
+- **Features**:
+  - Automatic token refresh (cached in-memory)
+  - Pagination support (up to 100 products/page)
+  - Batch product sync with error handling
+  - Order status mapping (CJ status → internal status)
+  - Comprehensive logging via `cj_sync_logs`
+- **Deployment**: `supabase functions deploy [function-name]`
+- **Documentation**: See `supabase/README.md` and `docs/cj-dropshipping-integration.md`
+
+#### 14. Environment Variables Architecture
 ```
 # Base
 NEXT_PUBLIC_BASE_URL        # Used for Stripe redirect URLs
@@ -246,6 +278,17 @@ GOOGLE_CLIENT_ID            # Google OAuth Client ID (from Google Cloud Console)
 GOOGLE_CLIENT_SECRET        # Google OAuth Client Secret
 APPLE_CLIENT_ID             # Apple Sign In Service ID (e.g., com.fetrabeauty.web.service)
 APPLE_CLIENT_SECRET         # Apple Sign In JWT (generate with private key, expires 6 months)
+
+# CJ Dropshipping (for Edge Functions)
+CJ_CLIENT_ID                # CJ Dropshipping OAuth2 Client ID
+CJ_CLIENT_SECRET            # CJ Dropshipping OAuth2 Client Secret
+
+# Supabase (for CJ integration)
+SUPABASE_URL                # Supabase project URL (https://xxx.supabase.co)
+SUPABASE_ANON_KEY           # Supabase anonymous key (public, client-side)
+SUPABASE_SERVICE_ROLE_KEY   # Supabase service role key (private, server-side only)
+NEXT_PUBLIC_SUPABASE_URL    # Public Supabase URL (for client-side access)
+NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side access)
 ```
 
 ## Key Files & Their Purposes
@@ -271,6 +314,12 @@ APPLE_CLIENT_SECRET         # Apple Sign In JWT (generate with private key, expi
 - `app/admin/`: Admin dashboard pages (login, orders list, order detail)
 - `app/api/admin/`: Admin API routes (auth, orders)
 - `app/api/colissimo/`: Colissimo tracking API
+- `supabase/functions/`: Supabase Edge Functions (Deno runtime)
+- `supabase/functions/_shared/cj-api/`: CJ Dropshipping API client modules
+- `supabase/functions/sync-cj-products/`: Product sync Edge Function
+- `supabase/functions/create-cj-order/`: Order creation Edge Function
+- `supabase/functions/get-cj-tracking/`: Tracking retrieval Edge Function
+- `supabase/migrations/`: SQL migrations for CJ tables (products, orders, sync_logs)
 - `middleware.ts`: Request interceptor (webhook bypass)
 - `tailwind.config.js`: Custom color tokens (fetra-olive, fetra-pink)
 

@@ -33,26 +33,23 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider messages={messages}>
-          <GoogleAnalyticsScript />
-          <HubspotSnippet />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-fetra-olive focus:text-white focus:rounded-md"
-          >
-            Aller au contenu principal
-          </a>
-          <Header />
-          <main id="main-content" className="bg-gray-50 min-h-screen">
-            {children}
-          </main>
-          <Footer />
-          <NewsletterPopup />
-          <ClientProviders />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <ClientProviders>
+        <GoogleAnalyticsScript />
+        <HubspotSnippet />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-fetra-olive focus:text-white focus:rounded-md"
+        >
+          Aller au contenu principal
+        </a>
+        <Header />
+        <main id="main-content" className="bg-gray-50 min-h-screen">
+          {children}
+        </main>
+        <Footer />
+        <NewsletterPopup />
+      </ClientProviders>
+    </NextIntlClientProvider>
   );
 }
