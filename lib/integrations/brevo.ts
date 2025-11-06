@@ -169,6 +169,54 @@ export async function sendTransactionalEmail(
 }
 
 /**
+ * Send custom email with HTML content (no template)
+ */
+export async function sendCustomEmail(
+  to: string,
+  subject: string,
+  htmlContent: string,
+  textContent?: string,
+  toName?: string
+): Promise<any> {
+  return retryWithBackoff(async () => {
+    const apiKey = process.env.BREVO_API_KEY;
+    const apiBase = process.env.BREVO_API_BASE || 'https://api.brevo.com';
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || 'contact@fetrabeauty.com';
+    const senderName = process.env.BREVO_SENDER_NAME || 'FETRA BEAUTY';
+
+    if (!apiKey) {
+      throw new Error('BREVO_API_KEY not configured');
+    }
+
+    const endpoint = `${apiBase}/v3/smtp/email`;
+
+    const payload = {
+      to: [{ email: to, name: toName }],
+      sender: { email: senderEmail, name: senderName },
+      subject,
+      htmlContent,
+      textContent
+    };
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': apiKey
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Brevo email send error (${res.status}): ${errorText}`);
+    }
+
+    return res.json();
+  });
+}
+
+/**
  * Send order confirmation email
  */
 export async function sendOrderConfirmationEmail(

@@ -105,8 +105,9 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60 // 24 hours
   },
   pages: {
-    signIn: '/admin/login',
-    error: '/admin/login'
+    // Built-in NextAuth pages
+    signIn: '/login',
+    error: '/auth-error'  // Show detailed error page
   },
   callbacks: {
     // Create Customer on first social sign in

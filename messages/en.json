@@ -90,6 +90,31 @@
         "passwordMismatch": "Passwords do not match",
         "acceptTermsRequired": "Please accept the terms and conditions"
       }
+    },
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "Enter your email and we'll send you a link to reset your password",
+      "email": "Email",
+      "emailHint": "We'll send a reset link to this address",
+      "sendButton": "Send link",
+      "sending": "Sending...",
+      "successTitle": "Email sent!",
+      "successMessage": "If an account exists with this email, you will receive a reset link in a few moments.",
+      "checkSpam": "Remember to check your spam folder if you don't receive anything.",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "title": "New Password",
+      "subtitle": "Enter your new password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "passwordHint": "Minimum 8 characters",
+      "resetButton": "Reset",
+      "resetting": "Resetting...",
+      "successTitle": "Password changed!",
+      "successMessage": "Your password has been successfully changed.",
+      "redirecting": "Redirecting to login...",
+      "backToLogin": "Back to login"
     }
   },
   "Account": {

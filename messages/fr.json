@@ -90,6 +90,31 @@
         "passwordMismatch": "Les mots de passe ne correspondent pas",
         "acceptTermsRequired": "Veuillez accepter les conditions générales"
       }
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié ?",
+      "subtitle": "Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+      "email": "Email",
+      "emailHint": "Nous vous enverrons un lien de réinitialisation à cette adresse",
+      "sendButton": "Envoyer le lien",
+      "sending": "Envoi...",
+      "successTitle": "Email envoyé !",
+      "successMessage": "Si un compte existe avec cet email, vous recevrez un lien de réinitialisation dans quelques instants.",
+      "checkSpam": "Pensez à vérifier vos spams si vous ne recevez rien.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "passwordHint": "Minimum 8 caractères",
+      "resetButton": "Réinitialiser",
+      "resetting": "Réinitialisation...",
+      "successTitle": "Mot de passe modifié !",
+      "successMessage": "Votre mot de passe a été modifié avec succès.",
+      "redirecting": "Redirection vers la connexion...",
+      "backToLogin": "Retour à la connexion"
     }
   },
   "Account": {
