@@ -6,7 +6,18 @@ const withNextIntl = createNextIntlPlugin('./i18n.ts');
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'oss-cf.cjdropshipping.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cf.cjdropshipping.com',
+        pathname: '/**',
+      },
+    ],
   },
 };
 

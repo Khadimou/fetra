@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-FETRA is a French e-commerce site built with Next.js 16 (App Router) selling a beauty product: "Rituel Visage Liftant" (facial lifting kit with rose quartz tools and oil). The site features Stripe payments, GDPR-compliant cookie consent, marketing automation via HubSpot and Brevo, and customer support via Freshdesk.
+FETRA is a French e-commerce platform built with Next.js 16 (App Router) selling beauty products. Originally focused on a single product ("Rituel Visage Liftant" - facial lifting kit with rose quartz tools and oil), it now features a full product catalog powered by CJ Dropshipping for K-Beauty products. The site includes Stripe payments, GDPR-compliant cookie consent, marketing automation via HubSpot and Brevo, customer support via Freshdesk, and automated order fulfillment through CJ Dropshipping.
 
 ## Commands
 
@@ -27,6 +27,26 @@ npm run format        # Format code with Prettier
 npm run test          # Run all tests with Vitest
 # Run single test file:
 npm run test -- <filename>.test.ts
+```
+
+### Database (Prisma)
+```bash
+npx prisma generate      # Generate Prisma Client types
+npx prisma db push       # Push schema changes to database (user preference)
+npx prisma migrate dev   # Create and apply migration (alternative)
+npx prisma migrate deploy # Apply migrations in production
+npx prisma db seed       # Seed database with initial admin user
+npx prisma studio        # Open Prisma Studio (database GUI)
+```
+
+### Supabase Edge Functions (CJ Dropshipping)
+```bash
+supabase login           # Login to Supabase CLI
+supabase link            # Link to Supabase project
+supabase functions deploy sync-cj-products    # Deploy product sync function
+supabase functions deploy create-cj-order     # Deploy order creation function
+supabase functions deploy get-cj-tracking     # Deploy tracking function
+supabase functions serve # Serve functions locally
 ```
 
 ### Stripe Webhook Testing (Local Development)
@@ -65,22 +85,31 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 - Custom event `cartUpdated` dispatched on changes
 - Components listen via `useEffect` + `addEventListener`
 
-#### 2. Product Data
-- **Single product model**: `lib/product.ts` exports `getProduct()`
-- Product images stored in `/public/*.webp` with LQIP placeholders
-- Images use base64-encoded LQIP for instant loading
-- Stock level is hardcoded (not dynamic inventory)
+#### 2. Product Data (Dual System)
+- **FETRA Product**: `lib/product.ts` exports `getProduct()` for original product
+  - Product images stored in `/public/*.webp` with LQIP placeholders
+  - Images use base64-encoded LQIP for instant loading
+  - Stock level is hardcoded (not dynamic inventory)
+- **CJ Products**: Stored in Supabase database, retrieved via API
+  - Accessed via `/api/products/cj` and `/api/products/cj/[sku]`
+  - Dynamic stock from Supabase `products` table
+  - Images hosted on CJ CDN (`oss-cf.cjdropshipping.com`)
+  - Pricing markup applied server-side (2.5x default)
 
-#### 3. Checkout Flow
-1. User adds product to cart (stored in localStorage)
+#### 3. Checkout Flow (Multi-Product)
+1. User adds products to cart (FETRA + CJ products, stored in localStorage)
 2. Clicks "Checkout" → POST to `/api/checkout`
-3. API creates Stripe Checkout session
-4. User redirected to Stripe hosted page
-5. On success → redirected to `/success?session_id=...`
-6. Stripe webhook (`/api/webhooks/stripe`) processes payment and syncs to:
-   - HubSpot (contact + order properties)
-   - Brevo (contact + transactional email)
-   - Local JSON file (`data/orders.json`)
+3. API validates prices server-side (Supabase for CJ, hardcoded for FETRA)
+4. API creates Stripe Checkout session with CJ metadata per line item
+5. User redirected to Stripe hosted page
+6. On success → redirected to `/success?session_id=...`
+7. Stripe webhook (`/api/webhooks/stripe`) processes payment:
+   - Creates order in Prisma with all items
+   - Decrements stock in Supabase for CJ products
+   - Creates CJ orders via Edge Function for items with `cjVariantId`
+   - Updates order with `cjOrderId` and `cjOrderNum`
+   - Syncs to HubSpot (contact + order properties)
+   - Sends confirmation email via Brevo
 
 #### 4. Webhook Architecture
 - **CRITICAL**: `/api/webhooks/*` routes MUST NOT redirect (middleware bypass)
@@ -228,7 +257,53 @@ All integrations have retry logic (3 attempts, exponential backoff):
 - **Deployment**: `supabase functions deploy [function-name]`
 - **Documentation**: See `supabase/README.md` and `docs/cj-dropshipping-integration.md`
 
-#### 14. Environment Variables Architecture
+#### 14. CJ Product Catalog (Multi-Product E-commerce)
+- **Overview**: Full-featured product catalog with CJ Dropshipping products alongside FETRA's original product
+- **Frontend Pages**:
+  - `/products` - Product catalog page with search, filters, pagination
+  - `/products/[sku]` - Product detail page with variant selection, image gallery
+- **Backend APIs**:
+  - `GET /api/products/cj` - List all CJ products with pricing markup (2.5x default)
+  - `GET /api/products/cj/[sku]` - Get single product details with variants
+- **Admin Pages**:
+  - `/admin/cj/products` - Sync and manage CJ products
+  - `/admin/cj/products/[id]` - Individual product management
+  - `/admin/cj/orders` - View CJ orders
+  - `/admin/cj/dashboard` - CJ integration dashboard
+  - `/admin/cj/mapping` - Product mapping tools
+- **Pricing Strategy**:
+  - Configurable markup in `app/api/products/cj/route.ts` and `app/api/products/cj/[sku]/route.ts`
+  - Default: 2.5x coefficient (150% margin)
+  - Options: coefficient-based or fixed amount markup
+  - **CRITICAL**: Must update both route files when changing pricing
+- **Multi-Product Cart**:
+  - Extended `CartItem` type with CJ-specific fields: `cjProductId`, `cjVariantId`, `variantName`, `maxQuantity`
+  - Smart cart matching by `cjVariantId` for CJ products
+  - Mixed cart support (FETRA products + CJ products)
+  - Stock limit enforcement at cart level
+- **Checkout Flow (Multi-Product)**:
+  1. Cart contains mixed products (FETRA + CJ)
+  2. Server validates prices against Supabase for CJ products
+  3. Stripe session created with CJ metadata per line item (`cjProductId`, `cjVariantId`, `variantName`)
+  4. Webhook extracts CJ metadata and creates CJ orders only for items with `cjVariantId`
+  5. Stock decremented in Supabase
+  6. CJ order created via Edge Function, returns `cjOrderId` and `cjOrderNum`
+- **Product Sync Workflow**:
+  1. Admin triggers sync via `/admin/cj/products`
+  2. Edge Function fetches products from CJ API
+  3. Products stored in Supabase `products` table
+  4. Next.js API routes apply pricing markup when serving to frontend
+- **Image Handling**: CJ images hosted on `oss-cf.cjdropshipping.com`, configured in `next.config.ts`
+- **Key Files**:
+  - `app/[locale]/products/page.tsx` - Catalog UI
+  - `app/[locale]/products/[sku]/page.tsx` - Product detail UI
+  - `app/api/products/cj/route.ts` - List API with pricing
+  - `app/api/products/cj/[sku]/route.ts` - Detail API with pricing
+  - `lib/cart.ts` - Multi-product cart logic
+  - `lib/db/products.ts` - Prisma product helpers
+- **Documentation**: See `CATALOGUE-CJ-README.md` and `docs/cj-catalog-implementation.md`
+
+#### 15. Environment Variables Architecture
 ```
 # Base
 NEXT_PUBLIC_BASE_URL        # Used for Stripe redirect URLs
@@ -293,35 +368,65 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side acces
 
 ## Key Files & Their Purposes
 
+### Core E-commerce
 - `app/layout.tsx`: Root layout with Header, Footer, analytics scripts
-- `app/product/page.tsx`: Main product page (landing page)
-- `app/cart/page.tsx`: Shopping cart UI
-- `app/checkout/page.tsx`: Checkout initiation
+- `app/product/page.tsx`: Main FETRA product page (Rituel Visage Liftant)
+- `app/cart/page.tsx`: Shopping cart UI (supports mixed FETRA + CJ products)
+- `app/checkout/page.tsx`: Checkout initiation with Stripe
 - `app/success/page.tsx`: Post-purchase confirmation (clears cart)
-- `app/api/checkout/route.ts`: Creates Stripe Checkout session
-- `app/api/webhooks/stripe/route.ts`: Handles Stripe events (most important API route)
-- `lib/cart.ts`: Client-side cart management (localStorage)
-- `lib/product.ts`: Product data model
+- `app/api/checkout/route.ts`: Creates Stripe Checkout session with price validation
+- `app/api/webhooks/stripe/route.ts`: Handles Stripe events, creates CJ orders (most critical API route)
+
+### CJ Product Catalog
+- `app/[locale]/products/page.tsx`: CJ products catalog page (search, filters, pagination)
+- `app/[locale]/products/[sku]/page.tsx`: CJ product detail page (variants, gallery)
+- `app/api/products/cj/route.ts`: CJ products list API with pricing markup
+- `app/api/products/cj/[sku]/route.ts`: CJ product detail API with pricing markup
+
+### Admin Dashboard
+- `app/[locale]/admin/page.tsx`: Admin dashboard with order stats
+- `app/[locale]/admin/login/page.tsx`: Admin login page
+- `app/[locale]/admin/orders/page.tsx`: Orders list with filters
+- `app/[locale]/admin/orders/[orderId]/page.tsx`: Order detail with tracking
+- `app/[locale]/admin/products/page.tsx`: FETRA products management
+- `app/[locale]/admin/cj/products/page.tsx`: CJ products sync and management
+- `app/[locale]/admin/cj/products/[id]/page.tsx`: Individual CJ product detail
+- `app/[locale]/admin/cj/orders/page.tsx`: CJ orders list
+- `app/[locale]/admin/cj/dashboard/page.tsx`: CJ integration dashboard
+- `app/[locale]/admin/cj/mapping/page.tsx`: Product mapping tools
+- `app/api/admin/`: Admin API routes (auth, orders)
+
+### Libraries and Utilities
+- `lib/cart.ts`: Multi-product cart management (localStorage, CJ + FETRA support)
+- `lib/product.ts`: FETRA product data model
 - `lib/db/prisma.ts`: Prisma client singleton
 - `lib/db/orders.ts`: Order management with Prisma
+- `lib/db/products.ts`: Product management with Prisma
 - `lib/integrations/`: HubSpot, Brevo, Colissimo integrations with retry logic
 - `lib/types/colissimo.ts`: TypeScript types for Colissimo API
 - `lib/auth/auth.config.ts`: NextAuth configuration
 - `lib/cookies.ts`: GDPR consent helpers
-- `prisma/schema.prisma`: Database schema (models, relations, enums)
-- `components/CookieConsent.tsx`: Cookie banner UI
+
+### Database and Schema
+- `prisma/schema.prisma`: Database schema (User, Customer, Product, Order, OrderItem, ShippingInfo)
+
+### Supabase Edge Functions (CJ Dropshipping)
+- `supabase/functions/_shared/cj-api/`: CJ API client modules (auth, client, types)
+- `supabase/functions/sync-cj-products/`: Product sync from CJ to Supabase
+- `supabase/functions/create-cj-order/`: Order creation in CJ
+- `supabase/functions/get-cj-tracking/`: Tracking retrieval from CJ
+- `supabase/migrations/`: SQL migrations for CJ tables in Supabase
+
+### Components
+- `components/CookieConsent.tsx`: GDPR cookie consent banner
+- `components/Header.tsx`: Navigation header (includes Catalogue link)
 - `components/admin/TrackingStatus.tsx`: Colissimo tracking widget
-- `app/admin/`: Admin dashboard pages (login, orders list, order detail)
-- `app/api/admin/`: Admin API routes (auth, orders)
-- `app/api/colissimo/`: Colissimo tracking API
-- `supabase/functions/`: Supabase Edge Functions (Deno runtime)
-- `supabase/functions/_shared/cj-api/`: CJ Dropshipping API client modules
-- `supabase/functions/sync-cj-products/`: Product sync Edge Function
-- `supabase/functions/create-cj-order/`: Order creation Edge Function
-- `supabase/functions/get-cj-tracking/`: Tracking retrieval Edge Function
-- `supabase/migrations/`: SQL migrations for CJ tables (products, orders, sync_logs)
-- `middleware.ts`: Request interceptor (webhook bypass)
+
+### Configuration
+- `middleware.ts`: Request interceptor (webhook bypass critical)
 - `tailwind.config.js`: Custom color tokens (fetra-olive, fetra-pink)
+- `next.config.ts`: Next.js configuration (CJ image domains)
+- `messages/fr.json`: French translations (includes Products.* and ProductDetail.*)
 
 ## Important Gotchas
 
@@ -335,7 +440,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side acces
 
 5. **Image Optimization**: Product images use LQIP (Low Quality Image Placeholder) base64 strings. Generate new LQIPs using sharp or online tools if adding images.
 
-6. **Single Product Model**: Site designed for one product. Adding multi-product requires refactoring `lib/product.ts` and checkout flow.
+6. **Dual Product System**: Site supports both FETRA's original product (`lib/product.ts`) AND CJ catalog products (Supabase). Checkout flow handles mixed carts automatically.
 
 7. **Database Migrations**: Always test migrations in development before applying to production. Use `npx prisma migrate dev` in dev, `npx prisma migrate deploy` in prod.
 
@@ -361,6 +466,22 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side acces
 
 17. **Signup Route Location**: Signup route is at `/api/signup` (NOT `/api/auth/signup`) to avoid conflict with NextAuth's `[...nextauth]` catch-all route.
 
+18. **CJ Pricing Configuration**: Pricing markup configured in TWO places: `app/api/products/cj/route.ts` AND `app/api/products/cj/[sku]/route.ts`. Must update BOTH when changing margin to maintain consistency.
+
+19. **CJ Product Storage**: CJ products stored in Supabase (separate database), NOT in local Prisma. Prisma `Product` model only used for FETRA's original product and SKU references in orders.
+
+20. **Multi-Product Cart**: Cart now supports both FETRA and CJ products. CJ products matched by `cjVariantId`, FETRA products by SKU. Do not assume single-product cart logic.
+
+21. **CJ Metadata in Stripe**: CJ product metadata (`cjProductId`, `cjVariantId`, `variantName`) MUST be included in Stripe line items. Webhook relies on this to create CJ orders. Missing metadata means no CJ fulfillment.
+
+22. **CJ Image Domains**: CJ product images hosted on `oss-cf.cjdropshipping.com`. This domain MUST be in `next.config.ts` `images.remotePatterns` or images won't load.
+
+23. **Price Validation**: Checkout validates prices server-side against Supabase for CJ products. Client-submitted prices are NEVER trusted. Mismatches result in checkout failure.
+
+24. **Stock Management**: CJ stock managed in Supabase `products` table. Stock decremented on successful payment. No automatic stock sync from CJ (manual sync required).
+
+25. **Database Migrations (User Preference)**: Use `npx prisma db push` to apply schema changes (user's preferred method from global CLAUDE.md). Avoid `prisma migrate dev` unless creating versioned migrations for production.
+
 ## Development Workflow Tips
 
 - **Stripe Testing**: Use test card `4242 4242 4242 4242` with any future date and CVC
@@ -370,6 +491,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side acces
 - **Error Monitoring**: Server errors go to Sentry automatically. Client errors require analytics consent.
 - **Colissimo Testing**: Use sandbox tracking numbers from `SANDBOX_TRACKING_NUMBERS` in `lib/integrations/colissimo.ts`
 - **Admin Access**: Login at `/admin/login` with credentials from `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars
+- **CJ Product Sync**: Test product sync at `/admin/cj/products` - requires Supabase Edge Functions deployed
+- **CJ Catalog Testing**: Visit `/products` to see synced products, test search and filters
+- **Multi-Product Cart**: Test mixed cart with both FETRA product and CJ products
+- **CJ Edge Functions Logs**: Check Supabase Dashboard → Edge Functions → Logs for CJ API errors
+- **Price Markup**: Default 2.5x coefficient means CJ price of €10 becomes €25 in catalog
 
 ## Deployment Notes
 
@@ -381,9 +507,21 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side acces
 
 ## Documentation
 
-Additional guides in `docs/`:
+### Main Documentation
+- `CATALOGUE-CJ-README.md`: Quick start guide for CJ catalog (French)
+- `docs/cj-catalog-implementation.md`: Complete CJ catalog architecture
+- `docs/cj-dropshipping-integration.md`: CJ Dropshipping integration guide
+- `supabase/README.md`: Supabase Edge Functions documentation
+
+### Additional Guides in `docs/`
 - `webhook-troubleshooting.md`: Debug webhook 307/404 issues
 - `fix-webhook-307-redirect.md`: Middleware configuration for webhooks
 - `email-deliverability-guide.md`: Avoid spam folder
 - `brevo-newsletter-setup.md`: Configure Brevo lists and templates
 - `email-automation.md`: Email automation workflows
+- `oauth-setup.md`: Google/Apple OAuth configuration
+- `prisma-nextauth-migration-guide.md`: Prisma + NextAuth setup
+- `apply-supabase-migrations.md`: Supabase migration instructions
+- `configure-cj-secrets.md`: CJ API credentials setup
+- `deploy-edge-functions.md`: Deploy Supabase Edge Functions
+- `troubleshooting-cj-sync.md`: Debug CJ product sync issues

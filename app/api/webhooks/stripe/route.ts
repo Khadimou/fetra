@@ -75,21 +75,33 @@ export async function POST(request: Request) {
           productName: string;
           quantity: number;
           unitPrice: number;
+          cjVariantId?: string;
+          cjProductId?: string;
         }> = [];
         if (process.env.STRIPE_SECRET_KEY) {
           try {
             const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
             const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-              expand: ['line_items']
+              expand: ['line_items', 'line_items.data.price.product']
             });
 
             if (fullSession.line_items?.data) {
-              orderItems = fullSession.line_items.data.map((item) => ({
-                productSku: item.price?.product as string || 'FETRA-RIT-001',
-                productName: item.description || 'Rituel Visage Liftant',
-                quantity: item.quantity || 1,
-                unitPrice: (item.price?.unit_amount || 0) / 100
-              }));
+              orderItems = fullSession.line_items.data.map((item) => {
+                // Extract metadata from product
+                const product = item.price?.product;
+                const metadata = typeof product === 'object' && product !== null 
+                  ? (product as any).metadata 
+                  : {};
+
+                return {
+                  productSku: metadata.sku || item.price?.product as string || 'FETRA-RIT-001',
+                  productName: item.description || 'Rituel Visage Liftant',
+                  quantity: item.quantity || 1,
+                  unitPrice: (item.price?.unit_amount || 0) / 100,
+                  cjVariantId: metadata.cjVariantId,
+                  cjProductId: metadata.cjProductId,
+                };
+              });
             }
           } catch (err: any) {
             console.error('Error fetching line items:', err.message);
@@ -170,28 +182,30 @@ export async function POST(request: Request) {
 
               const cjProducts = await Promise.all(
                 orderItems.map(async (item, index) => {
-                  // Try to get CJ variant ID from product in database
-                  let cjVariantId: string | null = null;
+                  // Priority 1: Use cjVariantId from line item metadata (from checkout)
+                  let cjVariantId: string | null = item.cjVariantId || null;
                   
-                  try {
-                    const product = await getProductBySku(item.productSku);
-                    if (product?.cjVariantId) {
-                      cjVariantId = product.cjVariantId;
+                  // Priority 2: Try to get CJ variant ID from product in database
+                  if (!cjVariantId) {
+                    try {
+                      const product = await getProductBySku(item.productSku);
+                      if (product?.cjVariantId) {
+                        cjVariantId = product.cjVariantId;
+                      }
+                    } catch (err) {
+                      console.warn(`Could not fetch product ${item.productSku}:`, err);
                     }
-                  } catch (err) {
-                    console.warn(`Could not fetch product ${item.productSku}:`, err);
                   }
                   
-                  // Fallback to environment variable or metadata
+                  // Priority 3: Fallback to environment variable
                   if (!cjVariantId) {
-                    cjVariantId = (item as any).cjVariantId || process.env.CJ_DEFAULT_VARIANT_ID || null;
+                    cjVariantId = process.env.CJ_DEFAULT_VARIANT_ID || null;
                   }
                   
+                  // Skip CJ order creation for products without CJ variant ID
                   if (!cjVariantId) {
-                    throw new Error(
-                      `CJ variant ID not found for product ${item.productSku}. ` +
-                      `Please configure cjVariantId in the Product model or set CJ_DEFAULT_VARIANT_ID environment variable.`
-                    );
+                    console.warn(`No CJ variant ID for product ${item.productSku}, skipping CJ fulfillment`);
+                    return null;
                   }
 
                   return {
@@ -202,43 +216,51 @@ export async function POST(request: Request) {
                 })
               );
 
-              // Build CJ order request
-              const cjOrderData: CJOrderRequest = {
-                orderNumber: order.orderNumber,
-                shippingCustomerName: customerName || `${firstName} ${lastName}`.trim(),
-                shippingAddress: shippingAddress.line1 || '',
-                shippingAddress2: shippingAddress.line2 || '',
-                shippingCity: shippingAddress.city || '',
-                shippingProvince: shippingAddress.state || '',
-                shippingCountry: shippingAddress.country || 'FR',
-                shippingCountryCode: shippingAddress.country || 'FR',
-                shippingZip: shippingAddress.postal_code || '',
-                shippingPhone: customer.phone || '',
-                email: customerEmail,
-                remark: `Order from Stripe: ${order.orderNumber}`,
-                products: cjProducts,
-                shopAmount: amountTotal,
-              };
+              // Filter out null products (non-CJ products)
+              const validCjProducts = cjProducts.filter((p): p is NonNullable<typeof p> => p !== null);
 
-              console.log('Creating CJ order for:', order.orderNumber);
-              const cjOrderResponse: CJOrderResponse = await createCjOrder(cjOrderData);
+              // Only create CJ order if there are CJ products
+              if (validCjProducts.length === 0) {
+                console.log('No CJ products in order, skipping CJ order creation');
+              } else {
+                // Build CJ order request
+                const cjOrderData: CJOrderRequest = {
+                  orderNumber: order.orderNumber,
+                  shippingCustomerName: customerName || `${firstName} ${lastName}`.trim(),
+                  shippingAddress: shippingAddress.line1 || '',
+                  shippingAddress2: shippingAddress.line2 || '',
+                  shippingCity: shippingAddress.city || '',
+                  shippingProvince: shippingAddress.state || '',
+                  shippingCountry: shippingAddress.country || 'FR',
+                  shippingCountryCode: shippingAddress.country || 'FR',
+                  shippingZip: shippingAddress.postal_code || '',
+                  shippingPhone: customer.phone || '',
+                  email: customerEmail,
+                  remark: `Order from Stripe: ${order.orderNumber}`,
+                  products: validCjProducts,
+                  shopAmount: amountTotal,
+                };
 
-              console.log('CJ order created successfully:', {
-                orderId: order.id,
-                cjOrderId: cjOrderResponse.orderId,
-                cjOrderNum: cjOrderResponse.orderNum,
-              });
+                console.log('Creating CJ order for:', order.orderNumber);
+                const cjOrderResponse: CJOrderResponse = await createCjOrder(cjOrderData);
 
-              // Update order with CJ order ID
-              await prisma.order.update({
-                where: { id: order.id },
-                data: {
+                console.log('CJ order created successfully:', {
+                  orderId: order.id,
                   cjOrderId: cjOrderResponse.orderId,
                   cjOrderNum: cjOrderResponse.orderNum,
-                },
-              });
+                });
 
-              console.log('Order updated with CJ order ID');
+                // Update order with CJ order ID
+                await prisma.order.update({
+                  where: { id: order.id },
+                  data: {
+                    cjOrderId: cjOrderResponse.orderId,
+                    cjOrderNum: cjOrderResponse.orderNum,
+                  },
+                });
+
+                console.log('Order updated with CJ order ID');
+              }
             }
           } catch (cjError: any) {
             // Non-blocking - log error but don't fail the webhook

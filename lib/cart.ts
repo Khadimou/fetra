@@ -6,6 +6,11 @@ export type CartItem = {
   price: number;
   quantity: number;
   image: string;
+  // CJ Dropshipping metadata
+  cjProductId?: string;
+  cjVariantId?: string;
+  maxQuantity?: number; // Stock limit
+  variantName?: string;
 };
 
 export type Cart = {
@@ -44,15 +49,26 @@ export function saveCart(cart: Cart): void {
 export function addToCart(item: Omit<CartItem, 'quantity'>, quantity: number = 1): Cart {
   const cart = getCart();
   
-  // Check if item already exists
-  const existingIndex = cart.items.findIndex(i => i.sku === item.sku);
+  // Check if item already exists (match by SKU and variant ID for CJ products)
+  const existingIndex = cart.items.findIndex(i => {
+    if (item.cjVariantId) {
+      // For CJ products, match by variant ID
+      return i.cjVariantId === item.cjVariantId;
+    }
+    // For regular products, match by SKU
+    return i.sku === item.sku;
+  });
   
   if (existingIndex >= 0) {
-    // Update quantity
-    cart.items[existingIndex].quantity += quantity;
+    // Update quantity, respecting max quantity if set
+    const newQuantity = cart.items[existingIndex].quantity + quantity;
+    const maxQty = cart.items[existingIndex].maxQuantity;
+    cart.items[existingIndex].quantity = maxQty ? Math.min(newQuantity, maxQty) : newQuantity;
   } else {
-    // Add new item
-    cart.items.push({ ...item, quantity });
+    // Add new item, respecting max quantity
+    const maxQty = item.maxQuantity;
+    const finalQuantity = maxQty ? Math.min(quantity, maxQty) : quantity;
+    cart.items.push({ ...item, quantity: finalQuantity });
   }
   
   // Recalculate totals

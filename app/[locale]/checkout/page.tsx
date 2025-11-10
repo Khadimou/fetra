@@ -38,12 +38,9 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
-      // Prepare checkout data
+      // Prepare checkout data with full cart items
       const checkoutData = {
-        items: cart.items.map(item => ({
-          sku: item.sku,
-          quantity: item.quantity,
-        })),
+        items: cart.items,
         customer: formData,
       };
 
@@ -54,7 +51,10 @@ export default function CheckoutPage() {
         body: JSON.stringify(checkoutData),
       });
 
-      if (!res.ok) throw new Error("Erreur lors du paiement");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erreur lors du paiement");
+      }
 
       const data = await res.json();
       if (data?.url) {
@@ -224,7 +224,7 @@ export default function CheckoutPage() {
               {/* Items */}
               <div className="space-y-4 mb-6 pb-6 border-b">
                 {cart.items.map((item) => (
-                  <div key={item.sku} className="flex gap-4">
+                  <div key={`${item.sku}-${item.cjVariantId ?? 'default'}`} className="flex gap-4">
                     <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
                       <Image
                         src={item.image}
@@ -239,10 +239,17 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">{item.title}</p>
-                      <p className="text-gray-600 text-sm">{item.price.toFixed(2)} €</p>
+                      {item.variantName && (
+                        <p className="text-xs text-gray-500">{item.variantName}</p>
+                      )}
+                      <p className="text-gray-600 text-sm">
+                        {item.price.toFixed(2)} €
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">{(item.price * item.quantity).toFixed(2)} €</p>
+                      <p className="font-semibold">
+                        {(item.price * item.quantity).toFixed(2)} €
+                      </p>
                     </div>
                   </div>
                 ))}
