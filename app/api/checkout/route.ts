@@ -14,6 +14,11 @@ interface CartItem {
   variantName?: string;
 }
 
+// Valid promo codes
+const PROMO_CODES: Record<string, number> = {
+  'BIENVENUE10': 0.1, // 10% discount
+};
+
 export async function POST(request: Request) {
   try {
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -22,10 +27,21 @@ export async function POST(request: Request) {
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const body = await request.json();
-    const { items } = body as { items: CartItem[] };
+    const { items, promoCode } = body as { items: CartItem[]; promoCode?: string };
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+    }
+
+    // Validate promo code server-side
+    let discountRate = 0;
+    if (promoCode) {
+      const upperCode = promoCode.toUpperCase();
+      if (PROMO_CODES[upperCode] !== undefined) {
+        discountRate = PROMO_CODES[upperCode];
+      } else {
+        return NextResponse.json({ error: "Invalid promo code" }, { status: 400 });
+      }
     }
 
     // Validate prices against database and build line items
@@ -88,6 +104,11 @@ export async function POST(request: Request) {
         metadata.variantName = item.variantName;
       }
 
+      // Apply discount to price if promo code is valid
+      const finalPrice = discountRate > 0
+        ? sellingPrice * (1 - discountRate)
+        : sellingPrice;
+
       line_items.push({
         price_data: {
           currency: "eur",
@@ -96,7 +117,7 @@ export async function POST(request: Request) {
             images: item.image ? [item.image] : undefined,
             metadata,
           },
-          unit_amount: Math.round(sellingPrice * 100), // Convert to cents
+          unit_amount: Math.round(finalPrice * 100), // Convert to cents, with discount applied
         },
         quantity: item.quantity,
       });
@@ -120,6 +141,8 @@ export async function POST(request: Request) {
       metadata: {
         cartItemCount: items.length.toString(),
         hasCjProducts: items.some(i => i.cjProductId || i.cjVariantId).toString(),
+        promoCode: promoCode || '',
+        discountRate: discountRate.toString(),
       },
     });
 

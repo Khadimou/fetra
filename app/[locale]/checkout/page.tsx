@@ -26,6 +26,13 @@ export default function CheckoutPage() {
     setCart(currentCart);
   }, [router]);
 
+  // Calculate totals with discount
+  const subtotal = cart.total;
+  const discount = cart.discount || 0;
+  const discountAmount = subtotal * discount;
+  const shipping = 0; // Free shipping
+  const total = subtotal - discountAmount + shipping;
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormData(prev => ({
       ...prev,
@@ -38,10 +45,12 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
-      // Prepare checkout data with full cart items
+      // Prepare checkout data with full cart items and promo code
       const checkoutData = {
         items: cart.items,
         customer: formData,
+        promoCode: cart.promoCode,
+        discount: cart.discount,
       };
 
       // Call Stripe checkout API
@@ -207,7 +216,7 @@ export default function CheckoutPage() {
                 disabled={isLoading}
                 className="w-full py-4 bg-fetra-olive text-white rounded-xl font-semibold hover:bg-fetra-olive/90 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
               >
-                {isLoading ? "Redirection vers le paiement..." : `Payer ${cart.total.toFixed(2)} €`}
+                {isLoading ? "Redirection vers le paiement..." : `Payer ${total.toFixed(2)} €`}
               </button>
 
               <p className="text-sm text-center text-gray-500">
@@ -259,8 +268,14 @@ export default function CheckoutPage() {
               <div className="space-y-3 mb-6 pb-6 border-b">
                 <div className="flex justify-between text-gray-600">
                   <span>Sous-total</span>
-                  <span>{cart.total.toFixed(2)} €</span>
+                  <span>{subtotal.toFixed(2)} €</span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Réduction ({cart.promoCode})</span>
+                    <span>-{discountAmount.toFixed(2)} €</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-gray-600">
                   <span>Livraison</span>
                   <span className="text-fetra-olive font-semibold">Gratuite</span>
@@ -269,7 +284,7 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between text-xl font-bold">
                 <span>Total</span>
-                <span>{cart.total.toFixed(2)} €</span>
+                <span>{total.toFixed(2)} €</span>
               </div>
             </div>
           </div>
