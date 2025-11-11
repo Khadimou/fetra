@@ -1,6 +1,10 @@
 ﻿import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 interface CartItem {
   sku: string;
@@ -46,21 +50,61 @@ export async function POST(request: Request) {
 
     // Validate prices against database and build line items
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-    
-    for (const item of items) {
-      // Fetch product from database to verify price
-      const product = await prisma.product.findUnique({
-        where: { sku: item.sku },
-      });
 
-      if (!product) {
-        return NextResponse.json(
-          { error: `Product not found: ${item.sku}` },
-          { status: 400 }
-        );
+    for (const item of items) {
+      let basePrice: number;
+      let stock: number;
+      let isActive: boolean;
+
+      // Check if this is a CJ product or FETRA product
+      if (item.cjProductId || item.cjVariantId) {
+        // CJ Product - fetch from Supabase
+        if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+          return NextResponse.json(
+            { error: 'CJ integration not configured' },
+            { status: 503 }
+          );
+        }
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+        const { data: cjProduct, error } = await supabase
+          .from('products')
+          .select('price, stock, is_active')
+          .eq('sku', item.sku)
+          .single();
+
+        if (error || !cjProduct) {
+          console.error('[Checkout] CJ Product not found:', item.sku, error);
+          return NextResponse.json(
+            { error: `Product not found: ${item.sku}` },
+            { status: 400 }
+          );
+        }
+
+        basePrice = parseFloat(cjProduct.price);
+        stock = cjProduct.stock;
+        isActive = cjProduct.is_active;
+      } else {
+        // FETRA Product - fetch from Prisma
+        const product = await prisma.product.findUnique({
+          where: { sku: item.sku },
+        });
+
+        if (!product) {
+          console.error('[Checkout] FETRA Product not found:', item.sku);
+          return NextResponse.json(
+            { error: `Product not found: ${item.sku}` },
+            { status: 400 }
+          );
+        }
+
+        basePrice = parseFloat(product.price.toString());
+        stock = product.stock;
+        isActive = product.isActive;
       }
 
-      if (!product.isActive) {
+      // Validate product availability
+      if (!isActive) {
         return NextResponse.json(
           { error: `Product not available: ${item.title}` },
           { status: 400 }
@@ -68,21 +112,30 @@ export async function POST(request: Request) {
       }
 
       // Verify stock
-      if (product.stock < item.quantity) {
+      if (stock < item.quantity) {
         return NextResponse.json(
           { error: `Insufficient stock for: ${item.title}` },
           { status: 400 }
         );
       }
 
-      // Calculate price with margin (same logic as API)
-      const basePrice = parseFloat(product.price.toString());
-      const sellingPrice = Math.round(basePrice * 2.5 * 100) / 100;
+      // Calculate selling price: Apply 2.5x markup only to CJ products
+      // FETRA products use database price directly (no markup)
+      const sellingPrice = (item.cjProductId || item.cjVariantId)
+        ? Math.round(basePrice * 2.5 * 100) / 100  // CJ products: 2.5x markup
+        : Math.round(basePrice * 100) / 100;       // FETRA products: no markup
 
       // Verify client-side price matches server-side calculation
       if (Math.abs(item.price - sellingPrice) > 0.01) {
+        console.error('[Checkout] Price mismatch:', {
+          item: item.title,
+          clientPrice: item.price,
+          serverPrice: sellingPrice,
+          basePrice,
+          isCjProduct: !!(item.cjProductId || item.cjVariantId),
+        });
         return NextResponse.json(
-          { error: `Price mismatch for: ${item.title}` },
+          { error: `Price mismatch for: ${item.title}. Expected ${sellingPrice}€, got ${item.price}€` },
           { status: 400 }
         );
       }
@@ -125,7 +178,7 @@ export async function POST(request: Request) {
 
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com')
-      : 'http://localhost:3000';
+      : 'https://3af3777bb235.ngrok-free.app/';
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
