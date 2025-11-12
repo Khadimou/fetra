@@ -17,23 +17,26 @@ export type Cart = {
   items: CartItem[];
   total: number;
   itemCount: number;
+  promoCode?: string;
+  discount?: number;
 };
 
 const CART_STORAGE_KEY = 'fetra_cart';
+const PROMO_STORAGE_KEY = 'fetra_promo';
 
 export function getCart(): Cart {
   if (typeof window === 'undefined') {
-    return { items: [], total: 0, itemCount: 0 };
+    return { items: [], total: 0, itemCount: 0, promoCode: undefined, discount: undefined };
   }
 
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
-    if (!stored) return { items: [], total: 0, itemCount: 0 };
-    
+    if (!stored) return { items: [], total: 0, itemCount: 0, promoCode: undefined, discount: undefined };
+
     const cart: Cart = JSON.parse(stored);
     return cart;
   } catch {
-    return { items: [], total: 0, itemCount: 0 };
+    return { items: [], total: 0, itemCount: 0, promoCode: undefined, discount: undefined };
   }
 }
 
@@ -103,9 +106,52 @@ export function updateQuantity(sku: string, quantity: number): Cart {
 }
 
 export function clearCart(): Cart {
-  const emptyCart = { items: [], total: 0, itemCount: 0 };
+  const emptyCart = { items: [], total: 0, itemCount: 0, promoCode: undefined, discount: undefined };
   saveCart(emptyCart);
+  // Also clear promo code
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(PROMO_STORAGE_KEY);
+  }
   return emptyCart;
+}
+
+export function applyPromoCode(code: string): { success: boolean; discount?: number; message?: string } {
+  const upperCode = code.toUpperCase();
+
+  // Validate promo code
+  if (upperCode === 'BIENVENUE10') {
+    const cart = getCart();
+    cart.promoCode = upperCode;
+    cart.discount = 0.1; // 10%
+    saveCart(cart);
+
+    // Also save to separate storage for checkout
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(PROMO_STORAGE_KEY, upperCode);
+    }
+
+    return { success: true, discount: 0.1, message: '10% de réduction appliquée !' };
+  }
+
+  return { success: false, message: 'Code promo invalide' };
+}
+
+export function removePromoCode(): Cart {
+  const cart = getCart();
+  cart.promoCode = undefined;
+  cart.discount = undefined;
+  saveCart(cart);
+
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(PROMO_STORAGE_KEY);
+  }
+
+  return cart;
+}
+
+export function getPromoCode(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(PROMO_STORAGE_KEY);
 }
 
 function updateCartTotals(cart: Cart): void {

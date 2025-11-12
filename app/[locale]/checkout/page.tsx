@@ -6,7 +6,7 @@ import { getCart, type Cart } from "../../../lib/cart";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const [cart, setCart] = useState<Cart>({ items: [], total: 0, itemCount: 0 });
+  const [cart, setCart] = useState<Cart>({ items: [], total: 0, itemCount: 0, promoCode: undefined, discount: undefined });
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
