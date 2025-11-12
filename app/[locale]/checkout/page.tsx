@@ -8,6 +8,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [cart, setCart] = useState<Cart>({ items: [], total: 0, itemCount: 0, promoCode: undefined, discount: undefined });
   const [isLoading, setIsLoading] = useState(false);
+  const [isGift, setIsGift] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -16,6 +17,7 @@ export default function CheckoutPage() {
     city: "",
     postalCode: "",
     phone: "",
+    giftMessage: "",
   });
 
   useEffect(() => {
@@ -219,6 +221,49 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Gift Message */}
+              <div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-red-200 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <input
+                    type="checkbox"
+                    id="isGift"
+                    checked={isGift}
+                    onChange={(e) => {
+                      setIsGift(e.target.checked);
+                      if (!e.target.checked) {
+                        setFormData(prev => ({ ...prev, giftMessage: "" }));
+                      }
+                    }}
+                    className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                  />
+                  <label htmlFor="isGift" className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <span>🎁</span>
+                    C'est un cadeau de Noël
+                  </label>
+                </div>
+
+                {isGift && (
+                  <div className="mt-4">
+                    <label htmlFor="giftMessage" className="block text-sm font-medium mb-2">
+                      Message personnalisé (optionnel)
+                    </label>
+                    <textarea
+                      id="giftMessage"
+                      name="giftMessage"
+                      value={formData.giftMessage}
+                      onChange={(e) => setFormData(prev => ({ ...prev, giftMessage: e.target.value }))}
+                      rows={3}
+                      maxLength={200}
+                      placeholder="Ex: Joyeux Noël Maman ! Profite de ce moment de détente. Je t'aime ❤️"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-fetra-olive/30 resize-none"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      {formData.giftMessage.length}/200 caractères • Nous inclurons une jolie carte avec votre message
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Submit */}

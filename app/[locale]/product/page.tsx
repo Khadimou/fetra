@@ -7,6 +7,8 @@ import Reviews from "../../../components/Reviews";
 import ValueComparison from "../../../components/ValueComparison";
 import MobileBarBridge from "../../../components/MobileBarBridge";
 import FAQ from "../../../components/FAQ";
+import ChristmasGiftBanner from "../../../components/ChristmasGiftBanner";
+import ChristmasGiftBadge from "../../../components/ChristmasGiftBadge";
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = "force-dynamic";
@@ -135,6 +137,9 @@ export default async function ProductPage() {
         <p className="text-sm mt-1">{t('launchOfferSubtitle')}</p>
       </div>
 
+      {/* Christmas Gift Banner */}
+      <ChristmasGiftBanner />
+
       {/* Hero Section - Above the fold */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-12">
         <div className="order-2 md:order-1">
@@ -155,6 +160,7 @@ export default async function ProductPage() {
 
             {/* Trust indicators */}
             <div className="flex flex-wrap gap-2 mb-6">
+              <ChristmasGiftBadge />
               <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-medium">
                 ✅ {t('trustBadge1')}
               </span>
