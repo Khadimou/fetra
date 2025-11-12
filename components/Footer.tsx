@@ -40,7 +40,7 @@ export default function Footer() {
             </li>
           </ul>
         </div>
-        <div>
+        <div id="newsletter">
           <h4 className="font-semibold mb-3">{t('newsletter')}</h4>
           <NewsletterForm />
           

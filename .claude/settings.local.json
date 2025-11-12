@@ -35,7 +35,10 @@
       "Bash(npx tsx:*)",
       "Bash(rd /s /q \"app\\[locale]\\account\\orders\" 2)",
       "Bash(del \"app\\api\\customer\\orders\\route.ts\" 2)",
-      "Bash(rd /s /q \"app\\api\\customer\\orders\" 2)"
+      "Bash(rd /s /q \"app\\api\\customer\\orders\" 2)",
+      "Bash(curl:*)",
+      "Bash(del /f .nextdev-lock 2)",
+      "Bash(del \"C:\\Users\\Rasso\\Desktop\\Workspace\\fetra\\components\\NewsletterPromoBanner.tsx\")"
     ],
     "deny": [],
     "ask": []

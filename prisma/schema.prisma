@@ -75,6 +75,7 @@ model Customer {
   hubspotId String?  @map("hubspot_id")
   brevoId   String?  @map("brevo_id")
   orders    Order[]
+  reviews   Review[]
   user      User?
 
   @@map("customers")
@@ -250,4 +251,30 @@ model PromoCode {
   @@index([subscriberEmail])
   @@index([isActive])
   @@map("promo_codes")
+}
+
+// ============================================
+// Review Models
+// ============================================
+
+model Review {
+  id              String        @id @default(cuid())
+  productSku      String        @map("product_sku")
+  authorName      String        @map("author_name")
+  authorEmail     String        @map("author_email")
+  rating          Int // 1 to 5
+  comment         String        @db.Text
+  isVerifiedBuyer Boolean       @default(false) @map("is_verified_buyer")
+  isApproved      Boolean       @default(false) @map("is_approved")
+  customerId      String?       @map("customer_id")
+  orderId         String?       @map("order_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  customer        Customer?     @relation(fields: [customerId], references: [id])
+
+  @@index([productSku])
+  @@index([isApproved])
+  @@index([customerId])
+  @@index([createdAt])
+  @@map("reviews")
 }

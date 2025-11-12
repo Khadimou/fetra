@@ -26,7 +26,7 @@ export default function Header() {
     <>
       {/* Top announcement bar */}
       <div className="bg-gradient-to-r from-fetra-olive to-fetra-pink text-white text-center py-2 px-4 text-sm font-medium">
-        {t('announcement', { code: t('promoCode') })}
+        {t('announcement')}
       </div>
 
       {/* Main header */}

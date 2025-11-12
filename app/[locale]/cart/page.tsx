@@ -152,7 +152,7 @@ export default function CartPage() {
                     type="text"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
-                    placeholder="BIENVENUE10"
+                    placeholder="NEWS-ABC123"
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fetra-olive/30"
                   />
                   <button
@@ -162,8 +162,12 @@ export default function CartPage() {
                     Appliquer
                   </button>
                 </div>
-                {discount > 0 && (
+                {discount > 0 ? (
                   <p className="mt-2 text-sm text-green-600">✓ Code appliqué : -{(discount * 100).toFixed(0)}%</p>
+                ) : (
+                  <p className="mt-2 text-xs text-gray-500">
+                    💌 Pas encore de code ? <a href="#newsletter" className="text-fetra-olive hover:underline font-medium">Inscris-toi à la newsletter</a> pour recevoir ton code personnalisé <span className="font-semibold">-15%</span>
+                  </p>
                 )}
               </div>
 

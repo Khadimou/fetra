@@ -327,7 +327,7 @@ export default async function ProductPage() {
 
       {/* Reviews */}
       <div className="mt-16">
-        <Reviews averageRating={4.7} reviewCount={128} />
+        <Reviews productSku={product.sku} />
       </div>
 
       {/* FAQ */}
