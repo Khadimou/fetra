@@ -202,7 +202,7 @@ Créez un fichier `.env.local` à la racine du projet (copiez `.env.example`) :
 
 ```env
 # URL de base de l'application
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_BASE_URL=https://0fa5d0e0758d.ngrok-free.app/
 
 # Clés Stripe (obtenez-les sur https://dashboard.stripe.com/test/apikeys)
 STRIPE_SECRET_KEY=sk_test_...
@@ -283,7 +283,7 @@ Voir la section [Configuration Stripe](#-configuration-stripe) ci-dessous.
 npm run dev
 ```
 
-Ouvrez [http://localhost:3000](http://localhost:3000) pour voir l'application.
+Ouvrez [https://0fa5d0e0758d.ngrok-free.app/](https://0fa5d0e0758d.ngrok-free.app/) pour voir l'application.
 
 ### Build de production
 
@@ -532,7 +532,7 @@ Pour tester les webhooks Stripe en développement local :
    - Ajoutez dans `.env.local` : `FRESHDESK_API_KEY=votre_cle_api`
 4. **Tester la création de ticket** :
    ```bash
-   curl -X POST http://localhost:3000/api/support \
+   curl -X POST https://0fa5d0e0758d.ngrok-free.app//api/support \
      -H "Content-Type: application/json" \
      -d '{"name":"Test","email":"test@example.com","subject":"Test","message":"Test message"}'
    ```

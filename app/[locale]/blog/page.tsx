@@ -1,6 +1,7 @@
 'use client';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import VideoEmbed from '@/components/VideoEmbed';
 
 export default function BlogPage() {
   const t = useTranslations('Blog');
@@ -87,15 +88,12 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Video 1 */}
             <div className="bg-gray-50 rounded-2xl overflow-hidden brand-shadow">
-              <div className="aspect-video bg-black">
-                <video
-                  controls
-                  className="w-full h-full"
-                  poster="/application.webp"
-                >
-                  <source src="/Routine_Matinale_Visage_Rouleau_Jade.mp4" type="video/mp4" />
-                  {t('videoNotSupported')}
-                </video>
+              <div className="bg-black">
+                <VideoEmbed
+                  src="https://www.youtube.com/shorts/dWZTqQgb8lA"
+                  title="Rituel Visage Liftant FETRA"
+                  aspect="9:16"
+                />
               </div>
               <div className="p-6">
                 <span className="inline-block px-3 py-1 bg-fetra-olive/10 text-fetra-olive text-xs font-semibold rounded-full mb-3">
@@ -130,15 +128,12 @@ export default function BlogPage() {
 
             {/* Video 2 */}
             <div className="bg-gray-50 rounded-2xl overflow-hidden brand-shadow">
-              <div className="aspect-video bg-black">
-                <video
-                  controls
-                  className="w-full h-full"
-                  poster="/main.webp"
-                >
-                  <source src="/Gua_Sha_Homme_Noir.mp4" type="video/mp4" />
-                  {t('videoNotSupported')}
-                </video>
+              <div className="bg-black">
+                <VideoEmbed
+                  src="https://youtu.be/YOain9w9UX8"
+                  title="Routine Gua Sha Homme FETRA"
+                  aspect="9:16"
+                />
               </div>
               <div className="p-6">
                 <span className="inline-block px-3 py-1 bg-fetra-pink/10 text-fetra-pink text-xs font-semibold rounded-full mb-3">

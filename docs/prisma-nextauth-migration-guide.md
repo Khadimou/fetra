@@ -74,7 +74,7 @@ DATABASE_URL="postgresql://..." # Votre connection string
 # NextAuth
 NEXTAUTH_SECRET="votre_secret_genere"
 # Générer avec: openssl rand -base64 32
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="https://0fa5d0e0758d.ngrok-free.app/"
 
 # Reste des variables (Stripe, Brevo, etc.)
 # ... (garder les existantes)
@@ -362,7 +362,7 @@ const order = await markAsShipped(orderId, {
 # 1. Démarrer le serveur
 npm run dev
 
-# 2. Aller sur http://localhost:3000/admin/login
+# 2. Aller sur https://0fa5d0e0758d.ngrok-free.app//admin/login
 # Email: admin@fetrabeauty.com
 # Password: admin123
 

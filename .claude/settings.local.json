@@ -24,7 +24,18 @@
       "Bash(npx next build:*)",
       "Bash(dir:*)",
       "Bash(echo:*)",
-      "Bash(libanalytics.ts)"
+      "Bash(libanalytics.ts)",
+      "Bash(if exist .nextdev-lock del /f .nextdev-lock 2)",
+      "Bash(netstat:*)",
+      "Bash(node check-price.js:*)",
+      "Bash(del check-price.js)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 243508 -Force\")",
+      "WebFetch(domain:developers.brevo.com)",
+      "Bash(npx tsx:*)",
+      "Bash(rd /s /q \"app\\[locale]\\account\\orders\" 2)",
+      "Bash(del \"app\\api\\customer\\orders\\route.ts\" 2)",
+      "Bash(rd /s /q \"app\\api\\customer\\orders\" 2)"
     ],
     "deny": [],
     "ask": []

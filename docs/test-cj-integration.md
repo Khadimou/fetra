@@ -29,7 +29,7 @@
    ```
 
 3. **Tester via l'UI admin :**
-   - Aller sur `http://localhost:3000/admin/cj/products`
+   - Aller sur `https://0fa5d0e0758d.ngrok-free.app//admin/cj/products`
    - Cliquer sur "Synchroniser des produits"
    - Rechercher par mot-clé (ex: "Gua Sha")
 
@@ -42,23 +42,23 @@ Si tu veux tester sans Supabase, il faut modifier `lib/integrations/cj-dropshipp
 ### 1. Test de l'UI Admin
 
 **Dashboard CJ :**
-- URL: `http://localhost:3000/admin/cj`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj`
 - Vérifier l'affichage des statistiques
 - Vérifier les logs de synchronisation
 
 **Synchronisation produits :**
-- URL: `http://localhost:3000/admin/cj/products`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj/products`
 - Tester la recherche de produits
 - Synchroniser quelques produits
 - Vérifier qu'ils apparaissent dans la liste
 
 **Mapping produits :**
-- URL: `http://localhost:3000/admin/cj/mapping`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj/mapping`
 - Lier un produit local à un produit CJ
 - Vérifier que le `cjVariantId` est sauvegardé
 
 **Commandes CJ :**
-- URL: `http://localhost:3000/admin/cj/orders`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj/orders`
 - Vérifier l'affichage des commandes
 - Tester le refresh du tracking
 
@@ -78,7 +78,7 @@ Si tu veux tester sans Supabase, il faut modifier `lib/integrations/cj-dropshipp
 
 **Test de synchronisation :**
 ```bash
-curl -X POST http://localhost:3000/api/admin/cj/sync-products \
+curl -X POST https://0fa5d0e0758d.ngrok-free.app//api/admin/cj/sync-products \
   -H "Content-Type: application/json" \
   -H "Cookie: next-auth.session-token=..." \
   -d '{
@@ -90,7 +90,7 @@ curl -X POST http://localhost:3000/api/admin/cj/sync-products \
 
 **Test de stats :**
 ```bash
-curl http://localhost:3000/api/admin/cj/stats \
+curl https://0fa5d0e0758d.ngrok-free.app//api/admin/cj/stats \
   -H "Cookie: next-auth.session-token=..."
 ```
 

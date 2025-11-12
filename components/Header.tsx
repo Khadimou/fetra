@@ -54,13 +54,13 @@ export default function Header() {
                   {t('ritual')}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
                 </Link>
-                <Link
+                {/* <Link
                   href="/products"
                   className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
                 >
                   {t('catalog')}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-fetra-olive transition-all group-hover:w-full"></span>
-                </Link>
+                </Link> */}
                 <Link
                   href="/about"
                   className="text-gray-700 hover:text-fetra-olive font-medium transition-colors relative group"
@@ -146,12 +146,12 @@ export default function Header() {
                 >
                   {t('ritual')}
                 </Link>
-                <Link
+                {/* <Link
                   href="/products"
                   className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"
                 >
                   {t('catalog')}
-                </Link>
+                </Link> */}
                 <Link
                   href="/about"
                   className="block px-4 py-3 text-gray-700 hover:bg-fetra-olive/5 hover:text-fetra-olive rounded-lg transition-colors font-medium"

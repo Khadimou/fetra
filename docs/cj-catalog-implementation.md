@@ -178,7 +178,7 @@ Le schéma `Product` doit inclure:
 ### 1. Test du catalogue
 ```bash
 # Visiter la page
-http://localhost:3000/fr/products
+https://0fa5d0e0758d.ngrok-free.app//fr/products
 
 # Vérifier:
 - Affichage des produits synchronisés
@@ -190,7 +190,7 @@ http://localhost:3000/fr/products
 ### 2. Test de la page détail
 ```bash
 # Visiter un produit
-http://localhost:3000/fr/products/[SKU]
+https://0fa5d0e0758d.ngrok-free.app//fr/products/[SKU]
 
 # Vérifier:
 - Galerie d'images

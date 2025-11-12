@@ -346,7 +346,7 @@ DATABASE_URL                # PostgreSQL connection string
 
 # NextAuth
 NEXTAUTH_SECRET             # Secret for JWT signing (generate with: openssl rand -base64 32)
-NEXTAUTH_URL                # Base URL (http://localhost:3000 in dev, https://... in prod)
+NEXTAUTH_URL                # Base URL (https://0fa5d0e0758d.ngrok-free.app/ in dev, https://... in prod)
 
 # OAuth Providers (optional, for social login)
 GOOGLE_CLIENT_ID            # Google OAuth Client ID (from Google Cloud Console)

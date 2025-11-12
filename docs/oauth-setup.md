@@ -47,10 +47,10 @@ APPLE_CLIENT_SECRET=your_apple_client_secret_here
 4. Configurez :
    - **Name** : FETRA Web Client
    - **Authorized JavaScript origins** :
-     - `http://localhost:3000` (développement)
+     - `https://0fa5d0e0758d.ngrok-free.app/` (développement)
      - `https://fetrabeauty.com` (production)
    - **Authorized redirect URIs** :
-     - `http://localhost:3000/api/auth/callback/google` (développement)
+     - `https://0fa5d0e0758d.ngrok-free.app//api/auth/callback/google` (développement)
      - `https://fetrabeauty.com/api/auth/callback/google` (production)
 5. Cliquez sur **Create**
 6. Copiez le **Client ID** et le **Client Secret**
@@ -91,7 +91,7 @@ GOOGLE_CLIENT_SECRET=GOCSPX-your_secret_here
    - **Primary App ID** : Sélectionnez l'App ID créé précédemment
    - **Domains and Subdomains** : `fetrabeauty.com`
    - **Return URLs** :
-     - `http://localhost:3000/api/auth/callback/apple` (développement)
+     - `https://0fa5d0e0758d.ngrok-free.app//api/auth/callback/apple` (développement)
      - `https://fetrabeauty.com/api/auth/callback/apple` (production)
 7. Sauvegardez et enregistrez
 
@@ -155,7 +155,7 @@ APPLE_CLIENT_SECRET=eyJhbGciOiJFUzI1NiIsImtpZCI6I... (le JWT généré)
    ```bash
    npm run dev
    ```
-3. Allez sur `http://localhost:3000/signup` ou `http://localhost:3000/login`
+3. Allez sur `https://0fa5d0e0758d.ngrok-free.app//signup` ou `https://0fa5d0e0758d.ngrok-free.app//login`
 4. Cliquez sur "Google" ou "Apple" pour tester l'authentification
 
 ---
@@ -176,7 +176,7 @@ APPLE_CLIENT_SECRET=eyJhbGciOiJFUzI1NiIsImtpZCI6I... (le JWT généré)
 
 ### Erreur "redirect_uri_mismatch" (Google)
 - Vérifiez que l'URL de callback est exactement celle configurée dans Google Cloud Console
-- Format : `http://localhost:3000/api/auth/callback/google`
+- Format : `https://0fa5d0e0758d.ngrok-free.app//api/auth/callback/google`
 
 ### Erreur "invalid_client" (Apple)
 - Vérifiez que le JWT n'est pas expiré

@@ -311,7 +311,7 @@ export async function POST(request: Request) {
 
 Testez avec curl ou Postman :
 ```bash
-curl -X POST http://localhost:3000/api/test/order-email \
+curl -X POST https://0fa5d0e0758d.ngrok-free.app//api/test/order-email \
   -H "Content-Type: application/json" \
   -d '{"email":"votreemail@example.com","name":"Votre Nom"}'
 ```

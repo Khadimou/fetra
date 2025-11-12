@@ -90,7 +90,7 @@ L'email d'expédition doit être déclenché manuellement via l'API quand vous e
 ### Test via l'API (développement)
 ```bash
 # Test email confirmation (ne pas utiliser en production)
-curl -X POST http://localhost:3000/api/test/email-confirmation \
+curl -X POST https://0fa5d0e0758d.ngrok-free.app//api/test/email-confirmation \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -98,7 +98,7 @@ curl -X POST http://localhost:3000/api/test/email-confirmation \
   }'
 
 # Test email expédition
-curl -X POST http://localhost:3000/api/orders/ship \
+curl -X POST https://0fa5d0e0758d.ngrok-free.app//api/orders/ship \
   -H "Content-Type: application/json" \
   -d '{
     "orderId": "cs_test_123",

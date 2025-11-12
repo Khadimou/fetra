@@ -20,26 +20,26 @@ npm run dev
 ### 2. Tester l'UI Admin
 
 **Page Dashboard CJ :**
-- URL: `http://localhost:3000/admin/cj`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj`
 - Vérifier l'affichage des statistiques
 - Si Supabase n'est pas configuré, tu verras un message d'erreur
 
 **Page Synchronisation produits :**
-- URL: `http://localhost:3000/admin/cj/products`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj/products`
 - Fonctionnalités :
   - Recherche de produits par mot-clé
   - Synchronisation depuis CJ Dropshipping
   - Affichage des produits synchronisés
 
 **Page Mapping produits :**
-- URL: `http://localhost:3000/admin/cj/mapping`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj/mapping`
 - Fonctionnalités :
   - Lister les produits locaux
   - Lier un produit local à un produit CJ
   - Configurer le `cjVariantId` pour chaque produit
 
 **Page Commandes CJ :**
-- URL: `http://localhost:3000/admin/cj/orders`
+- URL: `https://0fa5d0e0758d.ngrok-free.app//admin/cj/orders`
 - Fonctionnalités :
   - Lister les commandes envoyées à CJ
   - Voir le statut et le tracking

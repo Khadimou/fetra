@@ -57,7 +57,7 @@ export default function CustomerOrdersPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/admin/login?redirect=/account/orders");
+      router.push("/login?redirect=/account/orders");
     } else if (status === "authenticated") {
       fetchOrders();
     }

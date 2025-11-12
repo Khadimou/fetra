@@ -49,7 +49,7 @@ async function createAdmin() {
     console.log('   Email:', email);
     console.log('   Password:', password);
     console.log('\n🌐 Login URL:');
-    console.log('   http://localhost:3000/admin/login');
+    console.log('   https://0fa5d0e0758d.ngrok-free.app//admin/login');
     console.log('   https://fetrabeauty.com/admin/login\n');
     
   } catch (error: any) {

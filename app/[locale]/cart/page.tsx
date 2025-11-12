@@ -2,21 +2,22 @@
 import { useState, useEffect } from "react";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { getCart, updateQuantity, removeFromCart, type Cart } from "../../../lib/cart";
+import { getCart, updateQuantity, removeFromCart, applyPromoCode, removePromoCode, type Cart } from "../../../lib/cart";
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart>({ items: [], total: 0, itemCount: 0 });
   const [promoCode, setPromoCode] = useState("");
-  const [discount, setDiscount] = useState(0);
+  const [promoMessage, setPromoMessage] = useState("");
 
   useEffect(() => {
-    setCart(getCart());
-    
+    const currentCart = getCart();
+    setCart(currentCart);
+
     // Listen for cart updates
     function handleCartUpdate(e: CustomEvent) {
       setCart(e.detail);
     }
-    
+
     window.addEventListener('cartUpdated', handleCartUpdate as EventListener);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate as EventListener);
   }, []);
@@ -30,15 +31,25 @@ export default function CartPage() {
   }
 
   function handleApplyPromo() {
-    const code = promoCode.toUpperCase();
-    if (code === "BIENVENUE10") {
-      setDiscount(0.1); // 10% discount
+    const result = applyPromoCode(promoCode);
+    if (result.success) {
+      setPromoMessage(result.message || '');
+      // Reload cart to reflect discount
+      setCart(getCart());
     } else {
-      alert("Code promo invalide");
+      alert(result.message);
     }
   }
 
+  function handleRemovePromo() {
+    removePromoCode();
+    setPromoMessage('');
+    setPromoCode('');
+    setCart(getCart());
+  }
+
   const subtotal = cart.total;
+  const discount = cart.discount || 0;
   const discountAmount = subtotal * discount;
   const shipping = 0; // Free shipping
   const total = subtotal - discountAmount + shipping;

@@ -87,7 +87,7 @@ Après avoir généré et copié les fichiers :
    ```
 
 2. **Testez localement** :
-   - Ouvrez `http://localhost:3000`
+   - Ouvrez `https://0fa5d0e0758d.ngrok-free.app/`
    - Vérifiez l'icône dans l'onglet du navigateur
    - Vérifiez avec DevTools → Application → Manifest
 

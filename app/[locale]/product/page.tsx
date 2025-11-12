@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const product = await getProduct();
   const baseUrl = process.env.NODE_ENV === 'production' 
     ? 'https://www.fetrabeauty.com' 
-    : 'http://localhost:3000';
+    : 'https://0fa5d0e0758d.ngrok-free.app/';
   const canonicalUrl = `${baseUrl}/product`;
   
   // Get first image for Open Graph
@@ -61,7 +61,7 @@ export default async function ProductPage() {
 
   const baseUrl = process.env.NODE_ENV === 'production' 
     ? 'https://www.fetrabeauty.com' 
-    : 'http://localhost:3000';
+    : 'https://0fa5d0e0758d.ngrok-free.app/';
 
   const jsonLd = {
     "@context": "https://schema.org/",

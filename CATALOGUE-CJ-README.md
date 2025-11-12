@@ -83,7 +83,7 @@ Les traductions sont dans `messages/fr.json` :
 
 ### 1. Tester le catalogue
 ```
-http://localhost:3000/fr/products
+https://0fa5d0e0758d.ngrok-free.app//fr/products
 ```
 Vérifier :
 - ✅ Affichage des produits synchronisés
@@ -93,7 +93,7 @@ Vérifier :
 
 ### 2. Tester la page détail
 ```
-http://localhost:3000/fr/products/[SKU]
+https://0fa5d0e0758d.ngrok-free.app//fr/products/[SKU]
 ```
 Vérifier :
 - ✅ Galerie d'images
@@ -113,10 +113,10 @@ Vérifier :
 ### 4. Tester l'API
 ```bash
 # Liste des produits
-curl http://localhost:3000/api/products/cj
+curl https://0fa5d0e0758d.ngrok-free.app//api/products/cj
 
 # Produit spécifique
-curl http://localhost:3000/api/products/cj/CJYD2087201
+curl https://0fa5d0e0758d.ngrok-free.app//api/products/cj/CJYD2087201
 ```
 
 ## 📁 Structure des fichiers
