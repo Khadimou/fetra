@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pendingReviews, setPendingReviews] = useState(0);
 
   // Check authentication
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
         if (res.ok) {
           setIsAuthenticated(true);
           loadOrders();
+          loadReviewStats();
         } else {
           router.push('/admin/login');
         }
@@ -47,6 +49,19 @@ export default function AdminDashboard() {
       setOrders([]); // Reset to empty array on error
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Load review stats
+  async function loadReviewStats() {
+    try {
+      const res = await fetch('/api/admin/reviews?status=pending');
+      if (res.ok) {
+        const data = await res.json();
+        setPendingReviews(data.stats?.pending || 0);
+      }
+    } catch (err) {
+      console.error('Error loading review stats:', err);
     }
   }
 
@@ -110,7 +125,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <button
             onClick={() => router.push('/admin/products')}
             className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left group"
@@ -136,6 +151,26 @@ export default function AdminDashboard() {
                 <p className="text-sm text-gray-600">Voir l'historique complet</p>
               </div>
               <svg className="w-6 h-6 text-fetra-olive group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/admin/reviews')}
+            className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left group relative"
+          >
+            {pendingReviews > 0 && (
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center">
+                {pendingReviews}
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">Avis Clients</h3>
+                <p className="text-sm text-white/90">Modérer les avis</p>
+              </div>
+              <svg className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </div>
