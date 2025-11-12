@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
 import OrderDetails from '../../../components/OrderDetails';
 import ClearCartOnSuccess from '../../../components/ClearCartOnSuccess';
+import PostPurchaseSignup from '../../../components/PostPurchaseSignup';
 
 export const metadata: Metadata = {
   title: 'Commande confirmée — FETRA BEAUTY',
@@ -28,10 +29,13 @@ function SuccessContent() {
             🎉 Commande confirmée !
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Félicitations ! Votre Rituel Visage Liftant FETRA est en préparation. 
+            Félicitations ! Votre Rituel Visage Liftant FETRA est en préparation.
             Vous allez recevoir un email de confirmation dans les prochaines minutes.
           </p>
         </div>
+
+        {/* Post-purchase account creation */}
+        <PostPurchaseSignup />
 
         {/* Étapes de traitement */}
         <div className="bg-white rounded-3xl p-8 md:p-12 brand-shadow mb-8">

@@ -23,6 +23,18 @@ const PROMO_CODES: Record<string, number> = {
   'BIENVENUE10': 0.1, // 10% discount
 };
 
+// Helper to convert relative URLs to absolute URLs for Stripe
+function toAbsoluteUrl(url: string, baseUrl: string): string {
+  try {
+    // If already absolute, return as-is
+    new URL(url);
+    return url;
+  } catch {
+    // Relative URL, convert to absolute
+    return `${baseUrl.replace(/\/$/, '')}${url.startsWith('/') ? url : '/' + url}`;
+  }
+}
+
 export async function POST(request: Request) {
   try {
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -36,6 +48,11 @@ export async function POST(request: Request) {
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
+
+    // Base URL for converting relative URLs
+    const baseUrl = process.env.NODE_ENV === 'production'
+      ? (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com')
+      : 'https://0fa5d0e0758d.ngrok-free.app';
 
     // Validate promo code server-side
     let discountRate = 0;
@@ -162,12 +179,15 @@ export async function POST(request: Request) {
         ? sellingPrice * (1 - discountRate)
         : sellingPrice;
 
+      // Convert image URL to absolute if needed (Stripe requires absolute URLs)
+      const imageUrl = item.image ? toAbsoluteUrl(item.image, baseUrl) : undefined;
+
       line_items.push({
         price_data: {
           currency: "eur",
           product_data: {
             name: item.title,
-            images: item.image ? [item.image] : undefined,
+            images: imageUrl ? [imageUrl] : undefined,
             metadata,
           },
           unit_amount: Math.round(finalPrice * 100), // Convert to cents, with discount applied
@@ -175,10 +195,6 @@ export async function POST(request: Request) {
         quantity: item.quantity,
       });
     }
-
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com')
-      : 'https://3af3777bb235.ngrok-free.app/';
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
