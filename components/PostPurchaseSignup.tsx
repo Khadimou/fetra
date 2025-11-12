@@ -36,9 +36,9 @@ export default function PostPurchaseSignup() {
       if (response.ok) {
         const data = await response.json();
         setOrderDetails({
-          customerEmail: data.customer.email,
-          customerName: `${data.customer.firstName} ${data.customer.lastName}`,
-          orderNumber: data.order.orderNumber,
+          customerEmail: data.order.customerEmail || "",
+          customerName: data.order.customerName || "",
+          orderNumber: sessionId, // Use session ID as order reference
         });
       }
     } catch (error) {
@@ -91,14 +91,14 @@ export default function PostPurchaseSignup() {
 
       if (signInResult?.error) {
         console.error("Auto-login failed:", signInResult.error);
-        // Still redirect to login page
+        // Still redirect to customer login page
         setTimeout(() => {
-          router.push("/admin/login?redirect=/account/orders");
+          router.push("/login?redirect=/account");
         }, 2000);
       } else {
         // Redirect to dashboard after successful login
         setTimeout(() => {
-          router.push("/account/orders");
+          router.push("/account");
         }, 1500);
       }
     } catch (err: any) {
@@ -125,7 +125,7 @@ export default function PostPurchaseSignup() {
             </p>
           </div>
           <a
-            href="/account/orders"
+            href="/account"
             className="px-4 py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
           >
             Voir mes commandes

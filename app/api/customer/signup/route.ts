@@ -42,17 +42,7 @@ export async function POST(request: Request) {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(" ") || "";
 
-    // Create user account
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        name,
-        role: "customer",
-      },
-    });
-
-    // Find or create customer record
+    // Find or create customer record first
     let customer = await prisma.customer.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -66,6 +56,17 @@ export async function POST(request: Request) {
         },
       });
     }
+
+    // Create user account and link to customer
+    const user = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        name,
+        role: "CUSTOMER",
+        customerId: customer.id, // Link user to customer
+      },
+    });
 
     // Link all existing orders with this email to the customer
     const updatedOrders = await prisma.order.updateMany({
