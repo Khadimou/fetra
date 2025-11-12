@@ -5,6 +5,7 @@ import { addContactBrevo, sendOrderConfirmationEmail } from '../../../../lib/int
 import { upsertCustomer, createOrder, updateOrderStatus } from '../../../../lib/db/orders';
 import { getProductBySku, decrementStock } from '../../../../lib/db/products';
 import { createCjOrder } from '../../../../lib/integrations/cj-dropshipping';
+import { markPromoCodeAsUsed } from '../../../../lib/promo-codes';
 import type { CJOrderRequest, CJOrderResponse } from '../../../../lib/types/cj';
 import { OrderStatus } from '@prisma/client';
 import prisma from '../../../../lib/db/prisma';
@@ -156,6 +157,17 @@ export async function POST(request: Request) {
         await updateOrderStatus(order.id, OrderStatus.PAID);
 
         console.log('Order created in database:', order.orderNumber);
+
+        // Mark promo code as used (if applicable)
+        if (session.metadata?.promoCodeId) {
+          try {
+            await markPromoCodeAsUsed(session.metadata.promoCodeId);
+            console.log('Promo code marked as used:', session.metadata.promoCode);
+          } catch (promoErr: any) {
+            console.error('Error marking promo code as used:', promoErr.message);
+            // Non-blocking - order is already created
+          }
+        }
 
         // 4) Create order in CJ Dropshipping (if configured)
         // Check if Supabase is configured (for Edge Functions) or direct API

@@ -40,39 +40,95 @@ export async function upsertContactHubspot(
   props: Record<string, string | number>
 ): Promise<any> {
   return retryWithBackoff(async () => {
-    const apiKey = process.env.HUBSPOT_API_KEY;
-    const apiBase = process.env.HUBSPOT_API_BASE || 'https://api.hubapi.com';
+    const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
 
-    if (!apiKey) {
-      throw new Error('HUBSPOT_API_KEY not configured');
+    if (!accessToken) {
+      throw new Error('HUBSPOT_ACCESS_TOKEN not configured');
     }
 
-    // Transform props to HubSpot format
-    const properties = Object.entries(props).map(([property, value]) => ({
-      property,
-      value: String(value)
-    }));
+    // HubSpot API v3 - Create or update contact
+    const endpoint = `https://api.hubapi.com/crm/v3/objects/contacts`;
 
-    const body = { properties };
+    // First, try to find the contact by email
+    const searchEndpoint = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
+    const searchBody = {
+      filterGroups: [
+        {
+          filters: [
+            {
+              propertyName: 'email',
+              operator: 'EQ',
+              value: email
+            }
+          ]
+        }
+      ]
+    };
 
-    const endpoint = `${apiBase}/contacts/v1/contact/createOrUpdate/email/${encodeURIComponent(
-      email
-    )}/?hapikey=${apiKey}`;
+    let contactId: string | null = null;
 
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
+    try {
+      const searchRes = await fetch(searchEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(searchBody)
+      });
+
+      if (searchRes.ok) {
+        const searchData = await searchRes.json();
+        if (searchData.results && searchData.results.length > 0) {
+          contactId = searchData.results[0].id;
+        }
+      }
+    } catch (err) {
+      // Contact not found, will create new
+    }
+
+    // Transform props to HubSpot v3 format
+    const properties: Record<string, string> = {};
+    Object.entries(props).forEach(([key, value]) => {
+      properties[key] = String(value);
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`HubSpot API error (${res.status}): ${errorText}`);
-    }
+    if (contactId) {
+      // Update existing contact
+      const updateEndpoint = `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`;
+      const res = await fetch(updateEndpoint, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ properties })
+      });
 
-    return res.json();
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`HubSpot API error (${res.status}): ${errorText}`);
+      }
+
+      return res.json();
+    } else {
+      // Create new contact
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ properties })
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`HubSpot API error (${res.status}): ${errorText}`);
+      }
+
+      return res.json();
+    }
   });
 }
 
@@ -84,14 +140,13 @@ export async function trackEventHubspot(
   eventName: string,
   properties?: Record<string, any>
 ): Promise<any> {
-  const apiKey = process.env.HUBSPOT_API_KEY;
-  const apiBase = process.env.HUBSPOT_API_BASE || 'https://api.hubapi.com';
+  const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
 
-  if (!apiKey) {
-    throw new Error('HUBSPOT_API_KEY not configured');
+  if (!accessToken) {
+    throw new Error('HUBSPOT_ACCESS_TOKEN not configured');
   }
 
-  const endpoint = `${apiBase}/events/v3/send?hapikey=${apiKey}`;
+  const endpoint = `https://api.hubapi.com/events/v3/send`;
 
   const body = {
     email,
@@ -102,7 +157,8 @@ export async function trackEventHubspot(
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
     },
     body: JSON.stringify(body)
   });

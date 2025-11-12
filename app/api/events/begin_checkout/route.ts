@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     });
 
     // Track event in HubSpot (if email is provided)
-    if (email && process.env.HUBSPOT_API_KEY) {
+    if (email && process.env.HUBSPOT_ACCESS_TOKEN) {
       try {
         await trackEventHubspot(email, 'pe_begin_checkout_event', {
           sku,

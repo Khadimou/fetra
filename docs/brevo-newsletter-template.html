@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue chez FETRA BEAUTY</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .welcome-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+        .intro {
+            font-size: 16px;
+            color: #4a5568;
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+            text-align: center;
+        }
+        .promo-box {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-left: 4px solid #38a169;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .promo-label {
+            font-size: 14px;
+            color: #718096;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .promo-code {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2d3748;
+            letter-spacing: 3px;
+            margin: 10px 0;
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 2px dashed #38a169;
+        }
+        .promo-description {
+            font-size: 14px;
+            color: #718096;
+            margin: 15px 0 0 0;
+        }
+        .benefits {
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .benefits-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 15px;
+            color: #4a5568;
+        }
+        .benefit-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 18px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 30px 0;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        .cta-container {
+            text-align: center;
+        }
+        .expiry {
+            background-color: #fef5e7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .expiry-text {
+            font-size: 14px;
+            color: #92400e;
+            margin: 0;
+            text-align: center;
+        }
+        .footer {
+            background-color: #2d3748;
+            color: #cbd5e0;
+            padding: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .footer-links {
+            margin: 20px 0;
+        }
+        .footer-link {
+            color: #cbd5e0;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-link {
+            display: inline-block;
+            margin: 0 10px;
+            color: #cbd5e0;
+            font-size: 24px;
+            text-decoration: none;
+        }
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+            }
+            .promo-code {
+                font-size: 28px;
+            }
+            .welcome-text {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="logo">FETRA BEAUTY</h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <h2 class="welcome-text">🎉 Bienvenue dans la famille FETRA !</h2>
+
+            <p class="intro">
+                Merci de vous être inscrit(e) à notre newsletter ! <br>
+                Vous êtes maintenant membre de notre communauté beauté exclusive.
+            </p>
+
+            <!-- Promo Code Box -->
+            <div class="promo-box">
+                <p class="promo-label">Votre code promo exclusif</p>
+                <div class="promo-code">{{ params.PROMO_CODE }}</div>
+                <p class="promo-description">
+                    ✨ Copiez ce code et utilisez-le lors de votre commande
+                </p>
+            </div>
+
+            <!-- Benefits -->
+            <div class="benefits">
+                <h3 class="benefits-title">Ce que vous obtenez :</h3>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">🎁</span>
+                    <span><strong>15% de réduction</strong> sur votre première commande</span>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">⏰</span>
+                    <span>Valable pendant <strong>30 jours</strong></span>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">🔒</span>
+                    <span><strong>Usage unique</strong> - Réservé pour vous</span>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">🚚</span>
+                    <span><strong>Livraison gratuite</strong> sur toutes nos commandes</span>
+                </div>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="cta-container">
+                <a href="https://www.fetrabeauty.com/products" class="cta-button">
+                    Découvrir nos produits
+                </a>
+            </div>
+
+            <!-- Expiry Notice -->
+            <div class="expiry">
+                <p class="expiry-text">
+                    ⚠️ Ce code expire dans 30 jours. Profitez-en vite !
+                </p>
+            </div>
+
+            <!-- Additional Info -->
+            <p style="font-size: 14px; color: #718096; text-align: center; margin-top: 30px;">
+                En vous abonnant, vous recevrez :<br>
+                ✨ Nos nouveautés en avant-première<br>
+                💡 Des conseils beauté exclusifs<br>
+                🎁 Des offres spéciales réservées aux membres
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">FETRA BEAUTY</p>
+            <p style="margin: 0 0 20px 0;">La beauté naturelle révélée</p>
+
+            <div class="footer-links">
+                <a href="https://www.fetrabeauty.com" class="footer-link">Site web</a>
+                <a href="https://www.fetrabeauty.com/about" class="footer-link">À propos</a>
+                <a href="https://www.fetrabeauty.com/contact" class="footer-link">Contact</a>
+            </div>
+
+            <div class="social-links">
+                <a href="#" class="social-link">📘</a>
+                <a href="#" class="social-link">📷</a>
+                <a href="#" class="social-link">🐦</a>
+            </div>
+
+            <p style="font-size: 12px; color: #a0aec0; margin-top: 20px;">
+                Vous recevez cet email car vous vous êtes inscrit(e) à notre newsletter.<br>
+                <a href="{{ unsubscribe }}" style="color: #a0aec0;">Se désinscrire</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

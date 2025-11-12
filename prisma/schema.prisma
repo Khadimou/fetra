@@ -1,19 +1,12 @@
-// Prisma schema for FETRA e-commerce platform
-// NextJS 16 + NextAuth + PostgreSQL
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")      // Connection pooling (pour les requêtes)
-  directUrl = env("DIRECT_URL")        // Direct connection (pour les migrations)
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
-
-// ============================================
-// NextAuth Models
-// ============================================
 
 model Account {
   id                String  @id @default(cuid())
@@ -21,15 +14,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -50,18 +42,15 @@ model User {
   name          String?
   email         String    @unique
   emailVerified DateTime? @map("email_verified")
-  password      String? // Hashed password for credentials provider
+  password      String?
   image         String?
   role          UserRole  @default(CUSTOMER)
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
-
-  // Link to customer profile (for customer accounts)
   customerId    String?   @unique @map("customer_id")
+  accounts      Account[]
+  sessions      Session[]
   customer      Customer? @relation(fields: [customerId], references: [id])
-
-  accounts Account[]
-  sessions Session[]
 
   @@map("users")
 }
@@ -75,16 +64,6 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-enum UserRole {
-  CUSTOMER
-  ADMIN
-  SUPER_ADMIN
-}
-
-// ============================================
-// E-commerce Models
-// ============================================
-
 model Customer {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -93,79 +72,61 @@ model Customer {
   phone     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  orders Order[]
-  user   User? // Optional link to user account
-
-  // External IDs for integrations
-  hubspotId String? @map("hubspot_id")
-  brevoId   String? @map("brevo_id")
+  hubspotId String?  @map("hubspot_id")
+  brevoId   String?  @map("brevo_id")
+  orders    Order[]
+  user      User?
 
   @@map("customers")
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  sku         String   @unique // FETRA-RIT-001
-  name        String
-  description String?  @db.Text
-  price       Decimal  @db.Decimal(10, 2)
-
-  // Stock management
-  stock       Int      @default(0)
-  lowStockThreshold Int @default(10) @map("low_stock_threshold")
-
-  // Product details
-  imageUrl    String?  @map("image_url")
-  isActive    Boolean  @default(true) @map("is_active")
-
-  // CJ Dropshipping integration
-  cjVariantId String?  @map("cj_variant_id") // CJ variant ID for linking
-  cjProductId String?  @map("cj_product_id") // CJ product ID (optional)
-
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  orderItems  OrderItem[]
+  id                String      @id @default(cuid())
+  sku               String      @unique
+  name              String
+  description       String?
+  price             Decimal     @db.Decimal(10, 2)
+  stock             Int         @default(0)
+  lowStockThreshold Int         @default(10) @map("low_stock_threshold")
+  imageUrl          String?     @map("image_url")
+  isActive          Boolean     @default(true) @map("is_active")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  cjProductId       String?     @unique @map("cj_product_id")
+  cjVariantId       String?     @map("cj_variant_id")
+  images            Json?
+  variants          Json?
+  category          String?
+  category_id       String?
+  weight            Decimal?    @db.Decimal(10, 2)
+  dimensions        Json?
+  shipping_info     Json?
+  orderItems        OrderItem[]
 
   @@map("products")
 }
 
 model Order {
-  id                 String      @id @default(cuid())
-  orderNumber        String      @unique @map("order_number") // Human-readable: FETRA-XXXXXXXX
-  customerId         String      @map("customer_id")
-  customer           Customer    @relation(fields: [customerId], references: [id])
-
-  // Order details
-  status             OrderStatus @default(PENDING)
-  amount             Decimal     @db.Decimal(10, 2)
-  currency           String      @default("EUR")
-
-  // Stripe data
-  stripeSessionId    String?     @unique @map("stripe_session_id")
-  stripePaymentIntent String?    @map("stripe_payment_intent")
-
-  // CJ Dropshipping data
-  cjOrderId          String?     @map("cj_order_id")
-  cjOrderNum         String?     @map("cj_order_num")
-
-  // Timestamps
-  createdAt          DateTime    @default(now()) @map("created_at")
-  paidAt             DateTime?   @map("paid_at")
-  shippedAt          DateTime?   @map("shipped_at")
-  deliveredAt        DateTime?   @map("delivered_at")
-  cancelledAt        DateTime?   @map("cancelled_at")
-  updatedAt          DateTime    @updatedAt @map("updated_at")
-
-  // Relations
-  items              OrderItem[]
-  shipping           ShippingInfo?
-
-  // Metadata (for additional info)
-  metadata           Json?
+  id                  String        @id @default(cuid())
+  orderNumber         String        @unique @map("order_number")
+  customerId          String        @map("customer_id")
+  status              OrderStatus   @default(PENDING)
+  amount              Decimal       @db.Decimal(10, 2)
+  currency            String        @default("EUR")
+  stripeSessionId     String?       @unique @map("stripe_session_id")
+  stripePaymentIntent String?       @map("stripe_payment_intent")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  paidAt              DateTime?     @map("paid_at")
+  shippedAt           DateTime?     @map("shipped_at")
+  deliveredAt         DateTime?     @map("delivered_at")
+  cancelledAt         DateTime?     @map("cancelled_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+  metadata            Json?
+  cjOrderId           String?       @map("cj_order_id")
+  cjOrderNum          String?       @map("cj_order_num")
+  items               OrderItem[]
+  customer            Customer      @relation(fields: [customerId], references: [id])
+  shipping            ShippingInfo?
 
   @@index([customerId])
   @@index([status])
@@ -174,21 +135,17 @@ model Order {
 }
 
 model OrderItem {
-  id          String  @id @default(cuid())
-  orderId     String  @map("order_id")
-  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  // Product reference (optional for legacy orders)
-  productId   String? @map("product_id")
-  product     Product? @relation(fields: [productId], references: [id])
-
-  productSku  String  @map("product_sku")
-  productName String  @map("product_name")
+  id          String   @id @default(cuid())
+  orderId     String   @map("order_id")
+  productSku  String   @map("product_sku")
+  productName String   @map("product_name")
   quantity    Int
-  unitPrice   Decimal @db.Decimal(10, 2) @map("unit_price")
-  totalPrice  Decimal @db.Decimal(10, 2) @map("total_price")
-
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
+  totalPrice  Decimal  @map("total_price") @db.Decimal(10, 2)
   createdAt   DateTime @default(now()) @map("created_at")
+  productId   String?  @map("product_id")
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id])
 
   @@index([orderId])
   @@index([productId])
@@ -196,49 +153,43 @@ model OrderItem {
 }
 
 model ShippingInfo {
-  id              String         @id @default(cuid())
-  orderId         String         @unique @map("order_id")
-  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  // Tracking
-  trackingNumber  String?        @map("tracking_number")
-  carrier         ShippingCarrier @default(COLISSIMO)
-  trackingUrl     String?        @map("tracking_url")
-
-  // Recipient
-  recipientName   String         @map("recipient_name")
-  recipientEmail  String         @map("recipient_email")
-  recipientPhone  String?        @map("recipient_phone")
-
-  // Address
-  street          String
-  street2         String?
-  city            String
-  postalCode      String         @map("postal_code")
-  country         String         @default("FR")
-
-  // Timestamps
-  shippedAt       DateTime?      @map("shipped_at")
-  deliveredAt     DateTime?      @map("delivered_at")
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @updatedAt @map("updated_at")
+  id             String          @id @default(cuid())
+  orderId        String          @unique @map("order_id")
+  trackingNumber String?         @map("tracking_number")
+  carrier        ShippingCarrier @default(COLISSIMO)
+  trackingUrl    String?         @map("tracking_url")
+  recipientName  String          @map("recipient_name")
+  recipientEmail String          @map("recipient_email")
+  recipientPhone String?         @map("recipient_phone")
+  street         String
+  street2        String?
+  city           String
+  postalCode     String          @map("postal_code")
+  country        String          @default("FR")
+  shippedAt      DateTime?       @map("shipped_at")
+  deliveredAt    DateTime?       @map("delivered_at")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([trackingNumber])
   @@map("shipping_info")
 }
 
-// ============================================
-// Enums
-// ============================================
+enum UserRole {
+  ADMIN
+  SUPER_ADMIN
+  CUSTOMER
+}
 
 enum OrderStatus {
-  PENDING       // Payment pending
-  PAID          // Payment confirmed, ready to ship
-  PROCESSING    // Being prepared
-  SHIPPED       // Shipped with carrier
-  DELIVERED     // Successfully delivered
-  CANCELLED     // Cancelled by admin or customer
-  REFUNDED      // Payment refunded
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
 }
 
 enum ShippingCarrier {
@@ -248,4 +199,55 @@ enum ShippingCarrier {
   UPS
   FEDEX
   OTHER
+}
+
+enum PromoCodeType {
+  NEWSLETTER
+  WELCOME
+  VIP
+  SEASONAL
+  ABANDONED_CART
+  REFERRAL
+  CUSTOM
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+// ============================================
+// Promo Code Models
+// ============================================
+
+model PromoCode {
+  id            String         @id @default(cuid())
+  code          String         @unique // NEWSLETTER-ABC123
+  type          PromoCodeType  @default(NEWSLETTER)
+
+  // Discount details
+  discountType  DiscountType   @default(PERCENTAGE) @map("discount_type")
+  discountValue Decimal        @db.Decimal(10, 2) @map("discount_value") // 10 for 10% or 10.00 for 10€
+
+  // Usage limits
+  maxUses       Int?           @map("max_uses") // null = unlimited
+  currentUses   Int            @default(0) @map("current_uses")
+  isActive      Boolean        @default(true) @map("is_active")
+
+  // Validity period
+  validFrom     DateTime       @default(now()) @map("valid_from")
+  validUntil    DateTime?      @map("valid_until")
+
+  // Newsletter specific
+  subscriberEmail String?      @map("subscriber_email") // Email of newsletter subscriber
+
+  // Timestamps
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([subscriberEmail])
+  @@index([isActive])
+  @@map("promo_codes")
 }

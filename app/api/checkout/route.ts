@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const body = await request.json();
-    const { items, promoCode } = body as { items: CartItem[]; promoCode?: string };
+    const { items, promoCodeData } = body as { items: CartItem[]; promoCodeData?: any };
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
@@ -54,15 +54,40 @@ export async function POST(request: Request) {
       ? (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.fetrabeauty.com')
       : 'https://0fa5d0e0758d.ngrok-free.app';
 
-    // Validate promo code server-side
+    // Validate promo code server-side from database
     let discountRate = 0;
-    if (promoCode) {
-      const upperCode = promoCode.toUpperCase();
-      if (PROMO_CODES[upperCode] !== undefined) {
-        discountRate = PROMO_CODES[upperCode];
-      } else {
+    let promoCodeId: string | null = null;
+
+    if (promoCodeData && promoCodeData.code) {
+      const promoCode = await prisma.promoCode.findUnique({
+        where: { code: promoCodeData.code.toUpperCase() }
+      });
+
+      if (!promoCode || !promoCode.isActive) {
         return NextResponse.json({ error: "Invalid promo code" }, { status: 400 });
       }
+
+      // Check validity period
+      const now = new Date();
+      if (promoCode.validFrom > now || (promoCode.validUntil && promoCode.validUntil < now)) {
+        return NextResponse.json({ error: "Promo code expired" }, { status: 400 });
+      }
+
+      // Check usage limit
+      if (promoCode.maxUses !== null && promoCode.currentUses >= promoCode.maxUses) {
+        return NextResponse.json({ error: "Promo code usage limit reached" }, { status: 400 });
+      }
+
+      // Calculate discount rate
+      if (promoCode.discountType === 'PERCENTAGE') {
+        discountRate = Number(promoCode.discountValue) / 100;
+      } else if (promoCode.discountType === 'FIXED_AMOUNT') {
+        // Fixed amount will be handled differently below
+        // For now we don't support fixed amount in checkout
+        // TODO: Implement fixed amount discount
+      }
+
+      promoCodeId = promoCode.id;
     }
 
     // Validate prices against database and build line items
@@ -197,22 +222,28 @@ export async function POST(request: Request) {
     }
 
     // Create Stripe checkout session
+    const sessionMetadata: Record<string, string> = {
+      cartItemCount: items.length.toString(),
+      hasCjProducts: items.some(i => i.cjProductId || i.cjVariantId).toString(),
+      promoCode: promoCodeData?.code || '',
+      discountRate: discountRate.toString(),
+    };
+
+    if (promoCodeId) {
+      sessionMetadata.promoCodeId = promoCodeId;
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items,
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cart`,
-      shipping_address_collection: { 
-        allowed_countries: ["FR", "BE", "LU", "ES", "IT", "DE", "NL", "PT"] 
+      shipping_address_collection: {
+        allowed_countries: ["FR", "BE", "LU", "ES", "IT", "DE", "NL", "PT"]
       },
       // Store cart data in metadata for webhook processing
-      metadata: {
-        cartItemCount: items.length.toString(),
-        hasCjProducts: items.some(i => i.cjProductId || i.cjVariantId).toString(),
-        promoCode: promoCode || '',
-        discountRate: discountRate.toString(),
-      },
+      metadata: sessionMetadata,
     });
 
     return NextResponse.json({ url: session.url });

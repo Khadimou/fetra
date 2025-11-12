@@ -30,8 +30,8 @@ export default function CartPage() {
     removeFromCart(sku);
   }
 
-  function handleApplyPromo() {
-    const result = applyPromoCode(promoCode);
+  async function handleApplyPromo() {
+    const result = await applyPromoCode(promoCode);
     if (result.success) {
       setPromoMessage(result.message || '');
       // Reload cart to reflect discount

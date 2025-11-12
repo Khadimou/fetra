@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getCart, type Cart } from "../../../lib/cart";
+import { getCart, getPromoCode, type Cart } from "../../../lib/cart";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -45,12 +45,23 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
+      // Get promo code data from localStorage
+      const promoCodeStorage = getPromoCode();
+      let promoCodeData = null;
+
+      if (promoCodeStorage && cart.promoCode) {
+        try {
+          promoCodeData = JSON.parse(promoCodeStorage);
+        } catch {
+          promoCodeData = { code: cart.promoCode };
+        }
+      }
+
       // Prepare checkout data with full cart items and promo code
       const checkoutData = {
         items: cart.items,
         customer: formData,
-        promoCode: cart.promoCode,
-        discount: cart.discount,
+        promoCodeData,
       };
 
       // Call Stripe checkout API

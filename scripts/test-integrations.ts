@@ -55,10 +55,10 @@ async function testBrevo() {
 async function testHubSpot() {
   console.log('\n🧪 Testing HubSpot API...');
 
-  const apiKey = process.env.HUBSPOT_API_KEY;
+  const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
 
-  if (!apiKey) {
-    console.warn('⚠️  HUBSPOT_API_KEY not configured (optional)');
+  if (!accessToken) {
+    console.warn('⚠️  HUBSPOT_ACCESS_TOKEN not configured (optional)');
     return true; // Not critical
   }
 
@@ -66,7 +66,7 @@ async function testHubSpot() {
     const response = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts?limit=1`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${accessToken}`,
       },
     });
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sendNewsletterWelcomeEmail } from '@/lib/integrations/brevo';
+import { createNewsletterPromoCode } from '@/lib/promo-codes';
 
 export async function POST(request: Request) {
   try {
@@ -68,16 +69,34 @@ export async function POST(request: Request) {
       }
     }
     
-    // Send welcome email after successful subscription
+    // Generate unique promo code for subscriber
+    let promoCode = null;
     try {
-      await sendNewsletterWelcomeEmail(email);
+      promoCode = await createNewsletterPromoCode(email, 15, 30); // 15% off, valid for 30 days
+      console.log('Promo code generated for newsletter subscriber:', promoCode.code);
+    } catch (promoError: any) {
+      console.error('Failed to create promo code:', promoError.message);
+      // Continue anyway - promo code is nice-to-have
+    }
+
+    // Send welcome email after successful subscription with promo code
+    try {
+      await sendNewsletterWelcomeEmail(email, promoCode?.code);
       console.log('Newsletter welcome email sent to:', email);
     } catch (emailError: any) {
       // Log but don't fail the subscription if email fails
       console.error('Failed to send welcome email:', emailError.message);
     }
-    
-    return NextResponse.json({ ok: true, data });
+
+    return NextResponse.json({
+      ok: true,
+      data,
+      promoCode: promoCode ? {
+        code: promoCode.code,
+        discount: Number(promoCode.discountValue),
+        validUntil: promoCode.validUntil
+      } : null
+    });
   } catch (error: any) {
     console.error('Newsletter subscription error:', error);
     return NextResponse.json(

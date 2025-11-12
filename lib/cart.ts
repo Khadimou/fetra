@@ -115,25 +115,62 @@ export function clearCart(): Cart {
   return emptyCart;
 }
 
-export function applyPromoCode(code: string): { success: boolean; discount?: number; message?: string } {
-  const upperCode = code.toUpperCase();
+export async function applyPromoCode(code: string): Promise<{ success: boolean; discount?: number; discountType?: string; message?: string }> {
+  try {
+    // Call API to validate promo code
+    const response = await fetch('/api/promo-code/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    });
 
-  // Validate promo code
-  if (upperCode === 'BIENVENUE10') {
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { success: false, message: data.error || 'Code promo invalide' };
+    }
+
+    const { promoCode } = data;
     const cart = getCart();
-    cart.promoCode = upperCode;
-    cart.discount = 0.1; // 10%
+
+    // Calculate discount based on type
+    let discountAmount = 0;
+    if (promoCode.discountType === 'PERCENTAGE') {
+      discountAmount = promoCode.discountValue / 100; // Convert to decimal (15 -> 0.15)
+    } else if (promoCode.discountType === 'FIXED_AMOUNT') {
+      discountAmount = promoCode.discountValue;
+    }
+
+    cart.promoCode = promoCode.code;
+    cart.discount = discountAmount;
     saveCart(cart);
 
     // Also save to separate storage for checkout
     if (typeof window !== 'undefined') {
-      localStorage.setItem(PROMO_STORAGE_KEY, upperCode);
+      localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify({
+        code: promoCode.code,
+        id: promoCode.id,
+        discountType: promoCode.discountType,
+        discountValue: promoCode.discountValue
+      }));
     }
 
-    return { success: true, discount: 0.1, message: '10% de réduction appliquée !' };
-  }
+    const message = promoCode.discountType === 'PERCENTAGE'
+      ? `${promoCode.discountValue}% de réduction appliquée !`
+      : `${promoCode.discountValue}€ de réduction appliquée !`;
 
-  return { success: false, message: 'Code promo invalide' };
+    return {
+      success: true,
+      discount: discountAmount,
+      discountType: promoCode.discountType,
+      message
+    };
+  } catch (error) {
+    console.error('Apply promo code error:', error);
+    return { success: false, message: 'Erreur lors de l\'application du code promo' };
+  }
 }
 
 export function removePromoCode(): Cart {

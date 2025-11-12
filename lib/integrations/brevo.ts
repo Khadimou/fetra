@@ -252,13 +252,14 @@ export async function sendOrderConfirmationEmail(
 }
 
 /**
- * Send newsletter welcome email
+ * Send newsletter welcome email with promo code
  */
 export async function sendNewsletterWelcomeEmail(
-  email: string
+  email: string,
+  promoCode?: string
 ): Promise<any> {
   const templateId = Number(process.env.BREVO_TEMPLATE_NEWSLETTER_WELCOME);
-  
+
   if (!templateId) {
     console.warn('BREVO_TEMPLATE_NEWSLETTER_WELCOME not configured - skipping welcome email');
     return null;
@@ -268,7 +269,9 @@ export async function sendNewsletterWelcomeEmail(
     email,
     templateId,
     {
-      EMAIL: email
+      EMAIL: email,
+      PROMO_CODE: promoCode || 'BIENVENUE10', // Fallback to generic code
+      HAS_PROMO: promoCode ? 'true' : 'false'
     }
   );
 }
