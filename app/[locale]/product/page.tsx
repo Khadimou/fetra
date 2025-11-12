@@ -4,6 +4,7 @@ import { getProduct } from "../../../lib/product";
 import ProductCard from "../../../components/ProductCard";
 import Gallery from "../../../components/Gallery";
 import Reviews from "../../../components/Reviews";
+import ValueComparison from "../../../components/ValueComparison";
 import MobileBarBridge from "../../../components/MobileBarBridge";
 import FAQ from "../../../components/FAQ";
 import { getTranslations } from 'next-intl/server';
@@ -323,6 +324,11 @@ export default async function ProductPage() {
       <div className="mt-12 bg-green-50 border-2 border-green-200 p-6 rounded-xl text-center">
         <h3 className="text-2xl font-bold mb-2 text-green-800">✅ {t('guaranteeTitle')}</h3>
         <p className="text-green-700">{t('guaranteeText')}</p>
+      </div>
+
+      {/* Value Comparison */}
+      <div className="mt-16">
+        <ValueComparison />
       </div>
 
       {/* Reviews */}
