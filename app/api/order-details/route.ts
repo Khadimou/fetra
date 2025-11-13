@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
     // Récupérer la session Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['line_items', 'customer_details']
+      expand: ['line_items', 'line_items.data.price.product', 'customer_details']
     });
 
     if (session.payment_status !== 'paid') {
@@ -35,11 +35,21 @@ export async function GET(request: Request) {
       currency: session.currency?.toUpperCase(),
       paymentStatus: session.payment_status,
       orderDate: new Date(session.created * 1000).toISOString(),
-      items: session.line_items?.data.map(item => ({
-        name: item.description,
-        quantity: item.quantity,
-        amount: item.amount_total ? item.amount_total / 100 : 0
-      })) || [],
+      items: session.line_items?.data.map(item => {
+        const product = item.price?.product;
+        const metadata = typeof product === 'object' && product !== null
+          ? (product as Stripe.Product).metadata || {}
+          : {};
+
+        return {
+          name: item.description,
+          quantity: item.quantity || 0,
+          amount: item.amount_total ? item.amount_total / 100 : 0,
+          sku: metadata.sku || metadata.SKU || 'FETRA-RIT-001',
+          cjVariantId: metadata.cjVariantId,
+          cjProductId: metadata.cjProductId,
+        };
+      }) || [],
       shippingAddress: session.customer_details?.address ? {
         line1: session.customer_details.address.line1,
         line2: session.customer_details.address.line2,

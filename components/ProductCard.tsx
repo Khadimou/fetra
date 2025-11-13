@@ -80,8 +80,17 @@ export default function ProductCard({ product }: Props) {
 
         // Track TikTok AddToCart event
         if (typeof window !== 'undefined' && (window as any).ttq) {
-          (window as any).ttq.track('AddToCart', {
+          const content = {
             content_id: product.sku,
+            content_name: product.title,
+            content_type: 'product',
+            quantity: qty,
+            price: product.price,
+          };
+
+          (window as any).ttq.track('AddToCart', {
+            contents: [content],
+            content_id: [product.sku],
             content_name: product.title,
             content_type: 'product',
             value: product.price * qty,

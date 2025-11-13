@@ -24,19 +24,44 @@ export default function TikTokConversion() {
         const data = await response.json();
         
         // Track TikTok CompletePayment event
-        if (typeof window !== 'undefined' && (window as any).ttq && data.session) {
-          const orderValue = data.session.amount_total ? data.session.amount_total / 100 : 0;
-          
+        if (typeof window !== 'undefined' && (window as any).ttq && data.success && data.order) {
+          const order = data.order as {
+            amountTotal: number;
+            currency?: string;
+            items: Array<{
+              sku?: string;
+              name?: string;
+              quantity?: number;
+              amount?: number;
+            }>;
+          };
+
+          const orderValue = order.amountTotal || 0;
+          const currency = order.currency || 'EUR';
+          const contents = order.items?.map((item) => ({
+            content_id: item.sku || 'FETRA-RIT-001',
+            content_name: item.name || 'Produit FETRA',
+            content_type: 'product',
+            quantity: item.quantity || 0,
+            price: item.amount || 0,
+          })) || [];
+          const contentIds = contents.map((item) => item.content_id);
+          const totalQuantity = contents.reduce((sum, item) => sum + (item.quantity || 0), 0);
+
           (window as any).ttq.track('CompletePayment', {
+            contents,
+            content_id: contentIds,
             content_type: 'product',
             value: orderValue,
-            currency: data.session.currency?.toUpperCase() || 'EUR',
-            description: `Order ${sessionId.slice(-8)}`
+            currency,
+            description: `Order ${sessionId.slice(-8)}`,
+            quantity: totalQuantity,
           });
 
           console.log('TikTok Pixel: CompletePayment tracked', {
             value: orderValue,
-            currency: data.session.currency?.toUpperCase() || 'EUR'
+            currency,
+            contentIds,
           });
         }
       } catch (error) {
