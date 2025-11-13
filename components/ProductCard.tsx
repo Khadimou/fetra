@@ -78,6 +78,18 @@ export default function ProductCard({ product }: Props) {
           });
         }
 
+        // Track TikTok AddToCart event
+        if (typeof window !== 'undefined' && (window as any).ttq) {
+          (window as any).ttq.track('AddToCart', {
+            content_id: product.sku,
+            content_name: product.title,
+            content_type: 'product',
+            value: product.price * qty,
+            currency: 'EUR',
+            quantity: qty
+          });
+        }
+
         // Send to backend for HubSpot tracking
         await fetch('/api/events/begin_checkout', {
           method: 'POST',

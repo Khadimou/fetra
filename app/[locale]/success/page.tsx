@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import OrderDetails from '../../../components/OrderDetails';
 import ClearCartOnSuccess from '../../../components/ClearCartOnSuccess';
 import PostPurchaseSignup from '../../../components/PostPurchaseSignup';
+import TikTokConversion from '../../../components/TikTokConversion';
 
 export const metadata: Metadata = {
   title: 'Commande confirmée — FETRA BEAUTY',
@@ -16,6 +17,8 @@ function SuccessContent() {
     <div className="min-h-screen bg-gradient-to-br from-fetra-olive/5 via-white to-fetra-pink/5 py-12 px-4">
       {/* Clear cart on success */}
       <ClearCartOnSuccess />
+      {/* Track TikTok conversion */}
+      <TikTokConversion />
       
       <div className="max-w-4xl mx-auto">
         {/* Header Success */}
