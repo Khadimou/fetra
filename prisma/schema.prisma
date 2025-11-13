@@ -278,3 +278,69 @@ model Review {
   @@index([createdAt])
   @@map("reviews")
 }
+
+// ============================================
+// Financial Transaction Models
+// ============================================
+
+model Transaction {
+  id              String            @id @default(cuid())
+  type            TransactionType   // INCOME or EXPENSE
+  category        TransactionCategory
+  amount          Decimal           @db.Decimal(10, 2)
+  currency        String            @default("EUR")
+  description     String            @db.Text
+  transactionDate DateTime          @default(now()) @map("transaction_date")
+
+  // Optional references
+  orderId         String?           @map("order_id") // Link to Order for automatic revenue tracking
+  cjOrderId       String?           @map("cj_order_id") // Link to CJ order for dropshipping costs
+
+  // Metadata
+  metadata        Json?             // Additional data (invoice number, receipt URL, etc.)
+  notes           String?           @db.Text // Internal notes
+
+  // Tracking
+  createdBy       String?           @map("created_by") // User ID who created the transaction
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@index([category])
+  @@index([transactionDate])
+  @@index([orderId])
+  @@index([cjOrderId])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum TransactionCategory {
+  // Income categories
+  PRODUCT_SALE
+  REFUND // Negative income
+
+  // Expense categories
+  CJ_DROPSHIPPING
+  STRIPE_FEES
+  PAYMENT_FEES
+  MARKETING_ADS
+  MARKETING_INFLUENCER
+  MARKETING_OTHER
+  SHIPPING_COLISSIMO
+  SHIPPING_PACKAGING
+  SHIPPING_OTHER
+  SERVICES_HOSTING
+  SERVICES_DOMAIN
+  SERVICES_EMAIL
+  SERVICES_SUPPORT
+  SERVICES_OTHER
+  INVENTORY_PURCHASE
+  OFFICE_SUPPLIES
+  PROFESSIONAL_FEES
+  TAX_VAT
+  OTHER
+}

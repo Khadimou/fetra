@@ -125,7 +125,22 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <button
+            onClick={() => router.push('/admin/finances')}
+            className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left group"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">💰 Finances</h3>
+                <p className="text-sm text-white/90">Revenus et dépenses</p>
+              </div>
+              <svg className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+
           <button
             onClick={() => router.push('/admin/products')}
             className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left group"
