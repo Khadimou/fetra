@@ -9,6 +9,7 @@ import { markPromoCodeAsUsed } from '../../../../lib/promo-codes';
 import type { CJOrderRequest, CJOrderResponse } from '../../../../lib/types/cj';
 import { OrderStatus } from '@prisma/client';
 import prisma from '../../../../lib/db/prisma';
+import { generateInvoicePDF, generateInvoiceFilename } from '../../../../lib/pdf/invoice';
 
 export async function POST(request: Request) {
   try {
@@ -56,6 +57,9 @@ export async function POST(request: Request) {
         console.warn('No customer email in checkout session');
         return NextResponse.json({ received: true });
       }
+
+      // Initialize order variable
+      let order: any = null;
 
       // 0) Save order to database with Prisma
       try {
@@ -120,7 +124,7 @@ export async function POST(request: Request) {
         }
 
         // Create order
-        const order = await createOrder({
+        order = await createOrder({
           customerId: customer.id,
           amount: amountTotal,
           currency: session.currency || 'EUR',
@@ -324,7 +328,7 @@ export async function POST(request: Request) {
         console.error('Brevo upsert error:', err.message);
       }
 
-      // 3) Send order confirmation email via Brevo (do this regardless of fetching line items)
+      // 3) Generate invoice PDF and send order confirmation email via Brevo
       try {
         const orderDate = new Date().toLocaleDateString('fr-FR', {
           day: '2-digit',
@@ -332,6 +336,45 @@ export async function POST(request: Request) {
           year: 'numeric'
         });
 
+        let invoiceAttachment;
+
+        // Generate invoice PDF only if order was created successfully
+        if (order) {
+          // Fetch the complete order with all details for PDF generation
+          const fullOrder = await prisma.order.findUnique({
+            where: { id: order.id },
+            include: {
+              items: true,
+              customer: true,
+              shipping: true,
+            },
+          });
+
+          if (fullOrder) {
+            try {
+              // Generate invoice PDF
+              const invoicePDF = await generateInvoicePDF({
+                order: fullOrder,
+              });
+
+              // Convert PDF buffer to base64
+              const invoiceBase64 = invoicePDF.toString('base64');
+              const invoiceFilename = generateInvoiceFilename(fullOrder.orderNumber);
+
+              invoiceAttachment = {
+                name: invoiceFilename,
+                content: invoiceBase64,
+              };
+
+              console.log('Invoice PDF generated:', invoiceFilename);
+            } catch (pdfErr: any) {
+              console.error('Error generating invoice PDF:', pdfErr.message);
+              // Continue without PDF attachment
+            }
+          }
+        }
+
+        // Send email with or without PDF attachment
         await sendOrderConfirmationEmail(
           customerEmail,
           customerName,
@@ -340,7 +383,8 @@ export async function POST(request: Request) {
             orderDate: orderDate,
             orderTotal: amountTotal.toFixed(2).replace('.', ','),
             currency: '€'
-          }
+          },
+          invoiceAttachment
         );
 
         console.log('Order confirmation email sent:', customerEmail);

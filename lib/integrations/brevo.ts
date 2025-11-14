@@ -122,6 +122,11 @@ export async function addContactToList(
   return res.json();
 }
 
+export interface EmailAttachment {
+  name: string;
+  content: string; // Base64 encoded content
+}
+
 /**
  * Send a transactional email via Brevo
  */
@@ -129,7 +134,8 @@ export async function sendTransactionalEmail(
   to: string,
   templateId: number,
   params?: Record<string, any>,
-  toName?: string
+  toName?: string,
+  attachment?: EmailAttachment
 ): Promise<any> {
   return retryWithBackoff(async () => {
     const apiKey = process.env.BREVO_API_KEY;
@@ -143,12 +149,17 @@ export async function sendTransactionalEmail(
 
     const endpoint = `${apiBase}/v3/smtp/email`;
 
-    const payload = {
+    const payload: any = {
       to: [{ email: to, name: toName }],
       sender: { email: senderEmail, name: senderName },
       templateId,
       params: params || {}
     };
+
+    // Add attachment if provided
+    if (attachment) {
+      payload.attachment = [attachment];
+    }
 
     const res = await fetch(endpoint, {
       method: 'POST',
@@ -227,10 +238,11 @@ export async function sendOrderConfirmationEmail(
     orderDate: string;
     orderTotal: string;
     currency: string;
-  }
+  },
+  attachment?: EmailAttachment
 ): Promise<any> {
   const templateId = Number(process.env.BREVO_TEMPLATE_ORDER_CONFIRM);
-  
+
   if (!templateId) {
     throw new Error('BREVO_TEMPLATE_ORDER_CONFIRM not configured');
   }
@@ -247,7 +259,8 @@ export async function sendOrderConfirmationEmail(
       ORDERTOTAL: orderData.orderTotal,
       CURRENCY: orderData.currency
     },
-    customerName
+    customerName,
+    attachment
   );
 }
 
