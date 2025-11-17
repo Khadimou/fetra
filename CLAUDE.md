@@ -318,6 +318,13 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID   # GA4 tracking ID
 NEXT_PUBLIC_GTM_ID              # Google Tag Manager ID
 NEXT_PUBLIC_SENTRY_DSN          # Client-side Sentry (consent required)
 
+# Google Ads (conversion tracking, consent-gated on marketing)
+NEXT_PUBLIC_GOOGLE_ADS_ID                      # Google Ads Conversion ID (format: AW-XXXXXXXXXX)
+NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL          # Conversion label for purchase events
+NEXT_PUBLIC_GOOGLE_ADS_BEGIN_CHECKOUT_LABEL    # Conversion label for checkout initiation
+NEXT_PUBLIC_GOOGLE_ADS_ADD_TO_CART_LABEL       # Conversion label for add to cart
+NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL              # Conversion label for leads (newsletter, contact)
+
 # Monitoring (server-side, always active)
 SENTRY_DSN                  # Server-side Sentry
 
@@ -525,3 +532,4 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY  # Public Supabase anon key (for client-side acces
 - `configure-cj-secrets.md`: CJ API credentials setup
 - `deploy-edge-functions.md`: Deploy Supabase Edge Functions
 - `troubleshooting-cj-sync.md`: Debug CJ product sync issues
+- `google-ads-setup-strategy.md`: Complete Google Ads setup and strategy guide

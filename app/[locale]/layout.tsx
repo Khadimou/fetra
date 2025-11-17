@@ -8,6 +8,7 @@ import NewsletterPopup from '../../components/NewsletterPopup';
 import HubspotSnippet from '../../components/HubspotSnippet';
 import ClientProviders from '../../components/ClientProviders';
 import GoogleAnalyticsScript from '../google-analytics-script';
+import GoogleAdsScript from '../../components/GoogleAdsScript';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -36,6 +37,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <ClientProviders>
         <GoogleAnalyticsScript />
+        <GoogleAdsScript />
         <HubspotSnippet />
         <a
           href="#main-content"

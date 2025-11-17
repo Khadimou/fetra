@@ -6,6 +6,7 @@ import OrderDetails from '../../../components/OrderDetails';
 import ClearCartOnSuccess from '../../../components/ClearCartOnSuccess';
 import PostPurchaseSignup from '../../../components/PostPurchaseSignup';
 import TikTokConversion from '../../../components/TikTokConversion';
+import GoogleAdsConversion from '../../../components/GoogleAdsConversion';
 
 export const metadata: Metadata = {
   title: 'Commande confirmée — FETRA BEAUTY',
@@ -19,6 +20,8 @@ function SuccessContent() {
       <ClearCartOnSuccess />
       {/* Track TikTok conversion */}
       <TikTokConversion />
+      {/* Track Google Ads conversion */}
+      <GoogleAdsConversion />
       
       <div className="max-w-4xl mx-auto">
         {/* Header Success */}
