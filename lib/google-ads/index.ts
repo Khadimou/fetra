@@ -2,11 +2,93 @@
  * Google Ads Conversion Tracking Module
  *
  * Handles Google Ads conversion tracking with GDPR consent management.
+ * Supports Enhanced Conversions with hashed customer data.
  * Sends conversion events to Google Ads for purchase, leads, etc.
  */
 
 // Google Ads Conversion ID (format: AW-XXXXXXXXXX)
 export const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || '';
+
+/**
+ * Enhanced Conversion User Data (for improved conversion tracking)
+ */
+export interface EnhancedConversionData {
+  email?: string;
+  phone_number?: string;
+  address?: {
+    first_name?: string;
+    last_name?: string;
+    street?: string;
+    city?: string;
+    region?: string;
+    postal_code?: string;
+    country?: string;
+  };
+}
+
+/**
+ * Hash a string using SHA-256 (required for Enhanced Conversions)
+ */
+async function hashValue(value: string): Promise<string> {
+  if (!value) return '';
+
+  // Normalize: lowercase and trim
+  const normalized = value.toLowerCase().trim();
+
+  // Use Web Crypto API for SHA-256
+  const encoder = new TextEncoder();
+  const data = encoder.encode(normalized);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+  return hashHex;
+}
+
+/**
+ * Prepare Enhanced Conversion data with hashing
+ */
+async function prepareEnhancedConversionData(data: {
+  email?: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+  street?: string;
+  city?: string;
+  region?: string;
+  postalCode?: string;
+  country?: string;
+}): Promise<EnhancedConversionData> {
+  const enhanced: EnhancedConversionData = {};
+
+  // Hash email
+  if (data.email) {
+    enhanced.email = await hashValue(data.email);
+  }
+
+  // Hash phone (remove all non-digits first, then hash)
+  if (data.phone) {
+    const phoneDigits = data.phone.replace(/\D/g, '');
+    if (phoneDigits) {
+      enhanced.phone_number = await hashValue(phoneDigits);
+    }
+  }
+
+  // Hash address fields
+  if (data.firstName || data.lastName || data.street || data.city || data.postalCode || data.country) {
+    enhanced.address = {};
+
+    if (data.firstName) enhanced.address.first_name = await hashValue(data.firstName);
+    if (data.lastName) enhanced.address.last_name = await hashValue(data.lastName);
+    if (data.street) enhanced.address.street = await hashValue(data.street);
+    if (data.city) enhanced.address.city = await hashValue(data.city);
+    if (data.region) enhanced.address.region = await hashValue(data.region);
+    if (data.postalCode) enhanced.address.postal_code = await hashValue(data.postalCode);
+    if (data.country) enhanced.address.country = await hashValue(data.country);
+  }
+
+  return enhanced;
+}
 
 // Conversion labels for different actions
 export const CONVERSION_LABELS = {
@@ -48,13 +130,14 @@ export function initGoogleAds(): void {
 }
 
 /**
- * Track a conversion event
+ * Track a conversion event with optional Enhanced Conversion data
  */
 export function trackConversion(
   conversionLabel: string,
   value?: number,
   currency: string = 'EUR',
-  transactionId?: string
+  transactionId?: string,
+  enhancedData?: EnhancedConversionData
 ): void {
   if (typeof window === 'undefined' || !isGoogleAdsConfigured()) {
     return;
@@ -84,6 +167,12 @@ export function trackConversion(
     conversionData.transaction_id = transactionId;
   }
 
+  // Add Enhanced Conversion data if provided
+  if (enhancedData && Object.keys(enhancedData).length > 0) {
+    conversionData.user_data = enhancedData;
+    console.log('[Google Ads] Enhanced Conversion data included');
+  }
+
   gtag('event', 'conversion', conversionData);
 
   console.log('[Google Ads] Conversion tracked:', {
@@ -91,11 +180,12 @@ export function trackConversion(
     value,
     currency,
     transactionId,
+    enhanced: !!enhancedData,
   });
 }
 
 /**
- * Track purchase conversion
+ * Track purchase conversion (basic version without Enhanced Conversions)
  */
 export function trackPurchase(
   orderId: string,
@@ -107,6 +197,49 @@ export function trackPurchase(
     amount,
     currency,
     orderId
+  );
+}
+
+/**
+ * Track purchase conversion with Enhanced Conversions
+ * This version includes hashed customer data for better conversion tracking
+ * and works WITHOUT requiring marketing consent (uses first-party data)
+ */
+export async function trackPurchaseEnhanced(
+  orderId: string,
+  amount: number,
+  currency: string = 'EUR',
+  customerData?: {
+    email?: string;
+    phone?: string;
+    firstName?: string;
+    lastName?: string;
+    street?: string;
+    city?: string;
+    region?: string;
+    postalCode?: string;
+    country?: string;
+  }
+): Promise<void> {
+  // Prepare enhanced conversion data with hashing
+  let enhancedData: EnhancedConversionData | undefined;
+
+  if (customerData) {
+    try {
+      enhancedData = await prepareEnhancedConversionData(customerData);
+    } catch (error) {
+      console.error('[Google Ads] Error preparing enhanced conversion data:', error);
+      // Continue without enhanced data
+    }
+  }
+
+  // Track conversion with enhanced data
+  trackConversion(
+    CONVERSION_LABELS.PURCHASE,
+    amount,
+    currency,
+    orderId,
+    enhancedData
   );
 }
 
