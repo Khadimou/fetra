@@ -42,6 +42,12 @@
         "description": "Illuminates and evens skin tone thanks to the regenerating properties of the oil and Rose Quartz."
       }
     },
+    "tutorial": {
+      "title": "Learn how to use your Gua Sha",
+      "subtitle": "Watch our complete video tutorial to master the Gua Sha technique and optimize the results of your FETRA Beauty routine",
+      "watchVideo": "Watch the tutorial",
+      "description": "In this video, you'll learn the essential gestures for an effective facial massage and techniques to get the best results with your FETRA kit."
+    },
     "cta": {
       "title": "Ready to transform your beauty routine?",
       "subtitle": "Join the hundreds of people who have already adopted the FETRA ritual",
